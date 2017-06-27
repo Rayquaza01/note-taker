@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+    "name": "Note Taker",
+    "version": "1.0",
+    "description": "Adds a text box to a toolbar button for taking notes",
+    "applications": {
+        "gecko": {
+            "id": "note-taker@r01"
+        }
+    },
+    "icons": {
+        "48": "icons/icon-48.png",
+        "96": "icons/icon-96.png"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "browser_action": {
+        "browser_style": true,
+        "default_popup": "notes.html",
+        "default_icon": {
+            "48": "icons/icon-48.png",
+            "96": "icons/icon-96.png"
+        }
+    }
+}
