@@ -3,15 +3,22 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="notes.css">
-        <!-- <link rel="stylesheet" type="text/css" href="mdi/css/materialdesignicons.min.css"> -->
+        <link rel="stylesheet" type="text/css" href="node_modules/mdi/css/materialdesignicons.min.css">
     </head>
     <body>
         <textarea id="notes" autofocus></textarea>
-        <!-- <div id="buttons"> -->
-        <!--     <i class="mdi mdi-delete"></i> -->
-        <!--     <i class="mdi mdi-content-copy"></i> -->
-        <!--     <i class="mdi mdi-settings"></i> -->
-        <!-- </div> -->
+        <div id="buttons">
+            <div class="bottom left">
+                <span class="mdi mdi-keyboard-backspace"></span>
+            </div>
+            <div class="bottom center">
+                <span class="mdi mdi-note"></span>
+                <span class="mdi mdi-web"></span>
+            </div>
+            <div class="bottom right">
+                <span class="mdi mdi-settings"></span>
+            </div>
+        </div>
         <script src="notes.js"></script>
     </body>
 </html>

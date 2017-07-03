@@ -1,0 +1,23 @@
+textarea {
+    /* font-family: serif; */
+    border: none;
+    height: 300px;
+    width: 400px;
+}
+#buttons {
+    display: flex;
+    font-size: 20px;
+    width: 400px;
+}
+.bottom {
+    width: 33%;
+}
+.left {
+    text-align: left;
+}
+.right {
+    text-align: right;
+}
+.center {
+    text-align: center;
+}

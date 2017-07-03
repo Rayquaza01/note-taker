@@ -12,8 +12,13 @@
         "48": "icons/icon-48.png",
         "96": "icons/icon-96.png"
     },
+    "background": {
+        "scripts": ["setup.js"]
+    },
     "permissions": [
-        "storage"
+        "storage",
+        "tabs",
+        "activeTab"
     ],
     "browser_action": {
         "browser_style": true,
@@ -22,5 +27,9 @@
             "48": "icons/icon-48.png",
             "96": "icons/icon-96.png"
         }
+    },
+    "options_ui": {
+        "page": "options.html",
+        "browser_style": true
     }
 }

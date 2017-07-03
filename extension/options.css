@@ -1,0 +1,23 @@
+body, input {
+    font-size: 1.25rem;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+td, select, input {
+    height: 30px;
+    line-height: 30px;
+    width: 50%;
+}
+#background-color, #font-color {
+    text-transform: uppercase;
+}
+tr {
+    border-bottom: 1px solid black;
+    border-color: #c1c1c1;
+}
+.center {
+    align-items: center;
+    display: flex;
+}

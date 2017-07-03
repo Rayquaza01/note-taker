@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="options.css">
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td class="left">Background Color</td>
+                <td class="right center">#<input type="text" id="background-color"><input type="color" id="background-color-picker"></td>
+            </tr>
+            <tr>
+                <td>Text Color</td>
+                <td class="center">#<input type="text" id="font-color"><input type="color" id="font-color-picker"></td>
+            </tr>
+            <tr>
+                <td>Text Box Width</td>
+                <td><input type="number" id="width"> px</td>
+            </tr>
+            <tr>
+                <td>Text Box Height</td>
+                <td><input type="number" id="height"> px</td>
+            </tr>
+            <tr>
+                <td>Font (uses default fonts set in about:preferences)</td>
+                <td>
+                    <select id="font-family">
+                        <option value="default">Default</option>
+                        <option value="sans-serif">Sans Serif</option>
+                        <option value="serif">Serif</option>
+                        <option value="monospace">Monospace</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Font Size</td>
+                <td><input type="number" id="font-size"> px</td>
+            </tr>
+        </table>
+        <script src="options.js"></script>
+    </body>
+</html>
