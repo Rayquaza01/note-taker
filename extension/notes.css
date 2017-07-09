@@ -1,5 +1,4 @@
 textarea {
-    /* font-family: serif; */
     border: none;
     height: 300px;
     width: 400px;
@@ -7,7 +6,8 @@ textarea {
 #buttons {
     display: flex;
     font-size: 20px;
-    width: 400px;
+    white-space: nowrap;
+    width: 100%;
 }
 .bottom {
     width: 33%;

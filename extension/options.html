@@ -7,12 +7,29 @@
     <body>
         <table>
             <tr>
-                <td class="left">Background Color</td>
-                <td class="right center">#<input type="text" id="background-color"><input type="color" id="background-color-picker"></td>
+                <td>Theme</td>
+                <td>
+                    <select id="theme">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </td>
             </tr>
             <tr>
-                <td>Text Color</td>
+                <td>Background Color (Light)</td>
+                <td class="center">#<input type="text" id="background-color"><input type="color" id="background-color-picker"></td>
+            </tr>
+            <tr>
+                <td>Text Color (Light)</td>
                 <td class="center">#<input type="text" id="font-color"><input type="color" id="font-color-picker"></td>
+            </tr>
+            <tr>
+                <td>Background Color (Dark)</td>
+                <td class="center">#<input type="text" id="background-color-dark"><input type="color" id="background-color-picker-dark"></td>
+            </tr>
+            <tr>
+                <td>Text Color (Dark)</td>
+                <td class="center">#<input type="text" id="font-color-dark"><input type="color" id="font-color-picker-dark"></td>
             </tr>
             <tr>
                 <td>Text Box Width</td>
@@ -30,12 +47,26 @@
                         <option value="sans-serif">Sans Serif</option>
                         <option value="serif">Serif</option>
                         <option value="monospace">Monospace</option>
+                        <option value="custom">Custom</option>
                     </select>
                 </td>
             </tr>
             <tr>
+                <td>Font CSS</td>
+                <td><input id="font-css" type="text"></td>
+            </tr>
+            <tr>
                 <td>Font Size</td>
                 <td><input type="number" id="font-size"> px</td>
+            </tr>
+            <tr>
+                <td>Default Display</td>
+                <td>
+                    <select id="default-display">
+                        <option value="general_notes">General Notes</option>
+                        <option value="site_notes">Site Notes</option>
+                    </select>
+                </td>
             </tr>
         </table>
         <script src="options.js"></script>

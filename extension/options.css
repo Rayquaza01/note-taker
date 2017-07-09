@@ -5,10 +5,16 @@ table {
     border-collapse: collapse;
     width: 100%;
 }
+tr:last-child {
+    border-bottom: none;
+}
 td, select, input {
     height: 30px;
     line-height: 30px;
     width: 50%;
+}
+.sameLine {
+    width: 25%;
 }
 #background-color, #font-color {
     text-transform: uppercase;
@@ -20,4 +26,7 @@ tr {
 .center {
     align-items: center;
     display: flex;
+}
+#font-css-row {
+    display: none;
 }
