@@ -1,23 +1,33 @@
 const textarea = document.getElementsByTagName("textarea")[0];
-function getHost(href) {
-    var link = document.createElement("a");
-    link.href = href;
-    return link.hostname;
-}
+const back = document.getElementsByClassName("mdi-keyboard-backspace")[0];
+const toggle = document.getElementById("toggle");
+const theme = document.getElementById("theme");
 function loadGeneralNotes() {
     browser.storage.local.get("general_notes").then((res) => {
         document.getElementsByTagName("textarea")[0].value = res.general_notes || "";
-        document.getElementsByClassName("mdi-keyboard-backspace")[0].innerText = "General Notes";
+        back.innerText = "General Notes";
     });
 }
 function loadSiteNotes() {
-    browser.storage.local.get("site_notes").then((res) => {
+    browser.storage.local.get().then((res) => {
         browser.tabs.query({active: true}).then((tabs) => {
-            var site = getHost(tabs[0].url);
-            if (!res.site_notes[site]) {
-                res.site_notes[site] = "";
+            var url = tabs[0].url;
+            if (url.protocol === "about:") {
             }
-            textarea.value = res.site_notes[site];
+            var host = new URL(url).hostname;
+            var site = psl.parse(host)
+            if (res.options.ignoreSubdomain) {
+                if (!res.site_notes[site.domain]) {
+                    res.site_notes[site.domain] = "";
+                }
+                textarea.value = res.site_notes[site];
+                textarea.id = "site_notes";
+            } else if (!res.options.ignoreSubdomain) {
+                if (!res.site_notes[host]) {
+                    res.site_notes[host] = "";
+                }
+                textarea.value = res.site_notes[host];
+            }
         });
     });
 }

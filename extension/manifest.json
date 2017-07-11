@@ -18,7 +18,7 @@
     "permissions": [
         "storage",
         "tabs",
-        "activeTab"
+        "unlimitedStorage"
     ],
     "browser_action": {
         "browser_style": true,
