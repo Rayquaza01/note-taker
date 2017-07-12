@@ -4,7 +4,6 @@ textarea {
     width: 400px;
 }
 #buttons {
-    display: flex;
     font-size: 20px;
     white-space: nowrap;
     width: 100%;
@@ -13,11 +12,10 @@ textarea {
     width: 33%;
 }
 .left {
+    float: left;
     text-align: left;
 }
 .right {
+    float: right;
     text-align: right;
-}
-.center {
-    text-align: center;
 }

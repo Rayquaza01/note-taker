@@ -4,29 +4,40 @@ const toggle = document.getElementById("toggle");
 const theme = document.getElementById("theme");
 function loadGeneralNotes() {
     browser.storage.local.get("general_notes").then((res) => {
-        document.getElementsByTagName("textarea")[0].value = res.general_notes || "";
+        textarea.value = res.general_notes || "";
         back.innerText = "General Notes";
     });
 }
 function loadSiteNotes() {
     browser.storage.local.get().then((res) => {
-        browser.tabs.query({active: true}).then((tabs) => {
-            var url = tabs[0].url;
+        browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
+            var url = new URL(tabs[0].url);
             if (url.protocol === "about:") {
-            }
-            var host = new URL(url).hostname;
-            var site = psl.parse(host)
-            if (res.options.ignoreSubdomain) {
-                if (!res.site_notes[site.domain]) {
-                    res.site_notes[site.domain] = "";
+                var path = url.protocol + url.pathname;
+                console.log(path);
+                if (res.site_notes[path] === undefined) {
+                    res.site_notes[path] = "";
                 }
-                textarea.value = res.site_notes[site];
-                textarea.id = "site_notes";
-            } else if (!res.options.ignoreSubdomain) {
-                if (!res.site_notes[host]) {
-                    res.site_notes[host] = "";
+                textarea.value = res.site_notes[path];
+                back.innerText = path;
+            } else if (url.protocol.match(/https?:\/\//g)) {
+                var site = psl.parse(site.hostname);
+                if (res.options.ignoreSubdomain.indexOf(site.domain) > -1 || res.options.ignoreSubdomain[0] === "all_urls") {
+                    if (res.site_notes[site.domain] === undefined) {
+                        res.site_notes[site.domain] = "";
+                    }
+                    textarea.value = res.site_notes[site.domain];
+                    back.innerText = site.domain;
+                } else {
+                    if (res.site_notes[url.hostname] === undefined) {
+                        res.site_notes[url.hostname] = "";
+                    }
+                    textarea.value = res.site_notes[url.hostname];
+                    back.innerText = url.hostname;
                 }
-                textarea.value = res.site_notes[host];
+            } else {
+                console.log("do we get here?")
+                loadGeneralNotes();
             }
         });
     });

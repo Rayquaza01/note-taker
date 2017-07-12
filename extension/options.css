@@ -16,7 +16,7 @@ td, select, input {
 .sameLine {
     width: 25%;
 }
-#background-color, #font-color {
+#background-color, #font-color, #background-color-dark, #font-color-dark {
     text-transform: uppercase;
 }
 tr {
