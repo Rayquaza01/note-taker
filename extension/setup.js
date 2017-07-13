@@ -36,8 +36,11 @@ function setOpts() {
         if (res.options.default_display === undefined) {
             res.options.default_display = "general_notes";
         }
-        if (res.options.ignore_subdomains === undefined) {
-            res.options.ignore_subdomains = "";
+        if (res.options.subdomains_mode === undefined) {
+            res.options.subdomains_mode = "blacklist";
+        }
+        if (res.options.subdomains === undefined) {
+            res.options.subdomains = "";
         }
         if (res.site_notes === undefined) {
             res.site_notes = {};

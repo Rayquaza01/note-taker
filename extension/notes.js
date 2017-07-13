@@ -2,13 +2,28 @@ const textarea = document.getElementsByTagName("textarea")[0];
 const back = document.getElementsByClassName("mdi-keyboard-backspace")[0];
 const toggle = document.getElementById("toggle");
 const theme = document.getElementById("theme");
+function saveGeneralNotes() {
+    browser.storage.local.set({
+        general_notes: textarea.value || ""
+    });
+}
+function saveSiteNotes() {
+    var site = back.innerText;
+    var saveObj = {site_notes: {}};
+    saveObj.site_notes[site] = textarea.value || "";
+    console.log(saveObj);
+    browser.storage.local.set(saveObj);
+}
 function loadGeneralNotes() {
+    textarea.removeEventListener("input", saveSiteNotes);
     browser.storage.local.get("general_notes").then((res) => {
         textarea.value = res.general_notes || "";
         back.innerText = "General Notes";
+        textarea.addEventListener("input", saveGeneralNotes);
     });
 }
 function loadSiteNotes() {
+    textarea.removeEventListener("input", saveGeneralNotes);
     browser.storage.local.get().then((res) => {
         browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
             var url = new URL(tabs[0].url);
@@ -20,23 +35,43 @@ function loadSiteNotes() {
                 }
                 textarea.value = res.site_notes[path];
                 back.innerText = path;
+                textarea.addEventListener("input", saveSiteNotes);
             } else if (url.protocol.match(/https?:\/\//g)) {
                 var site = psl.parse(site.hostname);
-                if (res.options.ignoreSubdomain.indexOf(site.domain) > -1 || res.options.ignoreSubdomain[0] === "all_urls") {
-                    if (res.site_notes[site.domain] === undefined) {
-                        res.site_notes[site.domain] = "";
+                if (res.options.subdomains_mode === "blacklist") {
+                    if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains[0] === "all_urls") {
+                        if (res.site_notes[site.domain] === undefined) {
+                            res.site_notes[site.domain] = "";
+                        }
+                        textarea.value = res.site_notes[site.domain];
+                        back.innerText = site.domain;
+                        textarea.addEventListener("input", saveSiteNotes);
+                    } else {
+                        if (res.site_notes[url.hostname] === undefined) {
+                            res.site_notes[url.hostname] = "";
+                        }
+                        textarea.value = res.site_notes[url.hostname];
+                        back.innerText = url.hostname;
+                        textarea.addEventListener("input", saveSiteNotes);
                     }
-                    textarea.value = res.site_notes[site.domain];
-                    back.innerText = site.domain;
-                } else {
-                    if (res.site_notes[url.hostname] === undefined) {
-                        res.site_notes[url.hostname] = "";
+                } else if (res.options.subdomains_mode === "whitelist") {
+                    if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains[0] === "all_urls") {
+                        if (res.site_notes[url.hostname] === undefined) {
+                            res.site_notes[url.hostname] = "";
+                        }
+                        textarea.value = res.site_notes[url.hostname];
+                        back.innerText = url.hostname;
+                        textarea.addEventListener("input", saveSiteNotes);
+                    } else {
+                        if (res.site_notes[site.domain] === undefined) {
+                            res.site_notes[site.domain] = "";
+                        }
+                        textarea.value = res.site_notes[site.domain];
+                        back.innerText = site.domain;
+                        textarea.addEventListener("input", saveSiteNotes);
                     }
-                    textarea.value = res.site_notes[url.hostname];
-                    back.innerText = url.hostname;
                 }
             } else {
-                console.log("do we get here?")
                 loadGeneralNotes();
             }
         });
@@ -52,22 +87,22 @@ function pageSetup(e) {
         if (res.options.theme === "light") {
             document.body.style.backgroundColor = "#" + res.options.background_color;
             document.body.style.color = "#" + res.options.font_color;
-            document.getElementsByTagName("textarea")[0].style.backgroundColor = "#" + res.options.background_color;
-            document.getElementsByTagName("textarea")[0].style.color = "#" + res.options.font_color;
+            textarea.style.backgroundColor = "#" + res.options.background_color;
+            textarea.style.color = "#" + res.options.font_color;
         } else if (res.options.theme === "dark") {
             document.body.style.backgroundColor = "#" + res.options.background_color_dark;
             document.body.style.color = "#" + res.options.font_color_dark;
-            document.getElementsByTagName("textarea")[0].style.backgroundColor = "#" + res.options.background_color_dark;
-            document.getElementsByTagName("textarea")[0].style.color = "#" + res.options.font_color_dark;
+            textarea.style.backgroundColor = "#" + res.options.background_color_dark;
+            textarea.style.color = "#" + res.options.font_color_dark;
         }
         if (res.options.font_family === "custom") {
-            document.getElementsByTagName("textarea")[0].style.fontFamily = res.options.font_css;
+            textarea.style.fontFamily = res.options.font_css;
         } else if (res.options.font_family !== "default") {
-            document.getElementsByTagName("textarea")[0].style.fontFamily = res.options.font_family;
+            textarea.style.fontFamily = res.options.font_family;
         }
-        document.getElementsByTagName("textarea")[0].style.fontSize = res.options.font_size + "px";
-        document.getElementsByTagName("textarea")[0].style.width = res.options.width + "px";
-        document.getElementsByTagName("textarea")[0].style.height = res.options.height + "px";
+        textarea.style.fontSize = res.options.font_size + "px";
+        textarea.style.width = res.options.width + "px";
+        textarea.style.height = res.options.height + "px";
         if (res.options.default_display === "general_notes") {
             loadGeneralNotes();
         } else if (res.options.default_display === "site_notes") {
@@ -79,5 +114,5 @@ function pageSetup(e) {
 function options() {
     browser.runtime.openOptionsPage();
 }
-document.addEventListener("DOMContentLoaded", pageSetup);
 document.getElementsByClassName("mdi-settings")[0].addEventListener("click", options);
+document.addEventListener("DOMContentLoaded", pageSetup);

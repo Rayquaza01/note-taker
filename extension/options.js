@@ -12,7 +12,8 @@ function saveOptions(e) {
         font_css: document.getElementById("font-css").value || "",
         font_size: parseInt(document.getElementById("font-size").value) || 16,
         default_display: document.getElementById("default-display").value || "general_notes",
-        ignore_subdomains: document.getElementById("ignore-subdomains").value.split(" ") || []
+        subdomains_mode: document.getElementById("subdomains-mode").value || "blacklist",
+        subdomains: document.getElementById("subdomains").value.split(" ") || []
     };
     browser.storage.local.set({
         options: options
