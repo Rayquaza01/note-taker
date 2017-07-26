@@ -11,7 +11,6 @@ function saveSiteNotes() {
     var site = back.innerText;
     var saveObj = {site_notes: {}};
     saveObj.site_notes[site] = textarea.value || "";
-    console.log(saveObj);
     browser.storage.local.set(saveObj);
 }
 function loadGeneralNotes() {
@@ -33,17 +32,16 @@ function loadSiteNotes() {
             var url = new URL(tabs[0].url);
             if (url.protocol === "about:") {
                 var path = url.protocol + url.pathname;
-                console.log(path);
                 if (res.site_notes[path] === undefined) {
                     res.site_notes[path] = "";
                 }
                 textarea.value = res.site_notes[path];
                 back.innerText = path;
                 textarea.addEventListener("input", saveSiteNotes);
-            } else if (url.protocol.match(/https?:\/\//g)) {
-                var site = psl.parse(site.hostname);
+            } else if (url.protocol.match(/https?:/g)) {
+                var site = psl.parse(url.hostname);
                 if (res.options.subdomains_mode === "blacklist") {
-                    if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains[0] === "all_urls") {
+                    if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
                         if (res.site_notes[site.domain] === undefined) {
                             res.site_notes[site.domain] = "";
                         }
@@ -59,7 +57,7 @@ function loadSiteNotes() {
                         textarea.addEventListener("input", saveSiteNotes);
                     }
                 } else if (res.options.subdomains_mode === "whitelist") {
-                    if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains[0] === "all_urls") {
+                    if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
                         if (res.site_notes[url.hostname] === undefined) {
                             res.site_notes[url.hostname] = "";
                         }
