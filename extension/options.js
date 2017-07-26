@@ -28,6 +28,7 @@ function fontSync(ele) {
     }
 }
 function colorSync(ele) {
+    // Ugly function, try to fix later...
     switch (ele.target.id) {
         case "background-color":
             document.getElementById("background-color-picker").value = "#" + ele.target.value;
@@ -55,6 +56,13 @@ function colorSync(ele) {
             break;
     }
 }
+function domainModeSync(ele) {
+    if (ele.target.value === "blacklist") {
+        document.getElementById("domain-mode").innerText = "Ignore";
+    } else if (ele.target.value === "whitelist") {
+        document.getElementById("domain-mode").innerText = "Enforce";
+    }
+}
 function restoreOptions() {
     browser.storage.local.get().then((res) => {
         // if (!res.options) {
@@ -77,6 +85,11 @@ function restoreOptions() {
         document.getElementById("font-css").value = res.options.font_css;
         document.getElementById("font-size").value = res.options.font_size;
         document.getElementById("default-display").value = res.options.default_display;
+        document.getElementById("subdomains-mode").value = res.options.subdomains_mode;
+        document.getElementById("subdomains").value = res.options.subdomains.join(" ");
+        if (res.options.subdomains_mode === "whitelist") {
+            document.getElementById("domain-mode").innerText = "Enforce";
+        }
     });
 }
 // color sync
@@ -90,6 +103,8 @@ document.getElementById("background-color-picker-dark").addEventListener("input"
 document.getElementById("font-color-picker-dark").addEventListener("input", colorSync);
 // font sync
 document.getElementById("font-family").addEventListener("change", fontSync)
+// Subdomain Sync
+document.getElementById("subdomains-mode").addEventListener("input", domainModeSync);
 // save options
 table.addEventListener("change", saveOptions); // Event delegation is a lot simpler than what I was trying
 // onload
