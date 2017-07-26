@@ -15,6 +15,8 @@ function saveSiteNotes() {
     browser.storage.local.set(saveObj);
 }
 function loadGeneralNotes() {
+    toggle.className = "mdi mdi-web";
+    toggle.title = "Switch to site notes"
     textarea.removeEventListener("input", saveSiteNotes);
     browser.storage.local.get("general_notes").then((res) => {
         textarea.value = res.general_notes || "";
@@ -23,6 +25,8 @@ function loadGeneralNotes() {
     });
 }
 function loadSiteNotes() {
+    toggle.className = "mdi mdi-note";
+    toggle.title = "Switch to general notes"
     textarea.removeEventListener("input", saveGeneralNotes);
     browser.storage.local.get().then((res) => {
         browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
@@ -77,6 +81,34 @@ function loadSiteNotes() {
         });
     });
 }
+function changeNoteMode(ele) {
+    if (ele.target.className === "mdi mdi-web") {
+        loadSiteNotes();
+    } else if (ele.target.className === "mdi mdi-note") {
+        loadGeneralNotes();
+    }
+}
+function changeTheme(ele) {
+    browser.storage.local.get().then((res) => {
+        if (ele.target.title === "Switch to light theme") {
+            ele.target.title = "Switch to dark theme";
+            res.options.theme = "light";
+            browser.storage.local.set({options: res.options});
+            document.body.style.backgroundColor = "#" + res.options.background_color;
+            document.body.style.color = "#" + res.options.font_color;
+            textarea.style.backgroundColor = "#" + res.options.background_color;
+            textarea.style.color = "#" + res.options.font_color;
+        } else if (ele.target.title === "Switch to dark theme") {
+            ele.target.title = "Switch to light theme";
+            res.options.theme = "dark";
+            browser.storage.local.set({options: res.options});
+            document.body.style.backgroundColor = "#" + res.options.background_color_dark;
+            document.body.style.color = "#" + res.options.font_color_dark;
+            textarea.style.backgroundColor = "#" + res.options.background_color_dark;
+            textarea.style.color = "#" + res.options.font_color_dark;
+        }
+    });
+}
 function pageSetup(e) {
     // Needed to autofocus textbox
     // https://stackoverflow.com/a/11400653
@@ -85,11 +117,13 @@ function pageSetup(e) {
     }
     browser.storage.local.get("options").then((res) => {
         if (res.options.theme === "light") {
+            theme.title = "Switch to dark theme";
             document.body.style.backgroundColor = "#" + res.options.background_color;
             document.body.style.color = "#" + res.options.font_color;
             textarea.style.backgroundColor = "#" + res.options.background_color;
             textarea.style.color = "#" + res.options.font_color;
         } else if (res.options.theme === "dark") {
+            theme.title = "Switch to light theme";
             document.body.style.backgroundColor = "#" + res.options.background_color_dark;
             document.body.style.color = "#" + res.options.font_color_dark;
             textarea.style.backgroundColor = "#" + res.options.background_color_dark;
@@ -115,4 +149,6 @@ function options() {
     browser.runtime.openOptionsPage();
 }
 document.getElementsByClassName("mdi-settings")[0].addEventListener("click", options);
+toggle.addEventListener("click", changeNoteMode);
+theme.addEventListener("click", changeTheme);
 document.addEventListener("DOMContentLoaded", pageSetup);

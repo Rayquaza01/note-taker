@@ -1,5 +1,5 @@
 const table = document.getElementsByTagName("table")[0];
-function saveOptions(e) {
+function saveOptions() {
     var options = {
         theme: document.getElementById("theme").value || "light",
         background_color: document.getElementById("background-color").value || "ffffff",
@@ -18,7 +18,6 @@ function saveOptions(e) {
     browser.storage.local.set({
         options: options
     });
-    e.preventDefault();
 }
 function fontSync(ele) {
     if (ele.target.value === "custom") {
@@ -65,9 +64,9 @@ function domainModeSync(ele) {
 }
 function restoreOptions() {
     browser.storage.local.get().then((res) => {
-        // if (!res.options) {
-        //     saveOptions("e");
-        // }
+        if (!res.options) {
+            saveOptions();
+        }
         document.getElementById("background-color").value = res.options.background_color;
         document.getElementById("background-color-picker").value = "#" + res.options.background_color;
         document.getElementById("background-color-dark").value = res.options.background_color_dark;
