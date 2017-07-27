@@ -2,9 +2,20 @@ const textarea = document.getElementsByTagName("textarea")[0];
 const back = document.getElementsByClassName("mdi-keyboard-backspace")[0];
 const toggle = document.getElementById("toggle");
 const theme = document.getElementById("theme");
-const closeButton = document.getElementsByClassName("mdi mdi-close")[0];
 const overlay = document.getElementById("overlay");
+const overlayClose = document.getElementsByClassName("mdi-close")[0];
 const settings = document.getElementsByClassName("mdi-settings")[0];
+const noteList =  document.getElementById("note-list");
+function openList() {
+    overlay.style.width = "100%";
+    back.style.display = "none";
+    overlayClose.style.display = "block";
+}
+function closeList() {
+    overlay.style.width = "0";
+    back.style.display = "block";
+    overlayClose.style.display = "none";
+}
 function saveGeneralNotes() {
     browser.storage.local.set({
         general_notes: textarea.value || ""
@@ -28,6 +39,7 @@ function loadGeneralNotes() {
     });
 }
 function siteNoteSetup(site) {
+    textarea.removeEventListener("input", saveGeneralNotes);
     browser.storage.local.get("site_notes").then((res) => {
         if (res.site_notes[site] === undefined) {
             res.site_notes[site] = "";
@@ -37,10 +49,19 @@ function siteNoteSetup(site) {
         textarea.addEventListener("input", saveSiteNotes);
     });
 }
+function loadCustomNote(ele) {
+    toggle.className = "mdi mdi-note";
+    toggle.title = "Switch to general notes"
+    if (ele.target.innerText === "General Notes") {
+        loadGeneralNotes();
+    } else {
+        siteNoteSetup(ele.target.innerText);
+    }
+    closeList();
+}
 function loadSiteNotes() {
     toggle.className = "mdi mdi-note";
     toggle.title = "Switch to general notes"
-    textarea.removeEventListener("input", saveGeneralNotes);
     browser.storage.local.get().then((res) => {
         browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
             var url = new URL(tabs[0].url);
@@ -75,23 +96,15 @@ function changeNoteMode(ele) {
     }
 }
 function setLightTheme() {
-    browser.storage.local.get().then((res) => {
+    browser.storage.local.get("options").then((res) => {
         document.body.style.backgroundColor = "#" + res.options.background_color;
         document.body.style.color = "#" + res.options.font_color;
-        textarea.style.backgroundColor = "#" + res.options.background_color;
-        textarea.style.color = "#" + res.options.font_color;
-        overlay.style.backgroundColor = "#" + res.options.background_color;
-        overlay.style.color = "#" + res.options.font_color;
     });
 }
 function setDarkTheme() {
-    browser.storage.local.get().then((res) => {
+    browser.storage.local.get("options").then((res) => {
         document.body.style.backgroundColor = "#" + res.options.background_color_dark;
         document.body.style.color = "#" + res.options.font_color_dark;
-        textarea.style.backgroundColor = "#" + res.options.background_color_dark;
-        textarea.style.color = "#" + res.options.font_color_dark;
-        overlay.style.backgroundColor = "#" + res.options.background_color_dark;
-        overlay.style.color = "#" + res.options.font_color_dark;
     });
 }
 function changeTheme(ele) {
@@ -106,6 +119,25 @@ function changeTheme(ele) {
             res.options.theme = "dark";
             browser.storage.local.set({options: res.options});
             setDarkTheme();
+        }
+    });
+}
+function loadNoteList() {
+    browser.storage.local.get("site_notes").then((res) => {
+        for (var site in res.site_notes) {
+            console.log(res.site_notes.hasOwnProperty(site));
+            if (res.site_notes.hasOwnProperty(site)) {
+                var cont = document.createElement("span");
+                cont.className = "container";
+                var name = document.createElement("div");
+                name.innerText = site;
+                name.className = "name";
+                var del = document.createElement("span");
+                del.className = "mdi mdi-delete";
+                cont.append(name);
+                cont.append(del);
+                noteList.append(cont);
+            }
         }
     });
 }
@@ -131,25 +163,22 @@ function pageSetup() {
         textarea.style.fontSize = res.options.font_size + "px";
         textarea.style.width = res.options.width + "px";
         textarea.style.height = res.options.height + "px";
+        overlay.style.height = res.options.height + "px";
         if (res.options.default_display === "general_notes") {
             loadGeneralNotes();
         } else if (res.options.default_display === "site_notes") {
             loadSiteNotes();
         }
+        loadNoteList();
     });
 }
 function options() {
     browser.runtime.openOptionsPage();
 }
-function openList() {
-    overlay.style.width = "100%";
-}
-function closeList() {
-    overlay.style.width = "0";
-}
 settings.addEventListener("click", options);
 toggle.addEventListener("click", changeNoteMode);
 theme.addEventListener("click", changeTheme);
 back.addEventListener("click", openList);
-closeButton.addEventListener("click", closeList);
+overlayClose.addEventListener("click", closeList);
+noteList.addEventListener("click", loadCustomNote);
 document.addEventListener("DOMContentLoaded", pageSetup);
