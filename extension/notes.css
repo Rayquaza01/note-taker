@@ -3,7 +3,7 @@ textarea {
     height: 300px;
     width: 400px;
 }
-#buttons {
+#buttons, #overlay {
     font-size: 20px;
     white-space: nowrap;
     width: 100%;
@@ -21,4 +21,21 @@ textarea {
 }
 .mdi {
     cursor: pointer;
+}
+.mdi-close {
+    margin: 10px;
+    float: right;
+}
+.mdi-delete {
+    text-align: right;
+}
+#overlay {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    overflow-x: hidden;
+    transition: .5s;
 }

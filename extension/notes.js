@@ -2,6 +2,9 @@ const textarea = document.getElementsByTagName("textarea")[0];
 const back = document.getElementsByClassName("mdi-keyboard-backspace")[0];
 const toggle = document.getElementById("toggle");
 const theme = document.getElementById("theme");
+const closeButton = document.getElementsByClassName("mdi mdi-close")[0];
+const overlay = document.getElementById("overlay");
+const settings = document.getElementsByClassName("mdi-settings")[0];
 function saveGeneralNotes() {
     browser.storage.local.set({
         general_notes: textarea.value || ""
@@ -24,6 +27,16 @@ function loadGeneralNotes() {
         textarea.addEventListener("input", saveGeneralNotes);
     });
 }
+function siteNoteSetup(site) {
+    browser.storage.local.get("site_notes").then((res) => {
+        if (res.site_notes[site] === undefined) {
+            res.site_notes[site] = "";
+        }
+        textarea.value = res.site_notes[site];
+        back.innerText = site;
+        textarea.addEventListener("input", saveSiteNotes);
+    });
+}
 function loadSiteNotes() {
     toggle.className = "mdi mdi-note";
     toggle.title = "Switch to general notes"
@@ -32,46 +45,20 @@ function loadSiteNotes() {
         browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
             var url = new URL(tabs[0].url);
             if (url.protocol === "about:") {
-                var path = url.protocol + url.pathname;
-                if (res.site_notes[path] === undefined) {
-                    res.site_notes[path] = "";
-                }
-                textarea.value = res.site_notes[path];
-                back.innerText = path;
-                textarea.addEventListener("input", saveSiteNotes);
+                siteNoteSetup(url.protocol + url.pathname);
             } else if (url.protocol.match(/https?:/g)) {
                 var site = psl.parse(url.hostname);
                 if (res.options.subdomains_mode === "blacklist") {
                     if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
-                        if (res.site_notes[site.domain] === undefined) {
-                            res.site_notes[site.domain] = "";
-                        }
-                        textarea.value = res.site_notes[site.domain];
-                        back.innerText = site.domain;
-                        textarea.addEventListener("input", saveSiteNotes);
+                        siteNoteSetup(site.domain);
                     } else {
-                        if (res.site_notes[url.hostname] === undefined) {
-                            res.site_notes[url.hostname] = "";
-                        }
-                        textarea.value = res.site_notes[url.hostname];
-                        back.innerText = url.hostname;
-                        textarea.addEventListener("input", saveSiteNotes);
+                        siteNoteSetup(url.hostname);
                     }
                 } else if (res.options.subdomains_mode === "whitelist") {
                     if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
-                        if (res.site_notes[url.hostname] === undefined) {
-                            res.site_notes[url.hostname] = "";
-                        }
-                        textarea.value = res.site_notes[url.hostname];
-                        back.innerText = url.hostname;
-                        textarea.addEventListener("input", saveSiteNotes);
+                        siteNoteSetup(url.hostname);
                     } else {
-                        if (res.site_notes[site.domain] === undefined) {
-                            res.site_notes[site.domain] = "";
-                        }
-                        textarea.value = res.site_notes[site.domain];
-                        back.innerText = site.domain;
-                        textarea.addEventListener("input", saveSiteNotes);
+                        siteNoteSetup(site.domain);
                     }
                 }
             } else {
@@ -87,28 +74,42 @@ function changeNoteMode(ele) {
         loadGeneralNotes();
     }
 }
+function setLightTheme() {
+    browser.storage.local.get().then((res) => {
+        document.body.style.backgroundColor = "#" + res.options.background_color;
+        document.body.style.color = "#" + res.options.font_color;
+        textarea.style.backgroundColor = "#" + res.options.background_color;
+        textarea.style.color = "#" + res.options.font_color;
+        overlay.style.backgroundColor = "#" + res.options.background_color;
+        overlay.style.color = "#" + res.options.font_color;
+    });
+}
+function setDarkTheme() {
+    browser.storage.local.get().then((res) => {
+        document.body.style.backgroundColor = "#" + res.options.background_color_dark;
+        document.body.style.color = "#" + res.options.font_color_dark;
+        textarea.style.backgroundColor = "#" + res.options.background_color_dark;
+        textarea.style.color = "#" + res.options.font_color_dark;
+        overlay.style.backgroundColor = "#" + res.options.background_color_dark;
+        overlay.style.color = "#" + res.options.font_color_dark;
+    });
+}
 function changeTheme(ele) {
     browser.storage.local.get().then((res) => {
         if (ele.target.title === "Switch to light theme") {
             ele.target.title = "Switch to dark theme";
             res.options.theme = "light";
             browser.storage.local.set({options: res.options});
-            document.body.style.backgroundColor = "#" + res.options.background_color;
-            document.body.style.color = "#" + res.options.font_color;
-            textarea.style.backgroundColor = "#" + res.options.background_color;
-            textarea.style.color = "#" + res.options.font_color;
+            setLightTheme();
         } else if (ele.target.title === "Switch to dark theme") {
             ele.target.title = "Switch to light theme";
             res.options.theme = "dark";
             browser.storage.local.set({options: res.options});
-            document.body.style.backgroundColor = "#" + res.options.background_color_dark;
-            document.body.style.color = "#" + res.options.font_color_dark;
-            textarea.style.backgroundColor = "#" + res.options.background_color_dark;
-            textarea.style.color = "#" + res.options.font_color_dark;
+            setDarkTheme();
         }
     });
 }
-function pageSetup(e) {
+function pageSetup() {
     // Needed to autofocus textbox
     // https://stackoverflow.com/a/11400653
     if (location.search !== "?focusHack") {
@@ -117,16 +118,10 @@ function pageSetup(e) {
     browser.storage.local.get("options").then((res) => {
         if (res.options.theme === "light") {
             theme.title = "Switch to dark theme";
-            document.body.style.backgroundColor = "#" + res.options.background_color;
-            document.body.style.color = "#" + res.options.font_color;
-            textarea.style.backgroundColor = "#" + res.options.background_color;
-            textarea.style.color = "#" + res.options.font_color;
+            setLightTheme();
         } else if (res.options.theme === "dark") {
             theme.title = "Switch to light theme";
-            document.body.style.backgroundColor = "#" + res.options.background_color_dark;
-            document.body.style.color = "#" + res.options.font_color_dark;
-            textarea.style.backgroundColor = "#" + res.options.background_color_dark;
-            textarea.style.color = "#" + res.options.font_color_dark;
+            setDarkTheme();
         }
         if (res.options.font_family === "custom") {
             textarea.style.fontFamily = res.options.font_css;
@@ -142,12 +137,19 @@ function pageSetup(e) {
             loadSiteNotes();
         }
     });
-    e.preventDefault();
 }
 function options() {
     browser.runtime.openOptionsPage();
 }
-document.getElementsByClassName("mdi-settings")[0].addEventListener("click", options);
+function openList() {
+    overlay.style.width = "100%";
+}
+function closeList() {
+    overlay.style.width = "0";
+}
+settings.addEventListener("click", options);
 toggle.addEventListener("click", changeNoteMode);
 theme.addEventListener("click", changeTheme);
+back.addEventListener("click", openList);
+closeButton.addEventListener("click", closeList);
 document.addEventListener("DOMContentLoaded", pageSetup);
