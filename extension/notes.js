@@ -6,6 +6,10 @@ const overlay = document.getElementById("overlay");
 const overlayClose = document.getElementsByClassName("mdi-close")[0];
 const settings = document.getElementsByClassName("mdi-settings")[0];
 const noteList =  document.getElementById("note-list");
+const confirmDelete = document.getElementById("confirmDelete");
+const yes = document.getElementById("yes");
+const no = document.getElementById("no");
+const siteName = document.getElementById("siteName");
 function openList() {
     overlay.style.width = "100%";
     back.style.display = "none";
@@ -28,6 +32,7 @@ function saveSiteNotes() {
     });
 }
 function loadGeneralNotes() {
+    textarea.focus();
     toggle.className = "mdi mdi-web";
     toggle.title = "Switch to site notes"
     textarea.removeEventListener("input", saveSiteNotes);
@@ -38,29 +43,46 @@ function loadGeneralNotes() {
     });
 }
 function siteNoteSetup(site) {
+    textarea.focus();
     textarea.removeEventListener("input", saveGeneralNotes);
+    toggle.className = "mdi mdi-note";
+    toggle.title = "Switch to general notes"
     browser.storage.local.get("site_notes").then((res) => {
-        if (res.site_notes[site] === undefined) {
-            res.site_notes[site] = "";
-        }
-        textarea.value = res.site_notes[site];
+        textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site] : "";
         back.innerText = site;
         textarea.addEventListener("input", saveSiteNotes);
     });
 }
+function deleteNote() {
+    browser.storage.local.get("site_notes").then((res) => {
+        delete res.site_notes[siteName.innerText];
+        browser.storage.local.set({site_notes: res.site_notes});
+    });
+    var deleteButton = document.getElementById(siteName.innerText);
+    deleteButton.parentNode.parentNode.removeChild(deleteButton.parentNode);
+    confirmDelete.style.width = "0";
+}
 function loadCustomNote(ele) {
-    toggle.className = "mdi mdi-note";
-    toggle.title = "Switch to general notes"
     if (ele.target.innerText === "General Notes") {
         loadGeneralNotes();
+    } else if (ele.target.className === "mdi mdi-delete") {
+        // browser.storage.local.get("site_notes").then((res) => {
+        //     delete res.site_notes[ele.target.id];
+        //     browser.storage.local.set({site_notes: res.site_notes});
+        // });
+        // ele.target.parentNode.parentNode.removeChild(ele.target.parentNode);
+        confirmDelete.style.width = "100%";
+        siteName.innerText = ele.target.id;
+        return;
     } else {
         siteNoteSetup(ele.target.innerText);
     }
     closeList();
 }
+function closeConfirm() {
+    confirmDelete.style.width = "0";
+}
 function loadSiteNotes() {
-    toggle.className = "mdi mdi-note";
-    toggle.title = "Switch to general notes"
     browser.storage.local.get().then((res) => {
         browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
             if (!tabs[0].incognito || (res.options.private_browsing && tabs[0].incognito)) {
@@ -135,6 +157,7 @@ function loadNoteList() {
                 name.innerText = site;
                 name.className = "name";
                 var del = document.createElement("span");
+                del.id = site;
                 del.className = "mdi mdi-delete";
                 cont.append(name);
                 cont.append(del);
@@ -144,15 +167,6 @@ function loadNoteList() {
     });
 }
 function pageSetup() {
-    // Needed to autofocus textbox
-    // https://stackoverflow.com/a/11400653
-    if (location.search !== "?focusHack") {
-        location.search = "?focusHack";
-    }
-    var sidebars = browser.extension.getViews({type: "sidebar"});
-    for (var sidebar of sidebars) {
-        console.log("Is Same " + (sidebar === window));
-    }
     browser.storage.local.get("options").then((res) => {
         if (res.options.theme === "light") {
             theme.title = "Switch to dark theme";
@@ -181,10 +195,15 @@ function pageSetup() {
 function options() {
     browser.runtime.openOptionsPage();
 }
+document.addEventListener("focus", () => {
+    textarea.focus();
+});
 settings.addEventListener("click", options);
 toggle.addEventListener("click", changeNoteMode);
 theme.addEventListener("click", changeTheme);
 back.addEventListener("click", openList);
 overlayClose.addEventListener("click", closeList);
 noteList.addEventListener("click", loadCustomNote);
+no.addEventListener("click", closeConfirm);
+yes.addEventListener("click", deleteNote);
 document.addEventListener("DOMContentLoaded", pageSetup);
