@@ -24,7 +24,6 @@ function saveGeneralNotes() {
 function saveSiteNotes() {
     browser.storage.local.get("site_notes").then((res) => {
         res.site_notes[back.innerText] = textarea.value || "";
-        console.log(res.site_notes);
         browser.storage.local.set({site_notes: res.site_notes});
     });
 }
@@ -64,23 +63,27 @@ function loadSiteNotes() {
     toggle.title = "Switch to general notes"
     browser.storage.local.get().then((res) => {
         browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
-            var url = new URL(tabs[0].url);
-            if (url.protocol === "about:") {
-                siteNoteSetup(url.protocol + url.pathname);
-            } else if (url.protocol.match(/https?:/g)) {
-                var site = psl.parse(url.hostname);
-                if (res.options.subdomains_mode === "blacklist") {
-                    if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
-                        siteNoteSetup(site.domain);
-                    } else {
-                        siteNoteSetup(url.hostname);
+            if (!tabs[0].incognito || (res.options.private_browsing && tabs[0].incognito)) {
+                var url = new URL(tabs[0].url);
+                if (url.protocol === "about:") {
+                    siteNoteSetup(url.protocol + url.pathname);
+                } else if (url.protocol.match(/https?:/g)) {
+                    var site = psl.parse(url.hostname);
+                    if (res.options.subdomains_mode === "blacklist") {
+                        if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
+                            siteNoteSetup(site.domain);
+                        } else {
+                            siteNoteSetup(url.hostname);
+                        }
+                    } else if (res.options.subdomains_mode === "whitelist") {
+                        if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
+                            siteNoteSetup(url.hostname);
+                        } else {
+                            siteNoteSetup(site.domain);
+                        }
                     }
-                } else if (res.options.subdomains_mode === "whitelist") {
-                    if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
-                        siteNoteSetup(url.hostname);
-                    } else {
-                        siteNoteSetup(site.domain);
-                    }
+                } else {
+                    loadGeneralNotes();
                 }
             } else {
                 loadGeneralNotes();
@@ -125,7 +128,6 @@ function changeTheme(ele) {
 function loadNoteList() {
     browser.storage.local.get("site_notes").then((res) => {
         for (var site in res.site_notes) {
-            console.log(res.site_notes.hasOwnProperty(site));
             if (res.site_notes.hasOwnProperty(site)) {
                 var cont = document.createElement("span");
                 cont.className = "container";
@@ -146,6 +148,10 @@ function pageSetup() {
     // https://stackoverflow.com/a/11400653
     if (location.search !== "?focusHack") {
         location.search = "?focusHack";
+    }
+    var sidebars = browser.extension.getViews({type: "sidebar"});
+    for (var sidebar of sidebars) {
+        console.log("Is Same " + (sidebar === window));
     }
     browser.storage.local.get("options").then((res) => {
         if (res.options.theme === "light") {

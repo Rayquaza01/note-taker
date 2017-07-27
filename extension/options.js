@@ -13,9 +13,12 @@ function saveOptions(e) {
         font_css: document.getElementById("font-css").value || "",
         font_size: parseInt(document.getElementById("font-size").value) || 16,
         default_display: document.getElementById("default-display").value || "general_notes",
+        private_browsing: JSON.parse(document.getElementById("private-browsing").value) || false,
         subdomains_mode: document.getElementById("subdomains-mode").value || "blacklist",
         subdomains: document.getElementById("subdomains").value.split(" ") || []
     };
+    console.log(document.getElementById("private-browsing").value);
+    console.log(true);
     browser.storage.local.set({
         options: options
     });
@@ -83,6 +86,7 @@ function restoreOptions() {
         document.getElementById("font-css").value = res.options.font_css;
         document.getElementById("font-size").value = res.options.font_size;
         document.getElementById("default-display").value = res.options.default_display;
+        document.getElementById("private-browsing").value = res.options.private_browsing;
         document.getElementById("subdomains-mode").value = res.options.subdomains_mode;
         document.getElementById("subdomains").value = res.options.subdomains.join(" ");
         if (res.options.subdomains_mode === "whitelist") {

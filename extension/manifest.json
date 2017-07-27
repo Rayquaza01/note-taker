@@ -28,6 +28,9 @@
             "96": "icons/icon-96.png"
         }
     },
+    "sidebar_action": {
+        "default_panel": "notes.html"
+    },
     "options_ui": {
         "page": "options.html",
         "browser_style": true
