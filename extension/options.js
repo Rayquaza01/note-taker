@@ -1,5 +1,6 @@
 const table = document.getElementsByTagName("table")[0];
-function saveOptions() {
+function saveOptions(e) {
+    console.log(e.target);
     var options = {
         theme: document.getElementById("theme").value || "light",
         background_color: document.getElementById("background-color").value || "ffffff",
@@ -64,9 +65,7 @@ function domainModeSync(ele) {
 }
 function restoreOptions() {
     browser.storage.local.get().then((res) => {
-        if (!res.options) {
-            saveOptions();
-        }
+        document.getElementById("theme").value = res.options.theme;
         document.getElementById("background-color").value = res.options.background_color;
         document.getElementById("background-color-picker").value = "#" + res.options.background_color;
         document.getElementById("background-color-dark").value = res.options.background_color_dark;

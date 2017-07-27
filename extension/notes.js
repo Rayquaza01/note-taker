@@ -8,10 +8,11 @@ function saveGeneralNotes() {
     });
 }
 function saveSiteNotes() {
-    var site = back.innerText;
-    var saveObj = {site_notes: {}};
-    saveObj.site_notes[site] = textarea.value || "";
-    browser.storage.local.set(saveObj);
+    browser.storage.local.get("site_notes").then((res) => {
+        res.site_notes[back.innerText] = textarea.value || "";
+        console.log(res.site_notes);
+        browser.storage.local.set({site_notes: res.site_notes});
+    });
 }
 function loadGeneralNotes() {
     toggle.className = "mdi mdi-web";
