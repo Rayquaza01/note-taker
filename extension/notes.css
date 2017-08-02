@@ -2,6 +2,8 @@ textarea {
     background-color: inherit;
     border: none;
     color: inherit;
+    height: 100%;
+    width: 100%;
 }
 table {
     border-collapse: collapse;
@@ -60,6 +62,7 @@ table {
     display: flex;
     justify-content: center;
     text-align: center;
+    white-space: normal;
     z-index: 2;
 }
 #ynbox {
@@ -70,8 +73,8 @@ table {
     border: 1px solid;
     cursor: pointer;
     margin: 5px;
-    width: 100px;
     text-align: center;
+    width: 100px;
 }
 .name {
     float: left;
@@ -87,5 +90,7 @@ table {
     cursor: pointer;
 }
 #siteName {
-    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
 }

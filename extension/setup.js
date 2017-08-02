@@ -12,6 +12,7 @@ function setOpts() {
         res.options.font_size = res.options.hasOwnProperty("font_size") ? res.options.font_size :16;
         res.options.font_css = res.options.hasOwnProperty("font_css") ? res.options.font_css : "";
         res.options.default_display = res.options.hasOwnProperty("default_display") ? res.options.default_display : "general_notes";
+        res.options.per_site = res.options.hasOwnProperty("per_site") ? res.options.per_site : "domain";
         res.options.private_browsing = res.options.hasOwnProperty("private_browsing") ? res.options.private_browsing : false;
         res.options.subdomains_mode = res.options.hasOwnProperty("subdomains_mode") ? res.options.subdomains_mode : "blacklist";
         res.options.subdomains = res.options.hasOwnProperty("subdomains") ? res.options.subdomains : [];

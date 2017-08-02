@@ -1,112 +1,131 @@
+// Element Variables
 const table = document.getElementsByTagName("table")[0];
-function saveOptions(e) {
-    console.log(e.target);
+const theme = document.getElementById("theme");
+const background_color = document.getElementById("background-color");
+const font_color = document.getElementById("font-color");
+const background_color_dark = document.getElementById("background-color-dark");
+const font_color_dark = document.getElementById("font-color-dark");
+const background_color_picker = document.getElementById("background-color-picker");
+const font_color_picker = document.getElementById("font-color-picker");
+const background_color_picker_dark = document.getElementById("background-color-picker-dark");
+const font_color_picker_dark = document.getElementById("font-color-picker-dark");
+const width = document.getElementById("width");
+const height = document.getElementById("height");
+const font_family = document.getElementById("font-family");
+const font_css = document.getElementById("font-css");
+const font_size = document.getElementById("font-size");
+const default_display = document.getElementById("default-display");
+const per_site = document.getElementById("per-site");
+const private_browsing = document.getElementById("private-browsing");
+const domain_mode = document.getElementById("domain-mode");
+const subdomains_mode = document.getElementById("subdomains-mode");
+const subdomains = document.getElementById("subdomains");
+// End element variables
+function saveOptions() {
     var options = {
-        theme: document.getElementById("theme").value || "light",
-        background_color: document.getElementById("background-color").value || "ffffff",
-        font_color: document.getElementById("font-color").value || "000000",
-        background_color_dark: document.getElementById("background-color-dark").value || "000000",
-        font_color_dark: document.getElementById("font-color-dark").value || "ffffff",
-        width: parseInt(document.getElementById("width").value) || 400,
-        height: parseInt(document.getElementById("height").value) || 300,
-        font_family: document.getElementById("font-family").value || "default",
-        font_css: document.getElementById("font-css").value || "",
-        font_size: parseInt(document.getElementById("font-size").value) || 16,
-        default_display: document.getElementById("default-display").value || "general_notes",
-        private_browsing: JSON.parse(document.getElementById("private-browsing").value) || false,
-        subdomains_mode: document.getElementById("subdomains-mode").value || "blacklist",
-        subdomains: document.getElementById("subdomains").value.split(" ") || []
+        theme: theme.value || "light",
+        background_color: background_color.value || "ffffff",
+        font_color: font_color.value || "000000",
+        background_color_dark: background_color_dark.value || "000000",
+        font_color_dark: font_color_dark.value || "ffffff",
+        width: parseInt(width.value) || 400,
+        height: parseInt(height.value) || 300,
+        font_family: font_family.value || "default",
+        font_css: font_css.value || "",
+        font_size: parseInt(font_size.value) || 16,
+        default_display: default_display.value || "general_notes",
+        per_site: per_site.value || "domain",
+        private_browsing: JSON.parse(private_browsing.value) || false,
+        subdomains_mode: subdomains_mode.value || "blacklist",
+        subdomains: subdomains.value.split(" ") || []
     };
-    console.log(document.getElementById("private-browsing").value);
-    console.log(true);
     browser.storage.local.set({
         options: options
     });
 }
 function fontSync(ele) {
     if (ele.target.value === "custom") {
-        document.getElementById("font-css").disabled = false;
+        font_css.disabled = false;
     } else {
-        document.getElementById("font-css").disabled = true;
+        font_css.disabled = true;
     }
 }
 function colorSync(ele) {
     // Ugly function, try to fix later...
     switch (ele.target.id) {
         case "background-color":
-            document.getElementById("background-color-picker").value = "#" + ele.target.value;
+            background_color_picker.value = "#" + ele.target.value;
             break;
         case "background-color-picker":
-            document.getElementById("background-color").value = ele.target.value.substring(1);
+            background_color.value = ele.target.value.substring(1);
             break;
         case "font-color":
-            document.getElementById("font-color-picker").value = "#" + ele.target.value;
+            font_color_picker.value = "#" + ele.target.value;
             break;
         case "font-color-picker":
-            document.getElementById("font-color").value = ele.target.value.substring(1);
+            font_color.value = ele.target.value.substring(1);
             break;
         case "background-color-dark":
-            document.getElementById("background-color-picker-dark").value = "#" + ele.target.value;
+            background_color_picker_dark.value = "#" + ele.target.value;
             break;
         case "background-color-picker-dark":
-            document.getElementById("background-color-dark").value = ele.target.value.substring(1);
+            background_color_dark.value = ele.target.value.substring(1);
             break;
         case "font-color-dark":
-            document.getElementById("font-color-picker-dark").value = "#" + ele.target.value;
+            font_color_picker_dark.value = "#" + ele.target.value;
             break;
         case "font-color-picker-dark":
-            document.getElementById("font-color-dark").value = ele.target.value.substring(1);
+            font_color_dark.value = ele.target.value.substring(1);
             break;
     }
 }
 function domainModeSync(ele) {
-    if (ele.target.value === "blacklist") {
-        document.getElementById("domain-mode").innerText = "Ignore";
-    } else if (ele.target.value === "whitelist") {
-        document.getElementById("domain-mode").innerText = "Enforce";
-    }
+    domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
 }
 function restoreOptions() {
     browser.storage.local.get().then((res) => {
-        document.getElementById("theme").value = res.options.theme;
-        document.getElementById("background-color").value = res.options.background_color;
-        document.getElementById("background-color-picker").value = "#" + res.options.background_color;
-        document.getElementById("background-color-dark").value = res.options.background_color_dark;
-        document.getElementById("background-color-picker-dark").value = "#" + res.options.background_color_dark;
-        document.getElementById("font-color").value = res.options.font_color;
-        document.getElementById("font-color-picker").value = "#" + res.options.font_color;
-        document.getElementById("font-color-dark").value = res.options.font_color_dark;
-        document.getElementById("font-color-picker-dark").value = "#" + res.options.font_color_dark;
+        theme.value = res.options.theme;
+        background_color.value = res.options.background_color;
+        background_color_picker.value = "#" + res.options.background_color;
+        background_color_dark.value = res.options.background_color_dark;
+        background_color_picker_dark.value = "#" + res.options.background_color_dark;
+        font_color.value = res.options.font_color;
+        font_color_picker.value = "#" + res.options.font_color;
+        font_color_dark.value = res.options.font_color_dark;
+        font_color_picker_dark.value = "#" + res.options.font_color_dark;
         document.getElementById("width").value = res.options.width;
+        width.value = res.options.width;
         document.getElementById("height").value = res.options.height;
-        document.getElementById("font-family").value = res.options.font_family;
+        height.value = res.options.height;
+        font_family.value = res.options.font_family;
         if (res.options.font_family === "custom") {
-            document.getElementById("font-css").disabled = false;
+            font_css.disabled = false;
         }
-        document.getElementById("font-css").value = res.options.font_css;
-        document.getElementById("font-size").value = res.options.font_size;
-        document.getElementById("default-display").value = res.options.default_display;
-        document.getElementById("private-browsing").value = res.options.private_browsing;
-        document.getElementById("subdomains-mode").value = res.options.subdomains_mode;
-        document.getElementById("subdomains").value = res.options.subdomains.join(" ");
+        font_css.value = res.options.font_css;
+        font_size.value = res.options.font_size;
+        default_display.value = res.options.default_display;
+        per_site.value = res.options.per_site;
+        private_browsing.value = res.options.private_browsing;
+        subdomains_mode.value = res.options.subdomains_mode;
+        subdomains.value = res.options.subdomains.join(" ");
         if (res.options.subdomains_mode === "whitelist") {
-            document.getElementById("domain-mode").innerText = "Enforce";
+            domain_mode.innerText = "Enforce";
         }
     });
 }
 // color sync
-document.getElementById("background-color").addEventListener("input", colorSync);
-document.getElementById("font-color").addEventListener("input", colorSync);
-document.getElementById("background-color-picker").addEventListener("input", colorSync);
-document.getElementById("font-color-picker").addEventListener("input", colorSync);
-document.getElementById("background-color-dark").addEventListener("input", colorSync);
-document.getElementById("font-color-dark").addEventListener("input", colorSync);
-document.getElementById("background-color-picker-dark").addEventListener("input", colorSync);
-document.getElementById("font-color-picker-dark").addEventListener("input", colorSync);
+background_color.addEventListener("input", colorSync);
+font_color.addEventListener("input", colorSync);
+background_color_picker.addEventListener("input", colorSync);
+font_color_picker.addEventListener("input", colorSync);
+background_color_dark.addEventListener("input", colorSync);
+font_color_dark.addEventListener("input", colorSync);
+background_color_picker_dark.addEventListener("input", colorSync);
+font_color_picker_dark.addEventListener("input", colorSync);
 // font sync
-document.getElementById("font-family").addEventListener("change", fontSync)
+font_family.addEventListener("change", fontSync)
 // Subdomain Sync
-document.getElementById("subdomains-mode").addEventListener("input", domainModeSync);
+subdomains_mode.addEventListener("input", domainModeSync);
 // save options
 table.addEventListener("change", saveOptions); // Event delegation is a lot simpler than what I was trying
 // onload

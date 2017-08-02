@@ -66,11 +66,6 @@ function loadCustomNote(ele) {
     if (ele.target.innerText === "General Notes") {
         loadGeneralNotes();
     } else if (ele.target.className === "mdi mdi-delete") {
-        // browser.storage.local.get("site_notes").then((res) => {
-        //     delete res.site_notes[ele.target.id];
-        //     browser.storage.local.set({site_notes: res.site_notes});
-        // });
-        // ele.target.parentNode.parentNode.removeChild(ele.target.parentNode);
         confirmDelete.style.width = "100%";
         siteName.innerText = ele.target.id;
         return;
@@ -91,7 +86,9 @@ function loadSiteNotes() {
                     siteNoteSetup(url.protocol + url.pathname);
                 } else if (url.protocol.match(/https?:/g)) {
                     var site = psl.parse(url.hostname);
-                    if (res.options.subdomains_mode === "blacklist") {
+                    if (res.options.per_site === "url") {
+                        siteNoteSetup(url.hostname + url.pathname);
+                    } else if (res.options.subdomains_mode === "blacklist") {
                         if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
                             siteNoteSetup(site.domain);
                         } else {
