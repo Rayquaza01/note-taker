@@ -163,6 +163,11 @@ function loadNoteList() {
         }
     });
 }
+function resizePage() {
+    textarea.style.height = window.innerHeight - 30 + "px";
+    overlay.style.height = window.innerHeight - 30 + "px";
+    textarea.style.width = window.innerWidth - 5 + "px";
+}
 function pageSetup() {
     browser.storage.local.get("options").then((res) => {
         if (res.options.theme === "light") {
@@ -178,9 +183,14 @@ function pageSetup() {
             textarea.style.fontFamily = res.options.font_family;
         }
         textarea.style.fontSize = res.options.font_size + "px";
-        textarea.style.width = res.options.width + "px";
-        textarea.style.height = res.options.height + "px";
-        overlay.style.height = res.options.height + "px";
+        if (inSidebar) {
+            window.addEventListener("resize", resizePage);
+            resizePage();
+        } else {
+            textarea.style.width = res.options.width + "px";
+            textarea.style.height = res.options.height + "px";
+            overlay.style.height = res.options.height + "px";
+        }
         if (res.options.default_display === "general_notes") {
             loadGeneralNotes();
         } else if (res.options.default_display === "site_notes") {
