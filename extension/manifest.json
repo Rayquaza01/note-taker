@@ -29,7 +29,7 @@
         }
     },
     "sidebar_action": {
-        "default_panel": "notetaker.html",
+        "default_panel": "notes.html",
         "default_icon": {
             "48": "icons/icon-48.png",
             "96": "icons/icon-96.png"

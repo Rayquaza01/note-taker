@@ -169,6 +169,11 @@ function resizePage() {
     textarea.style.width = window.innerWidth - 5 + "px";
 }
 function pageSetup() {
+    var context = 
+        browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
+        browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
+        browser.extension.getViews({type: "tab"}).indexOf(window) > -1 ? "tab" :
+        undefined;
     browser.storage.local.get("options").then((res) => {
         if (res.options.theme === "light") {
             theme.title = "Switch to dark theme";
@@ -183,7 +188,7 @@ function pageSetup() {
             textarea.style.fontFamily = res.options.font_family;
         }
         textarea.style.fontSize = res.options.font_size + "px";
-        if (inSidebar) {
+        if (context === "sidebar" || "tab") {
             window.addEventListener("resize", resizePage);
             resizePage();
         } else {
