@@ -32,8 +32,8 @@ table {
 }
 .left {
     float: left;
-    text-align: left;
     overflow-x: hidden;
+    text-align: left;
     width: 66%;
 }
 .right {
@@ -79,6 +79,7 @@ table {
     width: 100px;
 }
 .name {
+    cursor: pointer;
     float: left;
 }
 #noteList {
@@ -95,4 +96,8 @@ table {
     align-items: center;
     display: flex;
     justify-content: center;
+}
+#search {
+    border: none;
+    width: 100%;
 }

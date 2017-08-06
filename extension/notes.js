@@ -11,7 +11,15 @@ const yes = document.getElementById("yes");
 const no = document.getElementById("no");
 const siteName = document.getElementById("siteName");
 const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
+const search = document.getElementById("search")
+function searchResults() {
+    var names = document.getElementsByClassName("name");
+    for (var name of names) {
+        name.parentNode.style.display = name.innerText.toUpperCase().indexOf(search.value.toUpperCase()) > -1 ? "block" : "none";
+    }
+}
 function openList() {
+    search.focus()
     overlay.style.width = "100%";
     back.style.display = "none";
     overlayClose.style.display = "block";
@@ -70,10 +78,13 @@ function loadCustomNote(ele) {
         confirmDelete.style.width = "100%";
         siteName.innerText = ele.target.id;
         return;
-    } else {
+    } else if (ele.target.className === "name") {
         siteNoteSetup(ele.target.innerText);
+    } else {
+        return;
     }
     closeList();
+    textarea.focus();
 }
 function closeConfirm() {
     confirmDelete.style.width = "0";
@@ -122,12 +133,16 @@ function setLightTheme() {
     browser.storage.local.get("options").then((res) => {
         document.body.style.backgroundColor = "#" + res.options.background_color;
         document.body.style.color = "#" + res.options.font_color;
+        search.style.color = "#" + res.options.font_color;
+        search.style.backgroundColor = "#" + res.options.background_color;
     });
 }
 function setDarkTheme() {
     browser.storage.local.get("options").then((res) => {
         document.body.style.backgroundColor = "#" + res.options.background_color_dark;
         document.body.style.color = "#" + res.options.font_color_dark;
+        search.style.color = "#" + res.options.font_color_dark;
+        search.style.backgroundColor = "#" + res.options.background_color_dark;
     });
 }
 function changeTheme(ele) {
@@ -170,12 +185,6 @@ function resizePage() {
     overlay.style.height = window.innerHeight - 30 + "px";
 }
 function pageSetup() {
-    var context =
-        browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
-        browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
-        browser.extension.getViews({type: "tab"}).indexOf(window) > -1 ? "tab" :
-        undefined;
-    console.log(context);
     browser.storage.local.get("options").then((res) => {
         if (res.options.theme === "light") {
             theme.title = "Switch to dark theme";
@@ -190,7 +199,16 @@ function pageSetup() {
             textarea.style.fontFamily = res.options.font_family;
         }
         textarea.style.fontSize = res.options.font_size + "px";
-        if (context === "sidebar" || context === "tab") {
+        var context =
+            browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
+            browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
+            browser.extension.getViews({type: "tab"}).indexOf(window) > -1 ? "tab" :
+            undefined;
+        if (context === "tab") {
+            openInTab.style.display = "none";
+            toggle.style.display = "none";
+        }
+        if (context !== "popup") {
             window.addEventListener("resize", resizePage);
             resizePage();
         } else {
@@ -228,4 +246,5 @@ noteList.addEventListener("click", loadCustomNote);
 no.addEventListener("click", closeConfirm);
 yes.addEventListener("click", deleteNote);
 openInTab.addEventListener("click", openTab);
+search.addEventListener("input", searchResults);
 document.addEventListener("DOMContentLoaded", pageSetup);

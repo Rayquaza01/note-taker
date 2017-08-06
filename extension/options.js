@@ -43,17 +43,10 @@ function saveOptions() {
         options: options
     });
 }
-function textToColor(ele) {
-    
-}
 function colorSync(ele) {
     if (typeof(ele.target.dataset.colorsync) !== "undefined") {
         var target = document.querySelector(ele.target.dataset.colorsync);
-        if (ele.target.type === "text") {
-            target.value = "#" + ele.target.value;
-        } else if (ele.target.type === "color") {
-            target.value = ele.target.value.substring(1);
-        }
+        target.value = target.type === "color" ? "#" + ele.target.value : ele.target.value.substring(1);
     }
 }
 function domainModeSync(ele) {
@@ -75,9 +68,6 @@ function restoreOptions() {
         document.getElementById("height").value = res.options.height;
         height.value = res.options.height;
         font_family.value = res.options.font_family;
-        if (res.options.font_family === "custom") {
-            font_css.disabled = false;
-        }
         font_css.value = res.options.font_css;
         font_size.value = res.options.font_size;
         default_display.value = res.options.default_display;
