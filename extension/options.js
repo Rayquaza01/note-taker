@@ -43,40 +43,17 @@ function saveOptions() {
         options: options
     });
 }
-function fontSync(ele) {
-    if (ele.target.value === "custom") {
-        font_css.disabled = false;
-    } else {
-        font_css.disabled = true;
-    }
+function textToColor(ele) {
+    
 }
 function colorSync(ele) {
-    // Ugly function, try to fix later...
-    switch (ele.target.id) {
-        case "background-color":
-            background_color_picker.value = "#" + ele.target.value;
-            break;
-        case "background-color-picker":
-            background_color.value = ele.target.value.substring(1);
-            break;
-        case "font-color":
-            font_color_picker.value = "#" + ele.target.value;
-            break;
-        case "font-color-picker":
-            font_color.value = ele.target.value.substring(1);
-            break;
-        case "background-color-dark":
-            background_color_picker_dark.value = "#" + ele.target.value;
-            break;
-        case "background-color-picker-dark":
-            background_color_dark.value = ele.target.value.substring(1);
-            break;
-        case "font-color-dark":
-            font_color_picker_dark.value = "#" + ele.target.value;
-            break;
-        case "font-color-picker-dark":
-            font_color_dark.value = ele.target.value.substring(1);
-            break;
+    if (typeof(ele.target.dataset.colorsync) !== "undefined") {
+        var target = document.querySelector(ele.target.dataset.colorsync);
+        if (ele.target.type === "text") {
+            target.value = "#" + ele.target.value;
+        } else if (ele.target.type === "color") {
+            target.value = ele.target.value.substring(1);
+        }
     }
 }
 function domainModeSync(ele) {
@@ -114,16 +91,7 @@ function restoreOptions() {
     });
 }
 // color sync
-background_color.addEventListener("input", colorSync);
-font_color.addEventListener("input", colorSync);
-background_color_picker.addEventListener("input", colorSync);
-font_color_picker.addEventListener("input", colorSync);
-background_color_dark.addEventListener("input", colorSync);
-font_color_dark.addEventListener("input", colorSync);
-background_color_picker_dark.addEventListener("input", colorSync);
-font_color_picker_dark.addEventListener("input", colorSync);
-// font sync
-font_family.addEventListener("change", fontSync)
+table.addEventListener("input", colorSync);
 // Subdomain Sync
 subdomains_mode.addEventListener("input", domainModeSync);
 // save options

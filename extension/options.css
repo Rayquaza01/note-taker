@@ -27,3 +27,9 @@ tr {
     align-items: center;
     display: flex;
 }
+tr a {
+    display: none;
+}
+tr:hover a {
+    display: inline;
+}

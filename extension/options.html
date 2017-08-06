@@ -7,7 +7,10 @@
     <body>
         <table>
             <tr>
-                <td>Theme</td>
+                <td>
+                    Theme
+                    <a href="test">?</a>
+                </td>
                 <td>
                     <select id="theme">
                         <option value="light">Light</option>
@@ -17,19 +20,31 @@
             </tr>
             <tr>
                 <td>Background Color (Light)</td>
-                <td class="center">#<input type="text" id="background-color"><input type="color" id="background-color-picker"></td>
+                <td class="center">#
+                    <input type="text" id="background-color" data-colorsync="#background-color-picker">
+                    <input type="color" id="background-color-picker" data-colorsync="#background-color">
+                </td>
             </tr>
             <tr>
                 <td>Text Color (Light)</td>
-                <td class="center">#<input type="text" id="font-color"><input type="color" id="font-color-picker"></td>
+                <td class="center">#
+                    <input type="text" id="font-color" data-colorsync="#font-color-picker">
+                    <input type="color" id="font-color-picker" data-colorsync="#font-color">
+                </td>
             </tr>
             <tr>
                 <td>Background Color (Dark)</td>
-                <td class="center">#<input type="text" id="background-color-dark"><input type="color" id="background-color-picker-dark"></td>
+                <td class="center">#
+                    <input type="text" id="background-color-dark" data-colorsync="#background-color-picker-dark">
+                    <input type="color" id="background-color-picker-dark" data-colorsync="#background-color-dark">
+                </td>
             </tr>
             <tr>
                 <td>Text Color (Dark)</td>
-                <td class="center">#<input type="text" id="font-color-dark"><input type="color" id="font-color-picker-dark"></td>
+                <td class="center">#
+                    <input type="text" id="font-color-dark" data-colorsync="#font-color-picker-dark">
+                    <input type="color" id="font-color-picker-dark" data-colorsync="#font-color-dark">
+                </td>
             </tr>
             <tr>
                 <td>Text Box Width</td>
@@ -52,8 +67,8 @@
                 </td>
             </tr>
             <tr>
-                <td>Font CSS</td>
-                <td><input id="font-css" type="text" disabled></td>
+                <td>Custom Font CSS</td>
+                <td><input id="font-css" type="text"></td>
             </tr>
             <tr>
                 <td>Font Size</td>

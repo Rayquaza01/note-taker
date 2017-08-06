@@ -10,7 +10,6 @@ const confirmDelete = document.getElementById("confirmDelete");
 const yes = document.getElementById("yes");
 const no = document.getElementById("no");
 const siteName = document.getElementById("siteName");
-const buttons = document.getElementById("buttons");
 const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
 function openList() {
     overlay.style.width = "100%";
