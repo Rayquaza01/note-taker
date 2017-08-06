@@ -10,6 +10,8 @@ const confirmDelete = document.getElementById("confirmDelete");
 const yes = document.getElementById("yes");
 const no = document.getElementById("no");
 const siteName = document.getElementById("siteName");
+const buttons = document.getElementById("buttons");
+const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
 function openList() {
     overlay.style.width = "100%";
     back.style.display = "none";
@@ -165,15 +167,16 @@ function loadNoteList() {
 }
 function resizePage() {
     textarea.style.height = window.innerHeight - 30 + "px";
+    textarea.style.width = window.innerWidth - 2 + "px";
     overlay.style.height = window.innerHeight - 30 + "px";
-    textarea.style.width = window.innerWidth - 5 + "px";
 }
 function pageSetup() {
-    var context = 
+    var context =
         browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
         browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
         browser.extension.getViews({type: "tab"}).indexOf(window) > -1 ? "tab" :
         undefined;
+    console.log(context);
     browser.storage.local.get("options").then((res) => {
         if (res.options.theme === "light") {
             theme.title = "Switch to dark theme";
@@ -188,10 +191,11 @@ function pageSetup() {
             textarea.style.fontFamily = res.options.font_family;
         }
         textarea.style.fontSize = res.options.font_size + "px";
-        if (context === "sidebar" || "tab") {
+        if (context === "sidebar" || context === "tab") {
             window.addEventListener("resize", resizePage);
             resizePage();
         } else {
+            document.body.style.width = res.options.width + "px";
             textarea.style.width = res.options.width + "px";
             textarea.style.height = res.options.height + "px";
             overlay.style.height = res.options.height + "px";
@@ -207,6 +211,12 @@ function pageSetup() {
 function options() {
     browser.runtime.openOptionsPage();
 }
+function openTab() {
+    browser.tabs.create({
+        active: true,
+        url: "notes.html"
+    });
+}
 document.addEventListener("focus", () => {
     textarea.focus();
 });
@@ -218,4 +228,5 @@ overlayClose.addEventListener("click", closeList);
 noteList.addEventListener("click", loadCustomNote);
 no.addEventListener("click", closeConfirm);
 yes.addEventListener("click", deleteNote);
+openInTab.addEventListener("click", openTab);
 document.addEventListener("DOMContentLoaded", pageSetup);

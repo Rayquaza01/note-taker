@@ -1,12 +1,11 @@
 html, body {
     margin: 0;
+    min-width: 100vw;
 }
 textarea {
     background-color: inherit;
     border: none;
     color: inherit;
-    height: 100%;
-    width: 100%;
 }
 table {
     border-collapse: collapse;
@@ -31,16 +30,16 @@ table {
 #buttons {
     border-top: 1px solid;
 }
-.bottom {
-    width: 33%;
-}
 .left {
     float: left;
     text-align: left;
+    overflow-x: hidden;
+    width: 66%;
 }
 .right {
     float: right;
     text-align: right;
+    width: 33%;
 }
 .mdi:hover {
     cursor: pointer;
