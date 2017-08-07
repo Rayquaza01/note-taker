@@ -20,6 +20,8 @@ const private_browsing = document.getElementById("private-browsing");
 const domain_mode = document.getElementById("domain-mode");
 const subdomains_mode = document.getElementById("subdomains-mode");
 const subdomains = document.getElementById("subdomains");
+const exportButton = document.getElementById("export");
+const importButton = document.getElementById("import");
 // End element variables
 function saveOptions() {
     var options = {
@@ -78,8 +80,22 @@ function restoreOptions() {
         if (res.options.subdomains_mode === "whitelist") {
             domain_mode.innerText = "Enforce";
         }
+        exportButton.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
     });
 }
+function importOptions() {
+    var reader = new FileReader();
+    reader.addEventListener("load", () => {
+        var obj = JSON.parse(reader.result);
+        browser.storage.local.clear();
+        browser.storage.local.set(obj);
+        location.reload();
+    });
+    var file = importButton.files[0];
+    reader.readAsText(file);
+}
+// import
+importButton.addEventListener("change", importOptions);
 // color sync
 table.addEventListener("input", colorSync);
 // Subdomain Sync

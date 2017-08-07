@@ -33,3 +33,9 @@ tr a {
 tr:hover a {
     display: inline;
 }
+#import, #export {
+    height: 30px;
+}
+button {
+    height: 30px;
+}

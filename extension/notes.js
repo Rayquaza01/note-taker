@@ -28,6 +28,7 @@ function closeList() {
     overlay.style.width = "0";
     back.style.display = "block";
     overlayClose.style.display = "none";
+    textarea.focus();
 }
 function saveGeneralNotes() {
     browser.storage.local.set({
@@ -84,7 +85,6 @@ function loadCustomNote(ele) {
         return;
     }
     closeList();
-    textarea.focus();
 }
 function closeConfirm() {
     confirmDelete.style.width = "0";
