@@ -6,6 +6,7 @@ textarea {
     background-color: inherit;
     border: none;
     color: inherit;
+    resize: none;
 }
 table {
     border-collapse: collapse;
