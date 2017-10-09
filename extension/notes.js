@@ -12,6 +12,12 @@ const no = document.getElementById("no");
 const siteName = document.getElementById("siteName");
 const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
 const search = document.getElementById("search")
+var tablist = {}
+function getContext() {
+    return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
+        browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
+        browser.extension.getViews({type: "tab"}).indexOf(window) > -1 ? "tab" : undefined;
+}
 function searchResults() {
     var names = document.getElementsByClassName("name");
     for (var name of names) {
@@ -51,6 +57,9 @@ function loadGeneralNotes() {
         back.innerText = "General Notes";
         textarea.addEventListener("input", saveGeneralNotes);
     });
+    browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
+        tablist[tabs[0].tabId] = "general_notes";
+    });
 }
 function siteNoteSetup(site) {
     textarea.focus();
@@ -61,6 +70,9 @@ function siteNoteSetup(site) {
         textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site] : "";
         back.innerText = site;
         textarea.addEventListener("input", saveSiteNotes);
+    });
+    browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
+        tablist[tabs[0].tabId] = site;
     });
 }
 function deleteNote() {
@@ -89,32 +101,44 @@ function loadCustomNote(ele) {
 function closeConfirm() {
     confirmDelete.style.width = "0";
 }
+function siteParser(rawUrl) {
+    console.log(rawUrl);
+    browser.storage.local.get("options").then((res) => {
+        var url = new URL(rawUrl);
+        if (url.protocol === "about:") {
+            return url.protocol + url.pathname;
+        } else if (url.protocol.match(/https?:/g)) {
+            var site = psl.parse(url.hostname);
+            if (res.options.per_site === "url") {
+                return url.hostname + url.pathname;
+            } else if (res.options.subdomains_mode === "blacklist") {
+                if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
+                    return site.domain;
+                } else {
+                    return url.hostname;
+                }
+            } else if (res.options.subdomains_mode === "whitelist") {
+                if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
+                    return url.hostname;
+                } else {
+                    return site.domain;
+                }
+            }
+        } else {
+            return "general_notes"
+        }
+    });
+}
 function loadSiteNotes() {
     browser.storage.local.get().then((res) => {
         browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
             if (!tabs[0].incognito || (res.options.private_browsing && tabs[0].incognito)) {
-                var url = new URL(tabs[0].url);
-                if (url.protocol === "about:") {
-                    siteNoteSetup(url.protocol + url.pathname);
-                } else if (url.protocol.match(/https?:/g)) {
-                    var site = psl.parse(url.hostname);
-                    if (res.options.per_site === "url") {
-                        siteNoteSetup(url.hostname + url.pathname);
-                    } else if (res.options.subdomains_mode === "blacklist") {
-                        if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
-                            siteNoteSetup(site.domain);
-                        } else {
-                            siteNoteSetup(url.hostname);
-                        }
-                    } else if (res.options.subdomains_mode === "whitelist") {
-                        if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
-                            siteNoteSetup(url.hostname);
-                        } else {
-                            siteNoteSetup(site.domain);
-                        }
-                    }
-                } else {
+                var url = tabs[0].url;
+                var site = siteParser(url);
+                if (site === "general_notes") {
                     loadGeneralNotes();
+                } else {
+                    siteNoteSetup(site);
                 }
             } else {
                 loadGeneralNotes();
@@ -199,11 +223,7 @@ function pageSetup() {
             textarea.style.fontFamily = res.options.font_family;
         }
         textarea.style.fontSize = res.options.font_size + "px";
-        var context =
-            browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
-            browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
-            browser.extension.getViews({type: "tab"}).indexOf(window) > -1 ? "tab" :
-            undefined;
+        var context = getContext()
         if (context === "tab") {
             openInTab.style.display = "none";
             toggle.style.display = "none";
@@ -234,6 +254,25 @@ function openTab() {
         url: "notes.html"
     });
 }
+function perTabSidebar(activeInfo) {
+    browser.storage.local.get("options").then((res) => {
+        browser.tabs.get(activeInfo.tabId).then((tab) => {
+            if (tablist.hasOwnProperty(activeInfo.tabId)) {
+                var site = siteParser(tab.url);
+                if (tablist[activeInfo.tabId] !== site) {
+                    if (res.options.default_display === "general_notes") {
+                        loadGeneralNotes();
+                    } else {
+                        siteNoteSetup(site);
+                    }
+                }
+            }
+        });
+    });
+}
+function listUpdate(changes) {
+    console.log(changes);
+}
 document.addEventListener("focus", () => {
     textarea.focus();
 });
@@ -248,3 +287,7 @@ yes.addEventListener("click", deleteNote);
 openInTab.addEventListener("click", openTab);
 search.addEventListener("input", searchResults);
 document.addEventListener("DOMContentLoaded", pageSetup);
+browser.storage.onChanged.addListener(listUpdate)
+if (getContext() === "sidebar") {
+    browser.tabs.onActivated.addListener(perTabSidebar)
+}
