@@ -12,7 +12,7 @@ const no = document.getElementById("no");
 const siteName = document.getElementById("siteName");
 const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
 const search = document.getElementById("search")
-var tablist = {}
+var tablist = {tablist: true}
 function getContext() {
     return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
         browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
@@ -47,7 +47,7 @@ function saveSiteNotes() {
         browser.storage.local.set({site_notes: res.site_notes});
     });
 }
-function loadGeneralNotes() {
+async function loadGeneralNotes() {
     textarea.focus();
     toggle.className = "mdi mdi-web";
     toggle.title = "Switch to site notes"
@@ -57,23 +57,20 @@ function loadGeneralNotes() {
         back.innerText = "General Notes";
         textarea.addEventListener("input", saveGeneralNotes);
     });
-    browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
-        tablist[tabs[0].tabId] = "general_notes";
-    });
+    var tabs = await browser.tabs.query({active: true, currentWindow: true});
+    tablist[tabs[0].id] = "general_notes";
 }
-function siteNoteSetup(site) {
+async function siteNoteSetup(site) {
     textarea.focus();
     textarea.removeEventListener("input", saveGeneralNotes);
     toggle.className = "mdi mdi-note";
     toggle.title = "Switch to general notes"
-    browser.storage.local.get("site_notes").then((res) => {
-        textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site] : "";
-        back.innerText = site;
-        textarea.addEventListener("input", saveSiteNotes);
-    });
-    browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
-        tablist[tabs[0].tabId] = site;
-    });
+    var res = await browser.storage.local.get("site_notes");
+    textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site] : "";
+    back.innerText = site;
+    textarea.addEventListener("input", saveSiteNotes);
+    var tabs = await browser.tabs.query({active: true, currentWindow: true});
+    tablist[tabs[0].id] = site;
 }
 function deleteNote() {
     browser.storage.local.get("site_notes").then((res) => {
@@ -101,50 +98,46 @@ function loadCustomNote(ele) {
 function closeConfirm() {
     confirmDelete.style.width = "0";
 }
-function siteParser(rawUrl) {
-    console.log(rawUrl);
-    browser.storage.local.get("options").then((res) => {
-        var url = new URL(rawUrl);
-        if (url.protocol === "about:") {
-            return url.protocol + url.pathname;
-        } else if (url.protocol.match(/https?:/g)) {
-            var site = psl.parse(url.hostname);
-            if (res.options.per_site === "url") {
-                return url.hostname + url.pathname;
-            } else if (res.options.subdomains_mode === "blacklist") {
-                if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
-                    return site.domain;
-                } else {
-                    return url.hostname;
-                }
-            } else if (res.options.subdomains_mode === "whitelist") {
-                if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
-                    return url.hostname;
-                } else {
-                    return site.domain;
-                }
-            }
-        } else {
-            return "general_notes"
-        }
-    });
-}
-function loadSiteNotes() {
-    browser.storage.local.get().then((res) => {
-        browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
-            if (!tabs[0].incognito || (res.options.private_browsing && tabs[0].incognito)) {
-                var url = tabs[0].url;
-                var site = siteParser(url);
-                if (site === "general_notes") {
-                    loadGeneralNotes();
-                } else {
-                    siteNoteSetup(site);
-                }
+async function siteParser(rawUrl) {
+    var res = await browser.storage.local.get("options");
+    var url = new URL(rawUrl);
+    if (url.protocol === "about:") {
+        return url.protocol + url.pathname;
+    } else if (url.protocol.match(/https?:/g)) {
+        var site = psl.parse(url.hostname);
+        if (res.options.per_site === "url") {
+            return url.hostname + url.pathname;
+        } else if (res.options.subdomains_mode === "blacklist") {
+            if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
+                return site.domain;
             } else {
-                loadGeneralNotes();
+                return url.hostname;
             }
-        });
-    });
+        } else if (res.options.subdomains_mode === "whitelist") {
+            if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
+                return url.hostname;
+            } else {
+                return site.domain;
+            }
+        }
+    } else {
+        return "general_notes";
+    }
+}
+async function loadSiteNotes() {
+    var res = await browser.storage.local.get("options");
+    var tabs = await browser.tabs.query({active: true, currentWindow: true})
+    if (!tabs[0].incognito || (res.options.private_browsing && tabs[0].incognito)) {
+        var url = tabs[0].url;
+        var site = await siteParser(url);
+        if (site === "general_notes") {
+            loadGeneralNotes();
+        } else {
+            siteNoteSetup(site);
+        }
+    } else {
+        loadGeneralNotes();
+    }
 }
 function changeNoteMode(ele) {
     if (ele.target.className === "mdi mdi-web") {
@@ -254,21 +247,27 @@ function openTab() {
         url: "notes.html"
     });
 }
-function perTabSidebar(activeInfo) {
-    browser.storage.local.get("options").then((res) => {
-        browser.tabs.get(activeInfo.tabId).then((tab) => {
-            if (tablist.hasOwnProperty(activeInfo.tabId)) {
-                var site = siteParser(tab.url);
-                if (tablist[activeInfo.tabId] !== site) {
-                    if (res.options.default_display === "general_notes") {
-                        loadGeneralNotes();
-                    } else {
-                        siteNoteSetup(site);
-                    }
-                }
+async function perTabSidebar(activeInfo) {
+    var res = await browser.storage.local.get("options");
+    var tab = await browser.tabs.get(activeInfo.tabId);
+    var site = await siteParser(tab.url);
+    console.log(tablist.hasOwnProperty(activeInfo.tabId));
+    if (tablist.hasOwnProperty(activeInfo.tabId)) {
+        if (tablist[activeInfo.tabId] !== site) {
+            if (res.options.default_display === "general_notes") {
+                loadGeneralNotes();
+            } else {
+                console.log(site);
+                siteNoteSetup(site);
             }
-        });
-    });
+        }
+    } else {
+        // if (tablist[activeInfo.tabId] === "general_notes") {
+        //     loadGeneralNotes();
+        // } else {
+        //     siteNoteSetup(tablist[activeInfo.tabId])
+        // }
+    }
 }
 function listUpdate(changes) {
     console.log(changes);
