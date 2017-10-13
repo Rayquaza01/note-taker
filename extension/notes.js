@@ -251,7 +251,7 @@ function openTab() {
         url: "notes.html"
     });
 }
-async function perTabSidebar(activeInfo) {
+async function perTabSidebar() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!back.dataset.hasOwnProperty(tabs[0].id)) {
