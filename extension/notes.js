@@ -12,7 +12,6 @@ const no = document.getElementById("no");
 const siteName = document.getElementById("siteName");
 const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
 const search = document.getElementById("search")
-var tablist = {tablist: true}
 function getContext() {
     return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
         browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
@@ -52,13 +51,10 @@ async function loadGeneralNotes() {
     toggle.className = "mdi mdi-web";
     toggle.title = "Switch to site notes"
     textarea.removeEventListener("input", saveSiteNotes);
-    browser.storage.local.get("general_notes").then((res) => {
-        textarea.value = res.general_notes || "";
-        back.innerText = "General Notes";
-        textarea.addEventListener("input", saveGeneralNotes);
-    });
-    var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    tablist[tabs[0].id] = "general_notes";
+    var res = await browser.storage.local.get("general_notes");
+    textarea.value = res.general_notes || "";
+    back.innerText = "General Notes";
+    textarea.addEventListener("input", saveGeneralNotes);
 }
 async function siteNoteSetup(site) {
     textarea.focus();
@@ -69,8 +65,6 @@ async function siteNoteSetup(site) {
     textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site] : "";
     back.innerText = site;
     textarea.addEventListener("input", saveSiteNotes);
-    var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    tablist[tabs[0].id] = site;
 }
 function deleteNote() {
     browser.storage.local.get("site_notes").then((res) => {
@@ -81,7 +75,11 @@ function deleteNote() {
     deleteButton.parentNode.parentNode.removeChild(deleteButton.parentNode);
     confirmDelete.style.width = "0";
 }
-function loadCustomNote(ele) {
+async function loadCustomNote(ele) {
+    if (ele.target.innerText !== back.innerText) {
+        var tabs = await browser.tabs.query({active: true, currentWindow: true})
+        back.dataset[tabs[0].id] = ele.target.innerText;
+    }
     if (ele.target.innerText === "General Notes") {
         loadGeneralNotes();
     } else if (ele.target.className === "mdi mdi-delete") {
@@ -249,28 +247,34 @@ function openTab() {
 }
 async function perTabSidebar(activeInfo) {
     var res = await browser.storage.local.get("options");
-    var tab = await browser.tabs.get(activeInfo.tabId);
-    var site = await siteParser(tab.url);
-    console.log(tablist.hasOwnProperty(activeInfo.tabId));
-    if (tablist.hasOwnProperty(activeInfo.tabId)) {
-        if (tablist[activeInfo.tabId] !== site) {
-            if (res.options.default_display === "general_notes") {
-                loadGeneralNotes();
-            } else {
-                console.log(site);
-                siteNoteSetup(site);
-            }
+    var tabs = await browser.tabs.query({active: true, currentWindow: true});
+    if (!back.dataset.hasOwnProperty(tabs[0].id)) {
+        if (res.options.default_display === "site_notes") {
+            loadSiteNotes();
+        } else {
+            loadGeneralNotes();
         }
     } else {
-        // if (tablist[activeInfo.tabId] === "general_notes") {
-        //     loadGeneralNotes();
-        // } else {
-        //     siteNoteSetup(tablist[activeInfo.tabId])
-        // }
+        siteNoteSetup(back.dataset[tabs[0].id])
     }
 }
 function listUpdate(changes) {
-    console.log(changes);
+    var oldValues = Object.keys(changes.site_notes.oldValue);
+    var newValues = Object.keys(changes.site_notes.newValue);
+    var delta = {
+        added: [],
+        removed: []
+    }
+    for (var value of newValues) {
+        if (oldValues.indexOf(value) === -1) {
+            delta.added.push(value);
+        }
+    }
+    for (var value of oldValues) {
+        if (newValues.indexOf(value) === -1) {
+            delta.removed.push(value);
+        }
+    }
 }
 document.addEventListener("focus", () => {
     textarea.focus();
@@ -289,4 +293,5 @@ document.addEventListener("DOMContentLoaded", pageSetup);
 browser.storage.onChanged.addListener(listUpdate)
 if (getContext() === "sidebar") {
     browser.tabs.onActivated.addListener(perTabSidebar)
+    browser.tabs.onUpdated.addListener(perTabSidebar)
 }
