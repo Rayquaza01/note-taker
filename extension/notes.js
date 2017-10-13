@@ -66,13 +66,16 @@ async function siteNoteSetup(site) {
     back.innerText = site;
     textarea.addEventListener("input", saveSiteNotes);
 }
+function removeNoteFromList(name) {
+    var deleteButton = noteList.querySelector("span[data-delete-site='" + name + "']");
+    deleteButton.parentNode.parentNode.removeChild(deleteButton.parentNode);
+}
 function deleteNote() {
     browser.storage.local.get("site_notes").then((res) => {
         delete res.site_notes[siteName.innerText];
         browser.storage.local.set({site_notes: res.site_notes});
     });
-    var deleteButton = document.getElementById(siteName.innerText);
-    deleteButton.parentNode.parentNode.removeChild(deleteButton.parentNode);
+    removeNoteFromList(siteName.innerText);
     confirmDelete.style.width = "0";
 }
 async function loadCustomNote(ele) {
@@ -84,7 +87,7 @@ async function loadCustomNote(ele) {
         loadGeneralNotes();
     } else if (ele.target.className === "mdi mdi-delete") {
         confirmDelete.style.width = "100%";
-        siteName.innerText = ele.target.id;
+        siteName.innerText = ele.target.dataset.deleteSite;
         return;
     } else if (ele.target.className === "name") {
         siteNoteSetup(ele.target.innerText);
@@ -175,21 +178,24 @@ function changeTheme(ele) {
         }
     });
 }
+function addNoteToList(site) {
+    var cont = document.createElement("span");
+    cont.className = "container";
+    var name = document.createElement("div");
+    name.innerText = site;
+    name.className = "name";
+    var del = document.createElement("span");
+    del.dataset.deleteSite = site;
+    del.className = "mdi mdi-delete";
+    cont.append(name);
+    cont.append(del);
+    noteList.append(cont);
+}
 function loadNoteList() {
     browser.storage.local.get("site_notes").then((res) => {
         for (var site in res.site_notes) {
             if (res.site_notes.hasOwnProperty(site)) {
-                var cont = document.createElement("span");
-                cont.className = "container";
-                var name = document.createElement("div");
-                name.innerText = site;
-                name.className = "name";
-                var del = document.createElement("span");
-                del.id = site;
-                del.className = "mdi mdi-delete";
-                cont.append(name);
-                cont.append(del);
-                noteList.append(cont);
+                addNoteToList(site);
             }
         }
     });
@@ -261,20 +267,16 @@ async function perTabSidebar(activeInfo) {
 function listUpdate(changes) {
     var oldValues = Object.keys(changes.site_notes.oldValue);
     var newValues = Object.keys(changes.site_notes.newValue);
-    var delta = {
-        added: [],
-        removed: []
-    }
-    for (var value of newValues) {
-        if (oldValues.indexOf(value) === -1) {
-            delta.added.push(value);
+    for (var item of oldValues) {
+        if (newValues.indexOf(item) === -1) {
+            removeNoteFromList(item);
         }
-    }
-    for (var value of oldValues) {
-        if (newValues.indexOf(value) === -1) {
-            delta.removed.push(value);
+    };
+    for (var item of newValues) {
+        if (oldValues.indexOf(item) === -1) {
+            addNoteToList(item)
         }
-    }
+    };
 }
 document.addEventListener("focus", () => {
     textarea.focus();
