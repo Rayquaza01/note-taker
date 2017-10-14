@@ -23,4 +23,41 @@ function setOpts() {
         browser.storage.local.set(res);
     });
 }
+async function updateBadge() {
+    var res = await browser.storage.local.get();
+    if (res.options.notification_badge !== "disabled") {
+        var tabs = await browser.tabs.query({active: true, currentWindow: true});
+        var site = await siteParser(tabs[0].url);
+        if (res.site_notes.hasOwnProperty(site)) {
+            console.log(res.site_notes.hasOwnProperty(site))
+            if (res.site_notes[site] !== "") {
+                if (res.options.notification_badge === "enabled") {
+                    browser.browserAction.setBadgeText({text: "!"});
+                } else if (res.options.notification_badge === "bullets") {
+                    var bulletCount = 0
+                    var escaped = res.options.bullet_types.join("");
+                    escaped.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                    var regex = new RegExp("^\\s*[" + escaped + "]");
+                    for (var line of res.site_notes[site].split("\n")) {
+                        if (line.search(regex) > -1) {
+                            bulletCount += 1;
+                        }
+                    }
+                    if (bulletCount > 0) {
+                        browser.browserAction.setBadgeText({text: bulletCount.toString()});
+                    } else {
+                        browser.browserAction.setBadgeText({text: ""});
+                    }
+                }
+            } else {
+                browser.browserAction.setBadgeText({text: ""});
+            }
+        } else {
+            browser.browserAction.setBadgeText({text: ""});
+        }
+    }
+}
+browser.tabs.onActivated.addListener(updateBadge);
+browser.tabs.onUpdated.addListener(updateBadge);
+browser.storage.onChanged.addListener(updateBadge);
 browser.runtime.onInstalled.addListener(setOpts);

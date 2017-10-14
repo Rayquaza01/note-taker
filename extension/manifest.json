@@ -13,7 +13,7 @@
         "96": "icons/icon-96.png"
     },
     "background": {
-        "scripts": ["setup.js"]
+        "scripts": ["setup.js", "node_modules/psl/dist/psl.min.js", "site-parser.js"]
     },
     "permissions": [
         "storage",
@@ -26,7 +26,8 @@
         "default_icon": "icons/icon.svg",
         "theme_icons": [{
             "light": "icons/icon-light.svg",
-            "dark": "icons/icon.svg"
+            "dark": "icons/icon.svg",
+            "size": 96
         }]
     },
     "sidebar_action": {
