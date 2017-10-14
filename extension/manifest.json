@@ -23,10 +23,11 @@
     "browser_action": {
         "browser_style": true,
         "default_popup": "notes.html",
-        "default_icon": {
-            "48": "icons/icon-48.png",
-            "96": "icons/icon-96.png"
-        }
+        "default_icon": "icons/icon.svg",
+        "theme_icons": [{
+            "light": "icons/icon-light.svg",
+            "dark": "icons/icon.svg"
+        }]
     },
     "sidebar_action": {
         "default_panel": "notes.html",
