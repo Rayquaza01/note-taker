@@ -11,7 +11,7 @@ const yes = document.getElementById("yes");
 const no = document.getElementById("no");
 const siteName = document.getElementById("siteName");
 const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
-const search = document.getElementById("search")
+const search = document.getElementById("search");
 function getContext() {
     return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
         browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
@@ -80,7 +80,7 @@ function deleteNote() {
 }
 async function loadCustomNote(ele) {
     if (ele.target.innerText !== back.innerText) {
-        var tabs = await browser.tabs.query({active: true, currentWindow: true})
+        var tabs = await browser.tabs.query({active: true, currentWindow: true});
         back.dataset[tabs[0].id] = ele.target.innerText;
     }
     if (ele.target.innerText === "General Notes") {
@@ -101,7 +101,7 @@ function closeConfirm() {
 }
 async function loadSiteNotes() {
     var res = await browser.storage.local.get("options");
-    var tabs = await browser.tabs.query({active: true, currentWindow: true})
+    var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!tabs[0].incognito || (res.options.private_browsing && tabs[0].incognito)) {
         var url = tabs[0].url;
         var site = await siteParser(url);
@@ -194,7 +194,7 @@ function pageSetup() {
             textarea.style.fontFamily = res.options.font_family;
         }
         textarea.style.fontSize = res.options.font_size + "px";
-        var context = getContext()
+        var context = getContext();
         if (context === "tab") {
             openInTab.style.display = "none";
             toggle.style.display = "none";
@@ -207,6 +207,10 @@ function pageSetup() {
             textarea.style.width = res.options.width + "px";
             textarea.style.height = res.options.height + "px";
             overlay.style.height = res.options.height + "px";
+        }
+        if (context === "sidebar") {
+            browser.tabs.onActivated.addListener(perTabSidebar);
+            browser.tabs.onUpdated.addListener(perTabSidebar);
         }
         if (res.options.default_display === "general_notes") {
             loadGeneralNotes();
@@ -235,22 +239,24 @@ async function perTabSidebar() {
             loadGeneralNotes();
         }
     } else {
-        siteNoteSetup(back.dataset[tabs[0].id])
+        siteNoteSetup(back.dataset[tabs[0].id]);
     }
 }
 function listUpdate(changes) {
-    var oldValues = Object.keys(changes.site_notes.oldValue);
-    var newValues = Object.keys(changes.site_notes.newValue);
-    for (var item of oldValues) {
-        if (newValues.indexOf(item) === -1) {
-            removeNoteFromList(item);
+    if (changes.hasOwnProperty("site_notes")) {
+        var oldValues = Object.keys(changes.site_notes.oldValue);
+        var newValues = Object.keys(changes.site_notes.newValue);
+        for (var item of oldValues) {
+            if (newValues.indexOf(item) === -1) {
+                removeNoteFromList(item);
+            }
+        };
+        for (var item of newValues) {
+            if (oldValues.indexOf(item) === -1) {
+                addNoteToList(item);
+            }
         }
-    };
-    for (var item of newValues) {
-        if (oldValues.indexOf(item) === -1) {
-            addNoteToList(item)
-        }
-    };
+    }
 }
 document.addEventListener("focus", () => {
     textarea.focus();
@@ -266,8 +272,4 @@ yes.addEventListener("click", deleteNote);
 openInTab.addEventListener("click", openTab);
 search.addEventListener("input", searchResults);
 document.addEventListener("DOMContentLoaded", pageSetup);
-browser.storage.onChanged.addListener(listUpdate)
-if (getContext() === "sidebar") {
-    browser.tabs.onActivated.addListener(perTabSidebar)
-    browser.tabs.onUpdated.addListener(perTabSidebar)
-}
+browser.storage.onChanged.addListener(listUpdate);
