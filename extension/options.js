@@ -27,6 +27,11 @@ const bullet_types = document.getElementById("bullet-types")
 const exportButton = document.getElementById("export");
 const importButton = document.getElementById("import");
 // End element variables
+function filterBlanks(item) {
+    if (!item.match(/^$/)) {
+        return item;
+    }
+}
 function saveOptions() {
     var options = {
         theme: theme.value || "light",
@@ -43,10 +48,10 @@ function saveOptions() {
         per_site: per_site.value || "domain",
         private_browsing: JSON.parse(private_browsing.value) || false,
         subdomains_mode: subdomains_mode.value || "blacklist",
-        subdomains: subdomains.value.split(" ") || [],
+        subdomains: subdomains.value.split(" ").filter(filterBlanks) || [],
         notification_badge: notification_badge.value || "disabled",
         notification_badge_color: notification_badge_color.value || "5a5b5c",
-        bullet_types: bullet_types.value.split(" ") || ["*", "-", "+"]
+        bullet_types: bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"]
     };
     browser.storage.local.set({
         options: options
@@ -62,7 +67,7 @@ function domainModeSync(ele) {
     domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
 }
 function restoreOptions() {
-    browser.storage.local.get().then((res) => {
+    browser.storage.local.get("options").then((res) => {
         theme.value = res.options.theme;
         background_color.value = res.options.background_color;
         background_color_picker.value = "#" + res.options.background_color;
@@ -105,6 +110,9 @@ function importOptions() {
     var file = importButton.files[0];
     reader.readAsText(file);
 }
+async function changeBadgeColor() {
+    browser.browserAction.setBadgeBackgroundColor({color: "#" + notification_badge_color.value});
+}
 // import
 importButton.addEventListener("change", importOptions);
 // color sync
@@ -113,5 +121,8 @@ table.addEventListener("input", colorSync);
 subdomains_mode.addEventListener("input", domainModeSync);
 // save options
 table.addEventListener("change", saveOptions); // Event delegation is a lot simpler than what I was trying
+// badges
+notification_badge_color.addEventListener("input", changeBadgeColor)
+notification_badge_color_picker.addEventListener("input", changeBadgeColor)
 // onload
 document.addEventListener("DOMContentLoaded", restoreOptions);
