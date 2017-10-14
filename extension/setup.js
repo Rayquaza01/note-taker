@@ -17,46 +17,68 @@ function setOpts() {
         res.options.subdomains_mode = res.options.hasOwnProperty("subdomains_mode") ? res.options.subdomains_mode : "blacklist";
         res.options.subdomains = res.options.hasOwnProperty("subdomains") ? res.options.subdomains : [];
         res.options.notification_badge = res.options.hasOwnProperty("notification_badge") ? res.options.notification_badge : "disabled";
-        res.options.notification_badge_color = res.options.hasOwnProperty("notification_badge_color") ? res.options.notification_badge_color : "5a5b5c";
+        res.options.notification_badge_color = res.options.hasOwnProperty("notification_badge_color") ? res.options.notification_badge_color : "d90000";
         res.options.bullet_types = res.options.hasOwnProperty("bullet_types") ? res.options.bullet_types : ["*", "-", "+"];
         res.site_notes = res.hasOwnProperty("site_notes") ? res.site_notes : {};
         browser.storage.local.set(res);
     });
 }
-async function updateBadge() {
+function escapeRegex(regex) {
+    return regex.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+function bulletCounter(bulletTypes, note) {
+    var bulletCount = 0;
+    var escaped = bulletTypes.map(escapeRegex);
+    var regex = new RegExp("^\\s*(" + escaped.join("|") + ")");
+    for (var line of note.split("\n")) {
+        if (line.search(regex) > -1) {
+            ++bulletCount;
+        }
+    }
+    return bulletCount;
+}
+async function setBadge(tab) {
     var res = await browser.storage.local.get();
-    if (res.options.notification_badge !== "disabled") {
-        var tabs = await browser.tabs.query({active: true, currentWindow: true});
-        var site = await siteParser(tabs[0].url);
+    if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {
+        var site = await siteParser(tab.url);
         if (res.site_notes.hasOwnProperty(site)) {
-            console.log(res.site_notes.hasOwnProperty(site))
             if (res.site_notes[site] !== "") {
-                if (res.options.notification_badge === "enabled") {
-                    browser.browserAction.setBadgeText({text: "!"});
-                } else if (res.options.notification_badge === "bullets") {
-                    var bulletCount = 0
-                    var escaped = res.options.bullet_types.join("");
-                    escaped.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-                    var regex = new RegExp("^\\s*[" + escaped + "]");
-                    for (var line of res.site_notes[site].split("\n")) {
-                        if (line.search(regex) > -1) {
-                            bulletCount += 1;
-                        }
-                    }
+                if (res.options.notification_badge.match(/enabled/)) {
+                    browser.browserAction.setBadgeText({text: "!", tabId: tab.id});
+                }
+                if (res.options.notification_badge.match(/bullets/)) {
+                    var bulletCount = bulletCounter(res.options.bullet_types, res.site_notes[site]);
                     if (bulletCount > 0) {
-                        browser.browserAction.setBadgeText({text: bulletCount.toString()});
-                    } else {
-                        browser.browserAction.setBadgeText({text: ""});
+                        browser.browserAction.setBadgeText({text: bulletCount.toString(), tabId: tab.id});
+                    } else if (!res.options.notification_badge.match(/enabled/)) {
+                        browser.browserAction.setBadgeText({text: "", tabId: tab.id});
                     }
                 }
             } else {
-                browser.browserAction.setBadgeText({text: ""});
+                browser.browserAction.setBadgeText({text: "", tabId: tab.id});
             }
         } else {
-            browser.browserAction.setBadgeText({text: ""});
+            browser.browserAction.setBadgeText({text: "", tabId: tab.id});
+        }
+    } else {
+        browser.browserAction.setBadgeText({text: "", tabId: tab.id});
+    }
+}
+async function updateBadge() {
+    var res = await browser.storage.local.get("options");
+    var tabs = await browser.tabs.query({active: true});
+    if (res.options.notification_badge !== "disabled") {
+        tabs.forEach(setBadge);
+    } else {
+        var allTabs = await browser.tabs.query({});
+        for (tab of allTabs) {
+            browser.browserAction.setBadgeText({text: "", tabId: tab.id});
         }
     }
 }
+browser.storage.local.get("options").then((res) => {
+    browser.browserAction.setBadgeBackgroundColor({color: "#" + res.options.notification_badge_color});
+})
 browser.tabs.onActivated.addListener(updateBadge);
 browser.tabs.onUpdated.addListener(updateBadge);
 browser.storage.onChanged.addListener(updateBadge);
