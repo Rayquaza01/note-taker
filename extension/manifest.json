@@ -27,7 +27,7 @@
         "theme_icons": [{
             "light": "icons/icon-light.svg",
             "dark": "icons/icon.svg",
-            "size": 96
+            "size": 16
         }]
     },
     "sidebar_action": {
