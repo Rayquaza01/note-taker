@@ -132,8 +132,8 @@
                 </td>
                 <td>
                     <select id="private-browsing">
-                        <option value=false>Disable</option>
-                        <option value=true>Enable</option>
+                        <option value=false>Disabled</option>
+                        <option value=true>Enabled</option>
                     </select>
                 </td>
             </tr>
@@ -155,6 +155,36 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#ignoreenforce-subdomains">?</a>
                 </td>
                 <td><input id="subdomains" type="text"></td>
+            </tr>
+            <tr>
+                <td>
+                    Notification Badge
+                    <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#notification-badge">?</a>
+                </td>
+                <td>
+                    <select id="notification-badge">
+                        <option value="disabled">Disabled</option>
+                        <option value="enabled">Enabled</option>
+                        <option value="bullets">Bullets</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Notification Badge Color
+                    <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#notification-badge-color">?</a>
+                </td>
+                <td class="center">
+                    #<input type="text" id="notification-badge-color" data-colorsync="#notification-badge-color-picker">
+                    <input type="color" id="notification-badge-color-picker" data-colorsync="#notification-badge-color">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Bullet Types
+                    <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#bullet-types">?</a>
+                </td>
+                <td><input id="bullet-types" type="text"></td>
             </tr>
         </table>
         <div class="center">

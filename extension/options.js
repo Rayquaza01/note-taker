@@ -20,6 +20,10 @@ const private_browsing = document.getElementById("private-browsing");
 const domain_mode = document.getElementById("domain-mode");
 const subdomains_mode = document.getElementById("subdomains-mode");
 const subdomains = document.getElementById("subdomains");
+const notification_badge = document.getElementById("notification-badge")
+const notification_badge_color = document.getElementById("notification-badge-color")
+const notification_badge_color_picker = document.getElementById("notification-badge-color-picker")
+const bullet_types = document.getElementById("bullet-types")
 const exportButton = document.getElementById("export");
 const importButton = document.getElementById("import");
 // End element variables
@@ -39,14 +43,17 @@ function saveOptions() {
         per_site: per_site.value || "domain",
         private_browsing: JSON.parse(private_browsing.value) || false,
         subdomains_mode: subdomains_mode.value || "blacklist",
-        subdomains: subdomains.value.split(" ") || []
+        subdomains: subdomains.value.split(" ") || [],
+        notification_badge: notification_badge.value || "disabled",
+        notification_badge_color: notification_badge_color.value || "5a5b5c",
+        bullet_types: bullet_types.value.split(" ") || ["*", "-", "+"]
     };
     browser.storage.local.set({
         options: options
     });
 }
 function colorSync(ele) {
-    if (typeof(ele.target.dataset.colorsync) !== "undefined") {
+    if (ele.target.dataset.hasOwnProperty("colorsync")) {
         var target = document.querySelector(ele.target.dataset.colorsync);
         target.value = target.type === "color" ? "#" + ele.target.value : ele.target.value.substring(1);
     }
@@ -77,6 +84,10 @@ function restoreOptions() {
         private_browsing.value = res.options.private_browsing;
         subdomains_mode.value = res.options.subdomains_mode;
         subdomains.value = res.options.subdomains.join(" ");
+        notification_badge.value = res.options.notification_badge;
+        notification_badge_color.value = res.options.notification_badge_color;
+        notification_badge_color_picker.value = "#" + res.options.notification_badge_color;
+        bullet_types.value = res.options.bullet_types.join(" ");
         if (res.options.subdomains_mode === "whitelist") {
             domain_mode.innerText = "Enforce";
         }
