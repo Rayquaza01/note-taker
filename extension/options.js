@@ -110,7 +110,7 @@ function importOptions() {
     var file = importButton.files[0];
     reader.readAsText(file);
 }
-async function changeBadgeColor() {
+function changeBadgeColor() {
     browser.browserAction.setBadgeBackgroundColor({color: "#" + notification_badge_color.value});
 }
 // import
