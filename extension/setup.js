@@ -37,26 +37,29 @@ function bulletCounter(bulletTypes, note) {
     }
     return bulletCount;
 }
-async function setBadge(tab) {
-    var res = await browser.storage.local.get();
+function setBadge(bullet_types, notification_badge, notes, tabId) {
+    if (notes !== "") {
+        if (notification_badge.indexOf("enabled") > -1) {
+            browser.browserAction.setBadgeText({text: "!", tabId: tabId});
+        }
+        if (notification_badge.indexOf("bullets") > -1) {
+            var bulletCount = bulletCounter(bullet_types, notes);
+            if (bulletCount > 0) {
+                browser.browserAction.setBadgeText({text: bulletCount.toString(), tabId: tabId});
+            } else if (notification_badge.indexOf("enabled") === -1) {
+                browser.browserAction.setBadgeText({text: "", tabId: tabId});
+            }
+        }
+    } else {
+        browser.browserAction.setBadgeText({text: "", tabId: tabId});
+    }
+}
+async function setBadgeSite(tab) {
+    var res = await browser.storage.local.get(["site_notes", "options"]);
     if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {
         var site = await siteParser(tab.url);
         if (res.site_notes.hasOwnProperty(site)) {
-            if (res.site_notes[site] !== "") {
-                if (res.options.notification_badge.match(/enabled/)) {
-                    browser.browserAction.setBadgeText({text: "!", tabId: tab.id});
-                }
-                if (res.options.notification_badge.match(/bullets/)) {
-                    var bulletCount = bulletCounter(res.options.bullet_types, res.site_notes[site]);
-                    if (bulletCount > 0) {
-                        browser.browserAction.setBadgeText({text: bulletCount.toString(), tabId: tab.id});
-                    } else if (!res.options.notification_badge.match(/enabled/)) {
-                        browser.browserAction.setBadgeText({text: "", tabId: tab.id});
-                    }
-                }
-            } else {
-                browser.browserAction.setBadgeText({text: "", tabId: tab.id});
-            }
+            setBadge(res.options.bullet_types, res.options.notification_badge, res.site_notes[site], tab.id)
         } else {
             browser.browserAction.setBadgeText({text: "", tabId: tab.id});
         }
@@ -64,11 +67,22 @@ async function setBadge(tab) {
         browser.browserAction.setBadgeText({text: "", tabId: tab.id});
     }
 }
+async function setBadgeGeneral(tab) {
+    var res = await browser.storage.local.get(["general_notes", "options"]);
+    setBadge(res.options.bullet_types, res.options.notification_badge, res.general_notes, tab.id);
+}
 async function updateBadge() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true});
     if (res.options.notification_badge !== "disabled") {
-        tabs.forEach(setBadge);
+        switch (res.options.default_display) {
+            case "site_notes":
+                tabs.forEach(setBadgeSite);
+                break;
+            case "general_notes":
+                tabs.forEach(setBadgeGeneral);
+                break;
+        }
     } else {
         var allTabs = await browser.tabs.query({});
         for (tab of allTabs) {
