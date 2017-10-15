@@ -99,10 +99,10 @@ async function loadCustomNote(ele) {
 function closeConfirm() {
     confirmDelete.style.width = "0";
 }
-async function loadSiteNotes() {
+async function loadSiteNotes(manualClick = false) {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    if (!tabs[0].incognito || (res.options.private_browsing && tabs[0].incognito)) {
+    if (!tabs[0].incognito || manualClick || (res.options.private_browsing && tabs[0].incognito)) {
         var url = tabs[0].url;
         var site = await siteParser(url);
         if (site === "general_notes") {
@@ -116,7 +116,7 @@ async function loadSiteNotes() {
 }
 function changeNoteMode(ele) {
     if (ele.target.className === "mdi mdi-web") {
-        loadSiteNotes();
+        loadSiteNotes(true);
     } else if (ele.target.className === "mdi mdi-note") {
         loadGeneralNotes();
     }
