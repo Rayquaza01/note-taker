@@ -56,15 +56,17 @@ function setBadge(bullet_types, notification_badge, notes, tabId) {
 }
 async function setBadgeSite(tab) {
     var res = await browser.storage.local.get(["site_notes", "options"]);
-    if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {
-        var site = await siteParser(tab.url);
+    var site = await siteParser(tab.url);
+    if (site === "general_notes") {
+        setBadgeGeneral(tab);
+    } else if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {
         if (res.site_notes.hasOwnProperty(site)) {
             setBadge(res.options.bullet_types, res.options.notification_badge, res.site_notes[site], tab.id)
         } else {
             browser.browserAction.setBadgeText({text: "", tabId: tab.id});
         }
     } else {
-        browser.browserAction.setBadgeText({text: "", tabId: tab.id});
+        setBadgeGeneral(tab);
     }
 }
 async function setBadgeGeneral(tab) {
