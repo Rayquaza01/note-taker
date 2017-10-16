@@ -40,11 +40,10 @@ function saveGeneralNotes() {
         general_notes: textarea.value || ""
     });
 }
-function saveSiteNotes() {
-    browser.storage.local.get("site_notes").then((res) => {
-        res.site_notes[back.innerText] = textarea.value || "";
-        browser.storage.local.set({site_notes: res.site_notes});
-    });
+await function saveSiteNotes() {
+    var res = await browser.storage.local.get("site_notes");
+    res.site_notes[back.innerText] = textarea.value || "";
+    browser.storage.local.set({site_notes: res.site_notes});
 }
 async function loadGeneralNotes() {
     textarea.focus();
@@ -70,18 +69,19 @@ function removeNoteFromList(name) {
     var deleteButton = noteList.querySelector("span[data-delete-site='" + name + "']");
     deleteButton.parentNode.parentNode.removeChild(deleteButton.parentNode);
 }
-function deleteNote() {
-    browser.storage.local.get("site_notes").then((res) => {
-        delete res.site_notes[siteName.innerText];
-        browser.storage.local.set({site_notes: res.site_notes});
-    });
+async function deleteNote() {
+    var res = await browser.storage.local.get("site_notes");
+    delete res.site_notes[siteName.innerText];
+    browser.storage.local.set({site_notes: res.site_notes});
     removeNoteFromList(siteName.innerText);
     confirmDelete.style.width = "0";
 }
 async function loadCustomNote(ele) {
+    var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (ele.target.innerText !== back.innerText) {
-        var tabs = await browser.tabs.query({active: true, currentWindow: true});
         back.dataset[tabs[0].id] = ele.target.innerText;
+    } else {
+        delete back.dataset[tabs[0].id]
     }
     if (ele.target.innerText === "General Notes") {
         loadGeneralNotes();
@@ -115,42 +115,46 @@ async function loadSiteNotes(manualClick = false) {
     }
 }
 function changeNoteMode(ele) {
-    if (ele.target.className === "mdi mdi-web") {
-        loadSiteNotes(true);
-    } else if (ele.target.className === "mdi mdi-note") {
-        loadGeneralNotes();
+    switch (ele.target.className) {
+        case "mdi mdi-web":
+            loadSiteNotes(true);
+            break;
+        case "mdi mdi-note":
+            loadSiteNotes();
+            break;
     }
 }
-function setLightTheme() {
-    browser.storage.local.get("options").then((res) => {
-        document.body.style.backgroundColor = "#" + res.options.background_color;
-        document.body.style.color = "#" + res.options.font_color;
-        search.style.color = "#" + res.options.font_color;
-        search.style.backgroundColor = "#" + res.options.background_color;
-    });
-}
-function setDarkTheme() {
-    browser.storage.local.get("options").then((res) => {
-        document.body.style.backgroundColor = "#" + res.options.background_color_dark;
-        document.body.style.color = "#" + res.options.font_color_dark;
-        search.style.color = "#" + res.options.font_color_dark;
-        search.style.backgroundColor = "#" + res.options.background_color_dark;
-    });
+async function setTheme(mode) {
+    var res = await browser.storage.local.get("options");
+    switch (mode) {
+        case "light":
+            var theme = "light";
+            break;
+        case "dark":
+            var theme = "dark";
+            break;
+    }
+    document.body.style.backgroundColor = "#" + res.options["background_color" + theme];
+    document.body.style.color = "#" + res.options["font_color" + theme];
+    search.style.color = "#" + res.options["font_color" + theme];
+    search.style.backgroundColor = "#" + res.options["background_color" + theme];
 }
 function changeTheme(ele) {
-    browser.storage.local.get().then((res) => {
-        if (ele.target.title === "Switch to light theme") {
+    var res = await browser.storage.local.get("options");
+    switch (ele.target.title) {
+        case "Switch to light theme":
             ele.target.title = "Switch to dark theme";
             res.options.theme = "light";
             browser.storage.local.set({options: res.options});
-            setLightTheme();
-        } else if (ele.target.title === "Switch to dark theme") {
+            setTheme("light");
+            break;
+        case "Switch to dark theme":
             ele.target.title = "Switch to light theme";
             res.options.theme = "dark";
             browser.storage.local.set({options: res.options});
-            setDarkTheme();
-        }
-    });
+            setTheme("dark");
+            break;
+    }
 }
 function addNoteToList(site) {
     var cont = document.createElement("span");
@@ -165,14 +169,13 @@ function addNoteToList(site) {
     cont.append(del);
     noteList.append(cont);
 }
-function loadNoteList() {
-    browser.storage.local.get("site_notes").then((res) => {
-        for (var site in res.site_notes) {
-            if (res.site_notes.hasOwnProperty(site)) {
-                addNoteToList(site);
-            }
+async function loadNoteList() {
+    var res = await browser.storage.local.get("site_notes");
+    for (var site in res.site_notes) {
+        if (res.site_notes.hasOwnProperty(site)) {
+            addNoteToList(site);
         }
-    });
+    }
 }
 function resizePage() {
     textarea.style.height = window.innerHeight - 30 + "px";
@@ -180,45 +183,52 @@ function resizePage() {
     overlay.style.height = window.innerHeight - 30 + "px";
 }
 function pageSetup() {
-    browser.storage.local.get("options").then((res) => {
-        if (res.options.theme === "light") {
+    var res = await browser.storage.local.get("options");
+    switch (res.options.theme) {
+        case "light":
             theme.title = "Switch to dark theme";
-            setLightTheme();
-        } else if (res.options.theme === "dark") {
+            break;
+        case "dark":
             theme.title = "Switch to light theme";
-            setDarkTheme();
-        }
-        if (res.options.font_family === "custom") {
-            textarea.style.fontFamily = res.options.font_css;
-        } else if (res.options.font_family !== "default") {
-            textarea.style.fontFamily = res.options.font_family;
-        }
-        textarea.style.fontSize = res.options.font_size + "px";
-        var context = getContext();
-        if (context === "tab") {
+            break;
+    }
+    setTheme(res.options.theme);
+    if (res.options.font_family === "custom") {
+        textarea.style.fontFamily = res.options.font_css;
+    } else if (res.options.font_family !== "default") {
+        textarea.style.fontFamily = res.options.font_family;
+    }
+    textarea.style.fontSize = res.options.font_size + "px";
+    var context = getContext();
+    switch (context) {
+        case "tab":
             openInTab.style.display = "none";
             toggle.style.display = "none";
-        }
-        if (context !== "popup") {
-            window.addEventListener("resize", resizePage);
-            resizePage();
-        } else {
+            break;
+        case "sidebar":
+            browser.tabs.onActivated.addListener(perTabSidebar);
+            browser.tabs.onUpdated.addListener(perTabSidebar);
+            break;
+        case "popup":
             document.body.style.width = res.options.width + "px";
             textarea.style.width = res.options.width + "px";
             textarea.style.height = res.options.height + "px";
             overlay.style.height = res.options.height + "px";
-        }
-        if (context === "sidebar") {
-            browser.tabs.onActivated.addListener(perTabSidebar);
-            browser.tabs.onUpdated.addListener(perTabSidebar);
-        }
-        if (res.options.default_display === "general_notes") {
+            break;
+    }
+    if (context !== "popup") {
+        window.addEventListener("resize", resizePage);
+        resizePage();
+    }
+    switch (res.options.default_display) {
+        case "general_notes":
             loadGeneralNotes();
-        } else if (res.options.default_display === "site_notes") {
+            break;
+        case "site_notes":
             loadSiteNotes();
-        }
-        loadNoteList();
-    });
+            break;
+    }
+    loadNoteList();
 }
 function options() {
     browser.runtime.openOptionsPage();
