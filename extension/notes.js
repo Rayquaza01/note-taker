@@ -40,7 +40,7 @@ function saveGeneralNotes() {
         general_notes: textarea.value || ""
     });
 }
-await function saveSiteNotes() {
+async function saveSiteNotes() {
     var res = await browser.storage.local.get("site_notes");
     res.site_notes[back.innerText] = textarea.value || "";
     browser.storage.local.set({site_notes: res.site_notes});
@@ -82,6 +82,7 @@ async function loadCustomNote(ele) {
         back.dataset[tabs[0].id] = ele.target.innerText;
     } else {
         delete back.dataset[tabs[0].id]
+        loadSiteNotes();
     }
     if (ele.target.innerText === "General Notes") {
         loadGeneralNotes();
@@ -128,10 +129,10 @@ async function setTheme(mode) {
     var res = await browser.storage.local.get("options");
     switch (mode) {
         case "light":
-            var theme = "light";
+            var theme = "";
             break;
         case "dark":
-            var theme = "dark";
+            var theme = "_dark";
             break;
     }
     document.body.style.backgroundColor = "#" + res.options["background_color" + theme];
@@ -139,7 +140,7 @@ async function setTheme(mode) {
     search.style.color = "#" + res.options["font_color" + theme];
     search.style.backgroundColor = "#" + res.options["background_color" + theme];
 }
-function changeTheme(ele) {
+async function changeTheme(ele) {
     var res = await browser.storage.local.get("options");
     switch (ele.target.title) {
         case "Switch to light theme":
@@ -182,7 +183,7 @@ function resizePage() {
     textarea.style.width = window.innerWidth - 2 + "px";
     overlay.style.height = window.innerHeight - 30 + "px";
 }
-function pageSetup() {
+async function pageSetup() {
     var res = await browser.storage.local.get("options");
     switch (res.options.theme) {
         case "light":
