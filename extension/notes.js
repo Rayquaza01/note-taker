@@ -106,10 +106,13 @@ async function loadSiteNotes(manualClick = false) {
     if (!tabs[0].incognito || manualClick || (res.options.private_browsing && tabs[0].incognito)) {
         var url = tabs[0].url;
         var site = await siteParser(url);
-        if (site === "general_notes") {
-            loadGeneralNotes();
-        } else {
-            siteNoteSetup(site);
+        switch (site) {
+            case "general_notes":
+                loadGeneralNotes();
+                break;
+            case "site_notes":
+                siteNoteSetup(site);
+                break;
         }
     } else {
         loadGeneralNotes();
@@ -244,10 +247,13 @@ async function perTabSidebar() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!back.dataset.hasOwnProperty(tabs[0].id)) {
-        if (res.options.default_display === "site_notes") {
-            loadSiteNotes();
-        } else {
-            loadGeneralNotes();
+        switch (res.options.default_display) {
+            case "site_notes":
+                loadSiteNotes();
+                break;
+            case "general_notes":
+                loadGeneralNotes();
+                break;
         }
     } else {
         siteNoteSetup(back.dataset[tabs[0].id]);
