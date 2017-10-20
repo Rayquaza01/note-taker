@@ -67,7 +67,7 @@ function domainModeSync(ele) {
     domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
 }
 function restoreOptions() {
-    browser.storage.local.get("options").then((res) => {
+    browser.storage.local.get().then((res) => {
         theme.value = res.options.theme;
         background_color.value = res.options.background_color;
         background_color_picker.value = "#" + res.options.background_color;
