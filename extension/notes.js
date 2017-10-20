@@ -78,7 +78,7 @@ async function deleteNote() {
 }
 async function loadCustomNote(ele) {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    if (ele.target.innerText !== back.innerText) {
+    if (ele.target.innerText !== back.innerText && ele.target.className !== "mdi mdi-delete") {
         back.dataset[tabs[0].id] = ele.target.innerText;
     } else {
         delete back.dataset[tabs[0].id]
@@ -106,13 +106,11 @@ async function loadSiteNotes(manualClick = false) {
     if (!tabs[0].incognito || manualClick || (res.options.private_browsing && tabs[0].incognito)) {
         var url = tabs[0].url;
         var site = await siteParser(url);
-        switch (site) {
-            case "general_notes":
-                loadGeneralNotes();
-                break;
-            case "site_notes":
-                siteNoteSetup(site);
-                break;
+        console.log(site);
+        if (site === "general_notes") {
+            loadGeneralNotes();
+        } else {
+            siteNoteSetup(site);
         }
     } else {
         loadGeneralNotes();
@@ -246,9 +244,13 @@ function openTab() {
 async function perTabSidebar() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
+    console.log(tabs[0].id)
+    console.log(!back.dataset.hasOwnProperty(tabs[0].id));
+    console.log(res.options.default_display)
     if (!back.dataset.hasOwnProperty(tabs[0].id)) {
         switch (res.options.default_display) {
             case "site_notes":
+                console.log("HERE")
                 loadSiteNotes();
                 break;
             case "general_notes":
