@@ -106,7 +106,6 @@ async function loadSiteNotes(manualClick = false) {
     if (!tabs[0].incognito || manualClick || (res.options.private_browsing && tabs[0].incognito)) {
         var url = tabs[0].url;
         var site = await siteParser(url);
-        console.log(site);
         if (site === "general_notes") {
             loadGeneralNotes();
         } else {
@@ -244,13 +243,9 @@ function openTab() {
 async function perTabSidebar() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    console.log(tabs[0].id)
-    console.log(!back.dataset.hasOwnProperty(tabs[0].id));
-    console.log(res.options.default_display)
     if (!back.dataset.hasOwnProperty(tabs[0].id)) {
         switch (res.options.default_display) {
             case "site_notes":
-                console.log("HERE")
                 loadSiteNotes();
                 break;
             case "general_notes":
