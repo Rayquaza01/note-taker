@@ -11,7 +11,7 @@ Documentation for the options page is available [here](https://github.com/Rayqua
  * Tabs: Required for per-site notes to detect what site is currently active.
 
 ## Acknowledgements
- * Using icons and fonts from [Material Design Icons](https://materialdesignicons.com/) ([OFL 1.1](http://scripts.sil.org/OFL)) 
+ * Using icons and fonts from [Material Design Icons](https://materialdesignicons.com/) ([OFL 1.1](http://scripts.sil.org/OFL))
  * Using [psl](https://github.com/wrangr/psl) ([MIT](https://opensource.org/licenses/MIT))
 
 [AMO Link](https://addons.mozilla.org/en-US/firefox/addon/note-taker/)
