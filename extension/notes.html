@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="notes.css">
-        <link rel="stylesheet" type="text/css" href="node_modules/mdi/css/materialdesignicons.min.css">
+        <link rel="stylesheet" type="text/css" href="third-party/mdi/css/materialdesignicons.min.css">
         <link rel="icon" type="img/png" href="icons/icon-96.png">
         <title>Note Taker</title>
     </head>
@@ -12,7 +12,7 @@
             <div id="note-list">
                 <input type="text" id="search" autocomplete="off" placeholder="Search">
                 <span class="container">
-                    <span class="name">General Notes</span>
+                    <span class="name">General Notes</span><span class="mdi mdi-plus"></span>
                 </span>
             </div>
         </div>
@@ -26,7 +26,7 @@
                     <div id="yes">Yes</div>
                     <div id="no">No</div>
                 </div>
-            </div> 
+            </div>
         </div>
         <textarea autofocus tabindex="1"></textarea>
         <div id="buttons">
@@ -41,7 +41,7 @@
                 <span class="mdi mdi-settings" title="Settings"></span>
             </div>
         </div>
-        <script src="node_modules/psl/dist/psl.min.js"></script>
+        <script src="third-party/psl.min.js"></script>
         <script src="site-parser.js"></script>
         <script src="notes.js"></script>
     </body>

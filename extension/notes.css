@@ -2,52 +2,60 @@ html, body {
     margin: 0;
     min-width: 100vw;
 }
+
 textarea {
     background-color: inherit;
     border: none;
     color: inherit;
     resize: none;
 }
+
 table {
     border-collapse: collapse;
     width: 100%;
 }
+
 .container {
     border-bottom: 1px solid;
-    float: left;
+    display: flex;
+    flex-direction: row;
     width: 100%;
 }
+
 .container:last-child {
     border-bottom: none;
 }
+
 #buttons, #overlay, #confirmDelete {
     background-color: inherit;
     color: inherit;
     font-family: sans-serif;
-    font-size: 20px;
+    font-size: 16px;
     white-space: nowrap;
     width: 100%;
 }
+
 #buttons {
     border-top: 1px solid;
 }
+
 .left {
     float: left;
     overflow-x: hidden;
     text-align: left;
     width: 66%;
 }
+
 .right {
     float: right;
     text-align: right;
     width: 33%;
 }
+
 .mdi:hover {
     cursor: pointer;
 }
-.mdi-delete {
-    float: right;
-}
+
 #overlay, #confirmDelete {
     height: 100%;
     left: 0;
@@ -57,9 +65,11 @@ table {
     transition: .5s;
     width: 0;
 }
+
 #overlay {
     z-index: 1;
 }
+
 #confirmDelete {
     align-items: center;
     display: flex;
@@ -68,10 +78,12 @@ table {
     white-space: normal;
     z-index: 2;
 }
+
 #ynbox {
     display: flex;
     justify-content: center;
 }
+
 #yes, #no {
     border: 1px solid;
     cursor: pointer;
@@ -79,25 +91,31 @@ table {
     text-align: center;
     width: 100px;
 }
+
 .name {
     cursor: pointer;
-    float: left;
+    flex-grow: 1;
 }
+
 #noteList {
-    margin: 20px;
+    margin: 16px;
     overflow-y: auto;
 }
+
 .mdi-close {
     display: none;
 }
+
 .mdi {
     cursor: pointer;
 }
+
 #siteName {
     align-items: center;
     display: flex;
     justify-content: center;
 }
+
 #search {
     border: none;
     width: 100%;

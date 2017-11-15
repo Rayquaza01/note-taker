@@ -1,0 +1,27 @@
+{
+  "name": "note-taker",
+  "version": "1.1.2",
+  "description": "Adds a text box to a toolbar button for taking notes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rayquaza01/note-taker.git"
+  },
+  "author": "Rayquaza01",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Rayquaza01/note-taker/issues"
+  },
+  "homepage": "https://github.com/Rayquaza01/note-taker#readme",
+  "dependencies": {
+    "fs-extra": "^4.0.2",
+    "mdi": "^2.0.46",
+    "psl": "^1.1.20"
+  },
+  "devDependencies": {
+    "ncp": "^2.0.0"
+  }
+}

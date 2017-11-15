@@ -10,7 +10,7 @@
         "spec": "latest",
         "type": "tag"
       },
-      "C:\\Users\\joeja_33zsq34\\RandomThings\\github\\note-taker\\extension"
+      "C:\\Users\\joeja_33zsq34\\RandomThings\\github\\note-taker"
     ]
   ],
   "_from": "mdi@latest",
@@ -39,13 +39,14 @@
     "type": "tag"
   },
   "_requiredBy": [
-    "#USER"
+    "#USER",
+    "/"
   ],
   "_resolved": "https://registry.npmjs.org/mdi/-/mdi-2.0.46.tgz",
   "_shasum": "65e07a7c622eda06e871cd6a336c60db8393e27a",
   "_shrinkwrap": null,
   "_spec": "mdi",
-  "_where": "C:\\Users\\joeja_33zsq34\\RandomThings\\github\\note-taker\\extension",
+  "_where": "C:\\Users\\joeja_33zsq34\\RandomThings\\github\\note-taker",
   "author": {
     "name": "Austin Andrews",
     "url": "http://twitter.com/templarian"

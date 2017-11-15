@@ -13,7 +13,7 @@
         "96": "icons/icon-96.png"
     },
     "background": {
-        "scripts": ["setup.js", "node_modules/psl/dist/psl.min.js", "site-parser.js"]
+        "scripts": ["setup.js", "third-party/psl.min.js", "site-parser.js"]
     },
     "permissions": [
         "storage",
