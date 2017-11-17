@@ -54,12 +54,12 @@ async function saveSiteNotes() {
 
 async function loadGeneralNotes() {
     textarea.focus();
-    toggle.className = "mdi mdi-web";
-    console.log("CHANGED")
-    toggle.title = "Switch to site notes"
+    toggle.value = "general_notes";
+    // toggle.className = "mdi mdi-web";
+    // toggle.title = "Switch to site notes"
     textarea.removeEventListener("input", saveSiteNotes);
     var res = await browser.storage.local.get("general_notes");
-    textarea.value = res.general_notes || "";
+    textarea.value = res.general_notes[0] || "";
     back.innerText = "General Notes";
     textarea.addEventListener("input", saveGeneralNotes);
 }
@@ -67,17 +67,8 @@ async function loadGeneralNotes() {
 async function siteNoteSetup(site, mode = "") {
     textarea.focus();
     textarea.removeEventListener("input", saveGeneralNotes);
-    if (mode === "url-notes") {
-        toggle.className = "mdi mdi-domain"
-        console.log("CHANGED")
-        toggle.title = "Switch to domain notes"
-    } else {
-        toggle.className = "mdi mdi-note";
-        console.log("CHANGED")
-        toggle.title = "Switch to general notes"
-    }
     var res = await browser.storage.local.get("site_notes");
-    textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site] : "";
+    textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site][0] : "";
     back.innerText = site;
     textarea.addEventListener("input", saveSiteNotes);
 }
@@ -95,22 +86,22 @@ async function deleteNote() {
     confirmDelete.style.width = "0";
 }
 
-async function loadCustomNote(ele) {
+async function loadCustomNote() {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    if (ele.target.innerText !== back.innerText && ele.target.className !== "mdi mdi-delete") {
-        back.dataset[tabs[0].id] = ele.target.innerText;
+    if (this.innerText !== back.innerText && this.className !== "mdi mdi-delete") {
+        back.dataset[tabs[0].id] = this.innerText;
     } else {
         delete back.dataset[tabs[0].id]
         loadSiteNotes();
     }
-    if (ele.target.innerText === "General Notes") {
+    if (this.innerText === "General Notes") {
         loadGeneralNotes();
-    } else if (ele.target.className === "mdi mdi-delete") {
+    } else if (this.className === "mdi mdi-delete") {
         confirmDelete.style.width = "100%";
-        siteName.innerText = ele.target.dataset.deleteSite;
+        siteName.innerText = this.dataset.deleteSite;
         return;
-    } else if (ele.target.className === "name") {
-        siteNoteSetup(ele.target.innerText);
+    } else if (this.className === "name") {
+        siteNoteSetup(this.innerText);
     } else {
         return;
     }
@@ -137,17 +128,29 @@ async function loadSiteNotes(manualClick = false, mode = "") {
     }
 }
 
-function changeNoteMode(ele) {
-    switch (ele.target.className) {
-        case "mdi mdi-web":
-            loadSiteNotes(true, "url-notes");
+function changeNoteMode() {
+    switch (this.value) {
+        case "url":
+            loadSiteNotes(true, "url");
             break;
-        case "mdi mdi-domain":
-            loadSiteNotes(true);
-        case "mdi mdi-note":
+        case "domain":
+            loadSiteNotes(true, "domain");
+            break;
+        case "general_notes":
             loadGeneralNotes();
             break;
     }
+    // switch (this.className) {
+    //     case "mdi mdi-web":
+    //         loadSiteNotes(true, "url");
+    //         break;
+    //     case "mdi mdi-domain":
+    //         loadSiteNotes(true);
+    //         break;
+    //     case "mdi mdi-note":
+    //         loadGeneralNotes();
+    //         break;
+    // }
 }
 
 async function setTheme(mode) {
@@ -166,17 +169,17 @@ async function setTheme(mode) {
     search.style.backgroundColor = "#" + res.options["background_color" + theme];
 }
 
-async function changeTheme(ele) {
+async function changeTheme() {
     var res = await browser.storage.local.get("options");
-    switch (ele.target.title) {
+    switch (this.title) {
         case "Switch to light theme":
-            ele.target.title = "Switch to dark theme";
+            this.title = "Switch to dark theme";
             res.options.theme = "light";
             browser.storage.local.set({options: res.options});
             setTheme("light");
             break;
         case "Switch to dark theme":
-            ele.target.title = "Switch to light theme";
+            this.title = "Switch to light theme";
             res.options.theme = "dark";
             browser.storage.local.set({options: res.options});
             setTheme("dark");
@@ -251,14 +254,12 @@ async function pageSetup() {
         window.addEventListener("resize", resizePage);
         resizePage();
     }
-    switch (res.options.default_display) {
-        case "general_notes":
-            loadGeneralNotes();
-            break;
-        case "site_notes":
-            loadSiteNotes();
-            break;
+    if (res.options.default_display === "general_notes") {
+        loadGeneralNotes();
+    } else if (res.options.default_display === "url" || res.options.default_display === "domain") {
+        loadSiteNotes(false, res.options.default_display);
     }
+    toggle.value = res.options.default_display;
     loadNoteList();
 }
 
@@ -312,7 +313,8 @@ document.addEventListener("focus", () => {
 });
 
 settings.addEventListener("click", options);
-toggle.addEventListener("click", changeNoteMode);
+// toggle.addEventListener("click", changeNoteMode);
+toggle.addEventListener("change", changeNoteMode);
 theme.addEventListener("click", changeTheme);
 back.addEventListener("click", openList);
 overlayClose.addEventListener("click", closeList);

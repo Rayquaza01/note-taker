@@ -37,20 +37,35 @@ table {
 
 #buttons {
     border-top: 1px solid;
+    display: flex;
+    flex-direction: row;
 }
 
-.left {
-    float: left;
+#buttons > .mdi {
+    padding-left: 5px;
+    /* padding-right: 5px; */
+}
+
+.mdi-keyboard-backspace {
     overflow-x: hidden;
-    text-align: left;
-    width: 66%;
 }
 
-.right {
-    float: right;
-    text-align: right;
-    width: 33%;
+.mdi-keyboard-backspace, .mdi-close {
+    flex-grow: 1;
 }
+
+/* .left { */
+/*     float: left; */
+/*     overflow-x: hidden; */
+/*     text-align: left; */
+/*     width: 66%; */
+/* } */
+
+/* .right { */
+/*     float: right; */
+/*     text-align: right; */
+/*     width: 33%; */
+/* } */
 
 .mdi:hover {
     cursor: pointer;
@@ -119,4 +134,9 @@ table {
 #search {
     border: none;
     width: 100%;
+}
+
+select {
+    border: none;
+    background-color: #EEEEEE;
 }

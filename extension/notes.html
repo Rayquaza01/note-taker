@@ -30,16 +30,17 @@
         </div>
         <textarea autofocus tabindex="1"></textarea>
         <div id="buttons">
-            <div class="bottom left">
                 <span class="mdi mdi-keyboard-backspace"></span>
                 <span class="mdi mdi-close">Close</span>
-            </div>
-            <div class="bottom right">
+                <select id="toggle">
+                    <option value="general_notes">General Notes</option>
+                    <option value="domain">Domain Notes</option>
+                    <option value="url">URL Notes</option>
+                </select>
+                <!-- <span id="toggle"></span> -->
                 <span class="mdi mdi-open-in-new" title="Open in New Tab"></span>
-                <span id="toggle"></span>
                 <span class="mdi mdi-theme-light-dark" id="theme"></span>
                 <span class="mdi mdi-settings" title="Settings"></span>
-            </div>
         </div>
         <script src="third-party/psl.min.js"></script>
         <script src="site-parser.js"></script>
