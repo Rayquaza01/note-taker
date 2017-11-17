@@ -23,7 +23,8 @@ const subdomains = document.getElementById("subdomains");
 const notification_badge = document.getElementById("notification-badge")
 const notification_badge_color = document.getElementById("notification-badge-color")
 const notification_badge_color_picker = document.getElementById("notification-badge-color-picker")
-const bullet_types = document.getElementById("bullet-types")
+const bullet_types = document.getElementById("bullet-types");
+const get_params = document.getElementById("get-params");
 const exportButton = document.getElementById("export");
 const importButton = document.getElementById("import");
 // End element variables
@@ -51,7 +52,8 @@ function saveOptions() {
         subdomains: subdomains.value.split(" ").filter(filterBlanks) || [],
         notification_badge: notification_badge.value || "disabled",
         notification_badge_color: notification_badge_color.value || "5a5b5c",
-        bullet_types: bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"]
+        bullet_types: bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"],
+        get_params: get_params.value.split(" ").filter(filterBlanks) || ["q", "v"]
     };
     browser.storage.local.set({
         options: options
@@ -85,7 +87,6 @@ function restoreOptions() {
         font_css.value = res.options.font_css;
         font_size.value = res.options.font_size;
         default_display.value = res.options.default_display;
-        per_site.value = res.options.per_site;
         private_browsing.value = res.options.private_browsing;
         subdomains_mode.value = res.options.subdomains_mode;
         subdomains.value = res.options.subdomains.join(" ");
@@ -93,6 +94,7 @@ function restoreOptions() {
         notification_badge_color.value = res.options.notification_badge_color;
         notification_badge_color_picker.value = "#" + res.options.notification_badge_color;
         bullet_types.value = res.options.bullet_types.join(" ");
+        get_params.value = res.options.get_params.join(" ");
         if (res.options.subdomains_mode === "whitelist") {
             domain_mode.innerText = "Enforce";
         }

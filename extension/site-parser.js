@@ -1,12 +1,23 @@
-async function siteParser(rawUrl, mode = "") {
+function allowedParams(search, allowed) {
+    params = []
+    for (var item of search.substring(1).split("&")) {
+        if (allowed.indexOf(item.split("=")[0]) > -1) {
+            params.push(item)
+        }
+    }
+    return params.length > 0 ? "?" + params.join("&") : "";
+}
+
+async function siteParser(rawUrl, mode) {
     var res = await browser.storage.local.get("options");
     var url = new URL(rawUrl);
     if (url.protocol === "about:") {
         return url.protocol + url.pathname;
     } else if (url.protocol.match(/https?:/g)) {
         var site = psl.parse(url.hostname);
-        if (res.options.per_site === "url" || mode === "url-notes") {
-            return url.hostname + url.pathname;
+        if (mode === "url") {
+            var params = allowedParams(url.search, res.options.get_params);
+            return url.hostname + url.pathname + params;
         } else if (res.options.subdomains_mode === "blacklist") {
             if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
                 return site.domain;

@@ -109,22 +109,23 @@
                 <td>
                     <select id="default-display">
                         <option value="general_notes">General Notes</option>
-                        <option value="site_notes">Site Notes</option>
+                        <option value="domain">Domain Notes</option>
+                        <option value="url">URL Notes</option>
                     </select>
                 </td>
             </tr>
-            <tr>
-                <td>
-                    Site Mode
-                    <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#site-mode">?</a>
-                </td>
-                <td>
-                    <select id="per-site">
-                        <option value="domain">Domain</option>
-                        <option value="url">URL</option>
-                    </select>
-                </td>
-            </tr>
+            <!-- <tr> -->
+            <!--     <td> -->
+            <!--         Site Mode -->
+            <!--         <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#site-mode">?</a> -->
+            <!--     </td> -->
+            <!--     <td> -->
+            <!--         <select id="per-site"> -->
+            <!--             <option value="domain">Domain</option> -->
+            <!--             <option value="url">URL</option> -->
+            <!--         </select> -->
+            <!--     </td> -->
+            <!-- </tr> -->
             <tr>
                 <td>
                     Site Notes in Private Browsing
@@ -186,6 +187,13 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#bullet-types">?</a>
                 </td>
                 <td><input id="bullet-types" type="text"></td>
+            </tr>
+            <tr>
+                <td>
+                    URL Parameters in Site Notes
+                    <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#url-parameters-in-site-notes">?</a>
+                </td>
+                <td><input id="get-params" type="text"></td>
             </tr>
         </table>
         <div class="center">
