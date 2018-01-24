@@ -20,19 +20,21 @@ const private_browsing = document.getElementById("private-browsing");
 const domain_mode = document.getElementById("domain-mode");
 const subdomains_mode = document.getElementById("subdomains-mode");
 const subdomains = document.getElementById("subdomains");
-const notification_badge = document.getElementById("notification-badge")
-const notification_badge_color = document.getElementById("notification-badge-color")
-const notification_badge_color_picker = document.getElementById("notification-badge-color-picker")
+const notification_badge = document.getElementById("notification-badge");
+const notification_badge_color = document.getElementById("notification-badge-color");
+const notification_badge_color_picker = document.getElementById("notification-badge-color-picker");
 const bullet_types = document.getElementById("bullet-types");
 const get_params = document.getElementById("get-params");
 const exportButton = document.getElementById("export");
 const importButton = document.getElementById("import");
 // End element variables
+
 function filterBlanks(item) {
     if (!item.match(/^$/)) {
         return item;
     }
 }
+
 function saveOptions() {
     var options = {
         theme: theme.value || "light",
@@ -59,15 +61,18 @@ function saveOptions() {
         options: options
     });
 }
+
 function colorSync(ele) {
     if (ele.target.dataset.hasOwnProperty("colorsync")) {
         var target = document.querySelector(ele.target.dataset.colorsync);
         target.value = target.type === "color" ? "#" + ele.target.value : ele.target.value.substring(1);
     }
 }
+
 function domainModeSync(ele) {
     domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
 }
+
 function restoreOptions() {
     browser.storage.local.get().then((res) => {
         theme.value = res.options.theme;
@@ -101,6 +106,7 @@ function restoreOptions() {
         exportButton.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
     });
 }
+
 function importOptions() {
     var reader = new FileReader();
     reader.addEventListener("load", () => {
@@ -112,6 +118,7 @@ function importOptions() {
     var file = importButton.files[0];
     reader.readAsText(file);
 }
+
 function changeBadgeColor() {
     browser.browserAction.setBadgeBackgroundColor({color: "#" + notification_badge_color.value});
 }
@@ -124,7 +131,7 @@ subdomains_mode.addEventListener("input", domainModeSync);
 // save options
 table.addEventListener("change", saveOptions); // Event delegation is a lot simpler than what I was trying
 // badges
-notification_badge_color.addEventListener("input", changeBadgeColor)
-notification_badge_color_picker.addEventListener("input", changeBadgeColor)
+notification_badge_color.addEventListener("input", changeBadgeColor);
+notification_badge_color_picker.addEventListener("input", changeBadgeColor);
 // onload
 document.addEventListener("DOMContentLoaded", restoreOptions);

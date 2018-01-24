@@ -1,8 +1,8 @@
 function allowedParams(search, allowed) {
-    params = []
+    var params = [];
     for (var item of search.substring(1).split("&")) {
         if (allowed.indexOf(item.split("=")[0]) > -1) {
-            params.push(item)
+            params.push(item);
         }
     }
     return params.length > 0 ? "?" + params.join("&") : "";

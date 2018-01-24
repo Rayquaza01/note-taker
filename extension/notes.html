@@ -12,7 +12,7 @@
             <div id="note-list">
                 <input type="text" id="search" autocomplete="off" placeholder="Search">
                 <span class="container">
-                    <span class="name">General Notes</span><span class="mdi mdi-plus"></span>
+                    <span class="name">General Notes</span>
                 </span>
             </div>
         </div>
@@ -28,10 +28,14 @@
                 </div>
             </div>
         </div>
+        <div id="tabstrip">
+            <span class="tab active"><span class="tabname">Tab 1</span><span class="mdi mdi-close"></span></span>
+            <span class="mdi mdi-plus"></span>
+        </div>
         <textarea autofocus tabindex="1"></textarea>
         <div id="buttons">
-                <span class="mdi mdi-keyboard-backspace"></span>
-                <span class="mdi mdi-close">Close</span>
+                <span class="mdi mdi-keyboard-backspace" id="back"></span>
+                <span class="mdi mdi-close" id="close">Close</span>
                 <select id="toggle">
                     <option value="general_notes">General Notes</option>
                     <option value="domain">Domain Notes</option>

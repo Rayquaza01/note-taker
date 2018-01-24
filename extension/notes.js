@@ -1,9 +1,9 @@
 const textarea = document.getElementsByTagName("textarea")[0];
-const back = document.getElementsByClassName("mdi-keyboard-backspace")[0];
+const back = document.getElementById("back");
 const toggle = document.getElementById("toggle");
 const theme = document.getElementById("theme");
 const overlay = document.getElementById("overlay");
-const overlayClose = document.getElementsByClassName("mdi-close")[0];
+const overlayClose = document.getElementById("close");
 const settings = document.getElementsByClassName("mdi-settings")[0];
 const noteList =  document.getElementById("note-list");
 const confirmDelete = document.getElementById("confirmDelete");
@@ -16,7 +16,7 @@ const search = document.getElementById("search");
 function getContext() {
     return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
         browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
-        browser.extension.getViews({type: "tab"}).indexOf(window) > -1 ? "tab" : undefined;
+            browser.extension.getViews({type: "tab"}).indexOf(window) > -1 ? "tab" : undefined;
 }
 
 function searchResults() {
@@ -48,7 +48,7 @@ function saveGeneralNotes() {
 
 async function saveSiteNotes() {
     var res = await browser.storage.local.get("site_notes");
-    res.site_notes[back.innerText] = textarea.value || "";
+    res.site_notes[back.innerText][0] = textarea.value || "";
     browser.storage.local.set({site_notes: res.site_notes});
 }
 
@@ -68,6 +68,7 @@ async function siteNoteSetup(site, mode = "") {
     textarea.focus();
     textarea.removeEventListener("input", saveGeneralNotes);
     var res = await browser.storage.local.get("site_notes");
+    console.log(res.site_notes[site])
     textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site][0] : "";
     back.innerText = site;
     textarea.addEventListener("input", saveSiteNotes);
