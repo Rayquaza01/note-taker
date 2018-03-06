@@ -12,6 +12,7 @@ const no = document.getElementById("no");
 const siteName = document.getElementById("siteName");
 const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
 const search = document.getElementById("search");
+const tabstrip = document.getElementById("tabstrip");
 
 function getContext() {
     return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
@@ -27,7 +28,7 @@ function searchResults() {
 }
 
 function openList() {
-    search.focus()
+    search.focus();
     overlay.style.width = "100%";
     back.style.display = "none";
     overlayClose.style.display = "block";
@@ -48,7 +49,10 @@ function saveGeneralNotes() {
 
 async function saveSiteNotes() {
     var res = await browser.storage.local.get("site_notes");
-    res.site_notes[back.innerText][0] = textarea.value || "";
+    if (!res.site_notes.hasOwnProperty(back.innerText)) {
+        res.site_notes[back.innerText] = []
+    }
+    res.site_notes[back.innerText][tabstrip.dataset.activeTab] = textarea.value || "";
     browser.storage.local.set({site_notes: res.site_notes});
 }
 
@@ -59,17 +63,16 @@ async function loadGeneralNotes() {
     // toggle.title = "Switch to site notes"
     textarea.removeEventListener("input", saveSiteNotes);
     var res = await browser.storage.local.get("general_notes");
-    textarea.value = res.general_notes[0] || "";
+    textarea.value = res.general_notes[tabstrip.dataset.activeTab] || "";
     back.innerText = "General Notes";
     textarea.addEventListener("input", saveGeneralNotes);
 }
 
-async function siteNoteSetup(site, mode = "") {
+async function siteNoteSetup(site) {
     textarea.focus();
     textarea.removeEventListener("input", saveGeneralNotes);
     var res = await browser.storage.local.get("site_notes");
-    console.log(res.site_notes[site])
-    textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site][0] : "";
+    textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site][tabstrip.dataset.activeTab] : "";
     back.innerText = site;
     textarea.addEventListener("input", saveSiteNotes);
 }
@@ -92,7 +95,7 @@ async function loadCustomNote() {
     if (this.innerText !== back.innerText && this.className !== "mdi mdi-delete") {
         back.dataset[tabs[0].id] = this.innerText;
     } else {
-        delete back.dataset[tabs[0].id]
+        delete back.dataset[tabs[0].id];
         loadSiteNotes();
     }
     if (this.innerText === "General Notes") {
@@ -131,15 +134,15 @@ async function loadSiteNotes(manualClick = false, mode = "") {
 
 function changeNoteMode() {
     switch (this.value) {
-        case "url":
-            loadSiteNotes(true, "url");
-            break;
-        case "domain":
-            loadSiteNotes(true, "domain");
-            break;
-        case "general_notes":
-            loadGeneralNotes();
-            break;
+    case "url":
+        loadSiteNotes(true, "url");
+        break;
+    case "domain":
+        loadSiteNotes(true, "domain");
+        break;
+    case "general_notes":
+        loadGeneralNotes();
+        break;
     }
     // switch (this.className) {
     //     case "mdi mdi-web":
@@ -157,12 +160,12 @@ function changeNoteMode() {
 async function setTheme(mode) {
     var res = await browser.storage.local.get("options");
     switch (mode) {
-        case "light":
-            var theme = "";
-            break;
-        case "dark":
-            var theme = "_dark";
-            break;
+    case "light":
+        var theme = "";
+        break;
+    case "dark":
+        var theme = "_dark";
+        break;
     }
     document.body.style.backgroundColor = "#" + res.options["background_color" + theme];
     document.body.style.color = "#" + res.options["font_color" + theme];
@@ -173,18 +176,18 @@ async function setTheme(mode) {
 async function changeTheme() {
     var res = await browser.storage.local.get("options");
     switch (this.title) {
-        case "Switch to light theme":
-            this.title = "Switch to dark theme";
-            res.options.theme = "light";
-            browser.storage.local.set({options: res.options});
-            setTheme("light");
-            break;
-        case "Switch to dark theme":
-            this.title = "Switch to light theme";
-            res.options.theme = "dark";
-            browser.storage.local.set({options: res.options});
-            setTheme("dark");
-            break;
+    case "Switch to light theme":
+        this.title = "Switch to dark theme";
+        res.options.theme = "light";
+        browser.storage.local.set({options: res.options});
+        setTheme("light");
+        break;
+    case "Switch to dark theme":
+        this.title = "Switch to light theme";
+        res.options.theme = "dark";
+        browser.storage.local.set({options: res.options});
+        setTheme("dark");
+        break;
     }
 }
 
@@ -220,12 +223,12 @@ function resizePage() {
 async function pageSetup() {
     var res = await browser.storage.local.get("options");
     switch (res.options.theme) {
-        case "light":
-            theme.title = "Switch to dark theme";
-            break;
-        case "dark":
-            theme.title = "Switch to light theme";
-            break;
+    case "light":
+        theme.title = "Switch to dark theme";
+        break;
+    case "dark":
+        theme.title = "Switch to light theme";
+        break;
     }
     setTheme(res.options.theme);
     if (res.options.font_family === "custom") {
@@ -236,20 +239,20 @@ async function pageSetup() {
     textarea.style.fontSize = res.options.font_size + "px";
     var context = getContext();
     switch (context) {
-        case "tab":
-            openInTab.style.display = "none";
-            toggle.style.display = "none";
-            break;
-        case "sidebar":
-            browser.tabs.onActivated.addListener(perTabSidebar);
-            browser.tabs.onUpdated.addListener(perTabSidebar);
-            break;
-        case "popup":
-            document.body.style.width = res.options.width + "px";
-            textarea.style.width = res.options.width + "px";
-            textarea.style.height = res.options.height + "px";
-            overlay.style.height = res.options.height + "px";
-            break;
+    case "tab":
+        openInTab.style.display = "none";
+        toggle.style.display = "none";
+        break;
+    case "sidebar":
+        browser.tabs.onActivated.addListener(perTabSidebar);
+        browser.tabs.onUpdated.addListener(perTabSidebar);
+        break;
+    case "popup":
+        document.body.style.width = res.options.width + "px";
+        textarea.style.width = res.options.width + "px";
+        textarea.style.height = res.options.height + "px";
+        overlay.style.height = res.options.height + "px";
+        break;
     }
     if (context !== "popup") {
         window.addEventListener("resize", resizePage);
@@ -259,6 +262,17 @@ async function pageSetup() {
         loadGeneralNotes();
     } else if (res.options.default_display === "url" || res.options.default_display === "domain") {
         loadSiteNotes(false, res.options.default_display);
+    }
+    if (res.options.tabnos === 0) {
+        tabstrip.style.display = "none";
+    } else if (res.options.tabnos > 1) {
+        for (var tab = 1; tab < res.options.tabnos; tab++) {
+            var newTab = document.createElement("span");
+            newTab.className = "tab";
+            newTab.dataset.tab = tab;
+            newTab.innerText = "Tab " + parseInt(tab + 1);
+            tabstrip.append(newTab);
+        }
     }
     toggle.value = res.options.default_display;
     loadNoteList();
@@ -280,12 +294,12 @@ async function perTabSidebar() {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!back.dataset.hasOwnProperty(tabs[0].id)) {
         switch (res.options.default_display) {
-            case "site_notes":
-                loadSiteNotes();
-                break;
-            case "general_notes":
-                loadGeneralNotes();
-                break;
+        case "site_notes":
+            loadSiteNotes();
+            break;
+        case "general_notes":
+            loadGeneralNotes();
+            break;
         }
     } else {
         siteNoteSetup(back.dataset[tabs[0].id]);
@@ -296,12 +310,12 @@ function listUpdate(changes) {
     if (changes.hasOwnProperty("site_notes")) {
         var oldValues = Object.keys(changes.site_notes.oldValue);
         var newValues = Object.keys(changes.site_notes.newValue);
-        for (var item of oldValues) {
+        for (let item of oldValues) {
             if (newValues.indexOf(item) === -1) {
                 removeNoteFromList(item);
             }
-        };
-        for (var item of newValues) {
+        }
+        for (let item of newValues) {
             if (oldValues.indexOf(item) === -1) {
                 addNoteToList(item);
             }
@@ -312,6 +326,13 @@ function listUpdate(changes) {
 document.addEventListener("focus", () => {
     textarea.focus();
 });
+
+async function tabSwitch(e) {
+    e.target.className = "tab active";
+    tabstrip.dataset.activeTab = e.target.tab;
+    var res = await browser.storage.local.get("options");
+    loadSiteNotes(true, res.options.default_display);
+}
 
 settings.addEventListener("click", options);
 // toggle.addEventListener("click", changeNoteMode);
@@ -324,5 +345,6 @@ no.addEventListener("click", closeConfirm);
 yes.addEventListener("click", deleteNote);
 openInTab.addEventListener("click", openTab);
 search.addEventListener("input", searchResults);
+tabstrip.addEventListener("click", tabSwitch);
 document.addEventListener("DOMContentLoaded", pageSetup);
 browser.storage.onChanged.addListener(listUpdate);

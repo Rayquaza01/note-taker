@@ -15,7 +15,6 @@ const font_family = document.getElementById("font-family");
 const font_css = document.getElementById("font-css");
 const font_size = document.getElementById("font-size");
 const default_display = document.getElementById("default-display");
-const per_site = document.getElementById("per-site");
 const private_browsing = document.getElementById("private-browsing");
 const domain_mode = document.getElementById("domain-mode");
 const subdomains_mode = document.getElementById("subdomains-mode");
@@ -27,6 +26,7 @@ const bullet_types = document.getElementById("bullet-types");
 const get_params = document.getElementById("get-params");
 const exportButton = document.getElementById("export");
 const importButton = document.getElementById("import");
+const tabnos = document.getElementById("tabnos");
 // End element variables
 
 function filterBlanks(item) {
@@ -48,14 +48,14 @@ function saveOptions() {
         font_css: font_css.value || "",
         font_size: parseInt(font_size.value) || 16,
         default_display: default_display.value || "general_notes",
-        per_site: per_site.value || "domain",
         private_browsing: JSON.parse(private_browsing.value) || false,
         subdomains_mode: subdomains_mode.value || "blacklist",
         subdomains: subdomains.value.split(" ").filter(filterBlanks) || [],
         notification_badge: notification_badge.value || "disabled",
         notification_badge_color: notification_badge_color.value || "5a5b5c",
         bullet_types: bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"],
-        get_params: get_params.value.split(" ").filter(filterBlanks) || ["q", "v"]
+        get_params: get_params.value.split(" ").filter(filterBlanks) || ["q", "v"],
+        tabnos: tabnos.value || 0
     };
     browser.storage.local.set({
         options: options
@@ -100,6 +100,7 @@ function restoreOptions() {
         notification_badge_color_picker.value = "#" + res.options.notification_badge_color;
         bullet_types.value = res.options.bullet_types.join(" ");
         get_params.value = res.options.get_params.join(" ");
+        tabnos.value = res.options.tabnos;
         if (res.options.subdomains_mode === "whitelist") {
             domain_mode.innerText = "Enforce";
         }
