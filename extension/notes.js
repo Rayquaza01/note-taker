@@ -41,10 +41,10 @@ function closeList() {
     textarea.focus();
 }
 
-function saveGeneralNotes() {
-    browser.storage.local.set({
-        general_notes: textarea.value || ""
-    });
+async function saveGeneralNotes() {
+    var gen = await browser.storage.local.get("general_notes");
+    gen.general_notes[tabstrip.dataset.activeTab] = textarea.value || "";
+    browser.storage.local.set(gen);
 }
 
 async function saveSiteNotes() {
@@ -72,7 +72,16 @@ async function siteNoteSetup(site) {
     textarea.focus();
     textarea.removeEventListener("input", saveGeneralNotes);
     var res = await browser.storage.local.get("site_notes");
-    textarea.value = res.site_notes.hasOwnProperty(site) ? res.site_notes[site][tabstrip.dataset.activeTab] : "";
+    if (res.site_notes.hasOwnProperty(site)) {
+        if (res.site_notes[site][tabstrip.dataset.activeTab] !== undefined) {
+            var text = res.site_notes[site][tabstrip.dataset.activeTab];
+        } else {
+            var text = "";
+        }
+    } else {
+        var text = "";
+    }
+    textarea.value = text;
     back.innerText = site;
     textarea.addEventListener("input", saveSiteNotes);
 }
@@ -93,9 +102,9 @@ async function deleteNote() {
 async function loadCustomNote() {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (this.innerText !== back.innerText && this.className !== "mdi mdi-delete") {
-        back.dataset[tabs[0].id] = this.innerText;
+        back.dataset[tabs[0].id.toString()] = this.innerText;
     } else {
-        delete back.dataset[tabs[0].id];
+        delete back.dataset[tabs[0].id.toString()];
         loadSiteNotes();
     }
     if (this.innerText === "General Notes") {
@@ -214,8 +223,13 @@ async function loadNoteList() {
     }
 }
 
-function resizePage() {
-    textarea.style.height = window.innerHeight - 25 + "px";
+async function resizePage() {
+    var res = await browser.storage.local.get("options");
+    if (res.options.tabnos > 1) {
+        textarea.style.height = window.innerHeight - 45 + "px";
+    } else {
+        textarea.style.height = window.innerHeight - 25 + "px";
+    }
     textarea.style.width = window.innerWidth - 2 + "px";
     overlay.style.height = window.innerHeight - 25 + "px";
 }
@@ -292,17 +306,19 @@ function openTab() {
 async function perTabSidebar() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    if (!back.dataset.hasOwnProperty(tabs[0].id)) {
+    console.log(tabs[0].id.toString())
+    console.log(back.dataset[tabs[0].id.toString()])
+    if (!back.dataset.hasOwnProperty(tabs[0].id.toString())) {
         switch (res.options.default_display) {
-        case "site_notes":
-            loadSiteNotes();
-            break;
-        case "general_notes":
-            loadGeneralNotes();
-            break;
+            case "site_notes":
+                loadSiteNotes();
+                break;
+            case "general_notes":
+                loadGeneralNotes();
+                break;
         }
     } else {
-        siteNoteSetup(back.dataset[tabs[0].id]);
+        siteNoteSetup(back.dataset[tabs[0].id.toString()]);
     }
 }
 
@@ -328,8 +344,10 @@ document.addEventListener("focus", () => {
 });
 
 async function tabSwitch(e) {
+    console.log(tabstrip.children)
+    Array.from(tabstrip.children)[tabstrip.dataset.activeTab].className = "tab"
     e.target.className = "tab active";
-    tabstrip.dataset.activeTab = e.target.tab;
+    tabstrip.dataset.activeTab = Array.from(tabstrip.children).indexOf(e.target);
     var res = await browser.storage.local.get("options");
     loadSiteNotes(true, res.options.default_display);
 }
