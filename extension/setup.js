@@ -23,13 +23,13 @@ function setOpts() {
         res.options.notification_badge_color = res.options.hasOwnProperty("notification_badge_color") ? res.options.notification_badge_color : "d90000";
         res.options.bullet_types = res.options.hasOwnProperty("bullet_types") ? res.options.bullet_types : ["*", "-", "+"];
         res.options.get_params = res.options.hasOwnProperty("get_params") ? res.options.get_params : ["q", "v"];
-        res.options.tabnos = res.options.hasOwnProperty("tabnos") ? res.options.tabnos : 0;
+        res.options.tabnos = res.options.hasOwnProperty("tabnos") ? res.options.tabnos : 1;
         res.site_notes = res.hasOwnProperty("site_notes") ? res.site_notes : {};
         if (!Array.isArray(res.general_notes)) {
             res.general_notes = [res.general_notes];
         }
         for (var site in res.site_notes) {
-            if (!Array.isArray(site)) {
+            if (!Array.isArray(res.site_notes[site])) {
                 res.site_notes[site] = [res.site_notes[site]];
             }
         }
@@ -73,11 +73,12 @@ function setBadge(bullet_types, notification_badge, notes, tabId) {
 
 async function setBadgeSite(tab) {
     var res = await browser.storage.local.get(["site_notes", "options"]);
-    var site = await siteParser(tab.url);
+    var site = await siteParser(tab.url, res.options.default_display);
     if (site === "general_notes") {
         setBadgeGeneral(tab);
     } else if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {
         if (res.site_notes.hasOwnProperty(site)) {
+            console.log(res.site_notes[site][0])
             setBadge(res.options.bullet_types, res.options.notification_badge, res.site_notes[site][0], tab.id);
         } else {
             browser.browserAction.setBadgeText({text: "", tabId: tab.id});
@@ -97,7 +98,8 @@ async function updateBadge() {
     var tabs = await browser.tabs.query({active: true});
     if (res.options.notification_badge !== "disabled") {
         switch (res.options.default_display) {
-        case "site_notes":
+        case "domain":
+        case "url":
             tabs.forEach(setBadgeSite);
             break;
         case "general_notes":

@@ -308,13 +308,13 @@ async function perTabSidebar() {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!back.dataset.hasOwnProperty(tabs[0].id.toString())) {
         switch (res.options.default_display) {
-            case "domain":
-            case "url":
-                loadSiteNotes(false, res.options.default_display);
-                break;
-            case "general_notes":
-                loadGeneralNotes();
-                break;
+        case "domain":
+        case "url":
+            loadSiteNotes(false, res.options.default_display);
+            break;
+        case "general_notes":
+            loadGeneralNotes();
+            break;
         }
     } else {
         siteNoteSetup(back.dataset[tabs[0].id.toString()]);
