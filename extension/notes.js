@@ -252,6 +252,7 @@ async function pageSetup() {
         textarea.style.fontFamily = res.options.font_family;
     }
     textarea.style.fontSize = res.options.font_size + "px";
+    textarea.style.padding = res.options.padding + "px";
     var context = getContext();
     switch (context) {
     case "tab":

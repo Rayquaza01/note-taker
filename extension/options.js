@@ -1,4 +1,7 @@
 // Element Variables
+const upload = document.getElementById("upload");
+const download = document.getElementById("download");
+const padding = document.getElementById("padding");
 const table = document.getElementsByTagName("table")[0];
 const theme = document.getElementById("theme");
 const background_color = document.getElementById("background-color");
@@ -55,7 +58,8 @@ function saveOptions() {
         notification_badge_color: notification_badge_color.value || "5a5b5c",
         bullet_types: bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"],
         get_params: get_params.value.split(" ").filter(filterBlanks) || ["q", "v"],
-        tabnos: tabnos.value || 0
+        tabnos: tabnos.value || 0,
+        padding: padding.value
     };
     browser.storage.local.set({
         options: options
@@ -73,7 +77,7 @@ function domainModeSync(ele) {
     domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
 }
 
-function restoreOptions() {
+async function restoreOptions() {
     browser.storage.local.get().then((res) => {
         theme.value = res.options.theme;
         background_color.value = res.options.background_color;
@@ -101,6 +105,7 @@ function restoreOptions() {
         bullet_types.value = res.options.bullet_types.join(" ");
         get_params.value = res.options.get_params.join(" ");
         tabnos.value = res.options.tabnos;
+        padding.value=res.options.padding;
         if (res.options.subdomains_mode === "whitelist") {
             domain_mode.innerText = "Enforce";
         }
@@ -123,6 +128,21 @@ function importOptions() {
 function changeBadgeColor() {
     browser.browserAction.setBadgeBackgroundColor({color: "#" + notification_badge_color.value});
 }
+
+async function uploadToSync() {
+    var res = await browser.storage.local.get();
+    browser.storage.sync.set(res);
+}
+
+async function downloadFromSync() {
+    var res = await browser.storage.sync.get();
+    await browser.storage.local.clear();
+    browser.storage.local.set(res);
+}
+
+// sync
+upload.addEventListener("click", uploadToSync);
+download.addEventListener("click", downloadFromSync);
 // import
 importButton.addEventListener("change", importOptions);
 // color sync
