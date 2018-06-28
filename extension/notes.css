@@ -49,7 +49,7 @@ table {
 }
 
 .tab.active {
-    box-shadow: inset 0 2px #0a84ff;
+    box-shadow: inset 0 2px;
 }
 
 .tab {
