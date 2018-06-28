@@ -8,31 +8,34 @@
         <title>Note Taker</title>
     </head>
     <body>
-        <div id="overlay">
-            <div id="note-list">
-                <input type="text" id="search" autocomplete="off" placeholder="Search">
-                <span class="container">
-                    <span class="name">General Notes</span>
-                </span>
-            </div>
-        </div>
-        <div id="confirmDelete">
-            <div>
-                <span>
-                    Are you sure you want to delete the note:<br>
-                    <span id="siteName"></span>
-                </span>
-                <div id="ynbox">
-                    <div id="yes">Yes</div>
-                    <div id="no">No</div>
+        <div class="box">
+            <div id="overlay" class="row content">
+                <div id="note-list">
+                    <input type="text" id="search" autocomplete="off" placeholder="Search">
+                    <span class="container">
+                        <span class="name">General Notes</span>
+                    </span>
                 </div>
             </div>
-        </div>
-        <div id="tabstrip" data-active-tab="0">
-            <span class="tab active" data-tab="0">Tab 1</span>
-        </div>
-        <textarea autofocus tabindex="1"></textarea>
-        <div id="buttons">
+            <div id="confirmDelete" class="row content">
+                <div>
+                    <span>
+                        Are you sure you want to delete the note:<br>
+                        <span id="siteName"></span>
+                    </span>
+                    <div id="ynbox">
+                        <div id="yes">Yes</div>
+                        <div id="no">No</div>
+                    </div>
+                </div>
+            </div>
+            <div id="tabstrip" class="row header" data-active-tab="0">
+                <span class="tab active" data-tab="0">Tab 1</span>
+            </div>
+            <div class="row content">
+                <textarea autofocus tabindex="1"></textarea>
+            </div>
+            <div id="buttons" class="row footer">
                 <span class="mdi mdi-keyboard-backspace" id="back"></span>
                 <span class="mdi mdi-close" id="close">Close</span>
                 <select id="toggle">
@@ -44,6 +47,7 @@
                 <span class="mdi mdi-open-in-new" title="Open in New Tab"></span>
                 <span class="mdi mdi-theme-light-dark" id="theme"></span>
                 <span class="mdi mdi-settings" title="Settings"></span>
+            </div>
         </div>
         <script src="third-party/psl.min.js"></script>
         <script src="site-parser.js"></script>

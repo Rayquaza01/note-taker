@@ -13,6 +13,7 @@ const siteName = document.getElementById("siteName");
 const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
 const search = document.getElementById("search");
 const tabstrip = document.getElementById("tabstrip");
+const buttons = document.getElementById("buttons");
 
 function getContext() {
     return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
@@ -31,6 +32,7 @@ function openList() {
     search.focus();
     overlay.style.width = "100%";
     back.style.display = "none";
+    buttons.style.zIndex = "1";
     overlayClose.style.display = "block";
 }
 
@@ -38,6 +40,7 @@ function closeList() {
     overlay.style.width = "0";
     back.style.display = "block";
     overlayClose.style.display = "none";
+    buttons.style.zIndex = "0";
     textarea.focus();
 }
 
@@ -177,10 +180,15 @@ async function setTheme(mode) {
         var theme = "_dark";
         break;
     }
-    document.body.style.backgroundColor = "#" + res.options["background_color" + theme];
-    document.body.style.color = "#" + res.options["font_color" + theme];
-    search.style.color = "#" + res.options["font_color" + theme];
-    search.style.backgroundColor = "#" + res.options["background_color" + theme];
+    bg_color = "#" + res.options["background_color" + theme];
+    font_color = "#" + res.options["font_color" + theme];
+    toggle.style.backgroundColor = bg_color;
+    document.body.style.backgroundColor = bg_color;
+    search.style.backgroundColor = bg_color;
+    overlay.style.backgroundColor = bg_color;
+    confirmDelete.style.backgroundColor = bg_color;
+    document.body.style.color = font_color;
+    search.style.color = font_color;
 }
 
 async function changeTheme() {
@@ -224,17 +232,6 @@ async function loadNoteList() {
     }
 }
 
-async function resizePage() {
-    var res = await browser.storage.local.get("options");
-    if (res.options.tabnos > 1) {
-        textarea.style.height = window.innerHeight - 45 + "px";
-    } else {
-        textarea.style.height = window.innerHeight - 25 + "px";
-    }
-    textarea.style.width = window.innerWidth - 2 + "px";
-    overlay.style.height = window.innerHeight - 25 + "px";
-}
-
 async function pageSetup() {
     var res = await browser.storage.local.get("options");
     switch (res.options.theme) {
@@ -265,14 +262,11 @@ async function pageSetup() {
         break;
     case "popup":
         document.body.style.width = res.options.width + "px";
+        document.body.style.height = res.options.height + 40 + "px";
         textarea.style.width = res.options.width + "px";
         textarea.style.height = res.options.height + "px";
         overlay.style.height = res.options.height + "px";
         break;
-    }
-    if (context !== "popup") {
-        window.addEventListener("resize", resizePage);
-        resizePage();
     }
     if (res.options.default_display === "general_notes") {
         loadGeneralNotes();
@@ -285,7 +279,6 @@ async function pageSetup() {
         for (var tab = 1; tab < res.options.tabnos; tab++) {
             var newTab = document.createElement("span");
             newTab.className = "tab";
-            newTab.dataset.tab = tab;
             newTab.innerText = "Tab " + parseInt(tab + 1);
             tabstrip.append(newTab);
         }

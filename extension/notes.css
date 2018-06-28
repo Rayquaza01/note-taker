@@ -1,6 +1,6 @@
 html, body {
     margin: 0;
-    min-width: 100vw;
+    height: 100%;
 }
 
 textarea {
@@ -8,6 +8,7 @@ textarea {
     border: none;
     color: inherit;
     resize: none;
+    height: 100%;
 }
 
 table {
@@ -171,5 +172,24 @@ table {
 
 select {
     border: none;
-    background-color: #EEEEEE;
+    /* background-color: #EEEEEE; */
+}
+
+/* https://stackoverflow.com/questions/90178/make-a-div-fill-the-height-of-the-remaining-screen-space */
+.box {
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+}
+
+.box .row.header {
+    flex: 0 1 auto;
+}
+
+.box .row.content {
+    flex: 1 1 auto;
+}
+
+.box .row.footer {
+    flex: 0 1 20px;
 }
