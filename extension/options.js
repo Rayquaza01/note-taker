@@ -131,6 +131,7 @@ function changeBadgeColor() {
 
 async function uploadToSync() {
     var res = await browser.storage.local.get();
+    await browser.storage.sync.clear();
     browser.storage.sync.set(res);
 }
 
