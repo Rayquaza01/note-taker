@@ -277,7 +277,7 @@ async function pageSetup() {
     } else if (res.options.default_display === "url" || res.options.default_display === "domain") {
         loadSiteNotes(false, res.options.default_display);
     }
-    if (res.options.tabnos === 0) {
+    if (res.options.tabnos < 2) {
         tabstrip.style.display = "none";
     } else if (res.options.tabnos > 1) {
         for (var tab = 1; tab < res.options.tabnos; tab++) {
@@ -306,12 +306,11 @@ function openTab() {
 async function perTabSidebar() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    console.log(tabs[0].id.toString())
-    console.log(back.dataset[tabs[0].id.toString()])
     if (!back.dataset.hasOwnProperty(tabs[0].id.toString())) {
         switch (res.options.default_display) {
-            case "site_notes":
-                loadSiteNotes();
+            case "domain":
+            case "url":
+                loadSiteNotes(false, res.options.default_display);
                 break;
             case "general_notes":
                 loadGeneralNotes();
@@ -344,7 +343,6 @@ document.addEventListener("focus", () => {
 });
 
 async function tabSwitch(e) {
-    console.log(tabstrip.children)
     Array.from(tabstrip.children)[tabstrip.dataset.activeTab].className = "tab"
     e.target.className = "tab active";
     tabstrip.dataset.activeTab = Array.from(tabstrip.children).indexOf(e.target);
