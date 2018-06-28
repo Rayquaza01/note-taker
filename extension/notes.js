@@ -23,7 +23,7 @@ function getContext() {
 function searchResults() {
     var names = document.getElementsByClassName("name");
     for (var name of names) {
-        name.parentNode.style.display = name.innerText.toUpperCase().indexOf(search.value.toUpperCase()) > -1 ? "block" : "none";
+        name.parentNode.style.display = name.innerText.toUpperCase().indexOf(search.value.toUpperCase()) > -1 ? "flex" : "none";
     }
 }
 
@@ -99,22 +99,23 @@ async function deleteNote() {
     confirmDelete.style.width = "0";
 }
 
-async function loadCustomNote() {
+async function loadCustomNote(e) {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    if (this.innerText !== back.innerText && this.className !== "mdi mdi-delete") {
-        back.dataset[tabs[0].id.toString()] = this.innerText;
+    console.log(e.target.innerText)
+    if (e.target.innerText !== back.innerText && e.target.className !== "mdi mdi-delete") {
+        back.dataset[tabs[0].id] = e.target.innerText;
     } else {
-        delete back.dataset[tabs[0].id.toString()];
+        delete back.dataset[tabs[0].id];
         loadSiteNotes();
     }
-    if (this.innerText === "General Notes") {
+    if (e.target.innerText === "General Notes") {
         loadGeneralNotes();
-    } else if (this.className === "mdi mdi-delete") {
+    } else if (e.target.className === "mdi mdi-delete") {
         confirmDelete.style.width = "100%";
-        siteName.innerText = this.dataset.deleteSite;
+        siteName.innerText = e.target.dataset.deleteSite;
         return;
-    } else if (this.className === "name") {
-        siteNoteSetup(this.innerText);
+    } else if (e.target.className === "name") {
+        siteNoteSetup(e.target.innerText);
     } else {
         return;
     }
@@ -134,7 +135,7 @@ async function loadSiteNotes(manualClick = false, mode = "") {
         if (site === "general_notes") {
             loadGeneralNotes();
         } else {
-            siteNoteSetup(site, mode);
+            siteNoteSetup(site);
         }
     } else {
         loadGeneralNotes();
@@ -306,7 +307,7 @@ function openTab() {
 async function perTabSidebar() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    if (!back.dataset.hasOwnProperty(tabs[0].id.toString())) {
+    if (!back.dataset.hasOwnProperty(tabs[0].id)) {
         switch (res.options.default_display) {
         case "domain":
         case "url":
@@ -317,7 +318,7 @@ async function perTabSidebar() {
             break;
         }
     } else {
-        siteNoteSetup(back.dataset[tabs[0].id.toString()]);
+        siteNoteSetup(back.dataset[tabs[0].id]);
     }
 }
 
@@ -362,5 +363,5 @@ yes.addEventListener("click", deleteNote);
 openInTab.addEventListener("click", openTab);
 search.addEventListener("input", searchResults);
 tabstrip.addEventListener("click", tabSwitch);
-document.addEventListener("DOMContentLoaded", pageSetup);
 browser.storage.onChanged.addListener(listUpdate);
+document.addEventListener("DOMContentLoaded", pageSetup);
