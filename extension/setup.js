@@ -24,7 +24,7 @@ function setOpts() {
         res.options.bullet_types = res.options.hasOwnProperty("bullet_types") ? res.options.bullet_types : ["*", "-", "+"];
         res.options.get_params = res.options.hasOwnProperty("get_params") ? res.options.get_params : ["q", "v"];
         res.options.tabnos = res.options.hasOwnProperty("tabnos") ? res.options.tabnos : 1;
-        res.options.padding = res.options.hasOwnProperty("padding") ? res.options.padding : 0;
+        res.options.padding = res.options.hasOwnProperty("padding") ? res.options.padding : 5;
         res.site_notes = res.hasOwnProperty("site_notes") ? res.site_notes : {};
         if (!Array.isArray(res.general_notes)) {
             res.general_notes = [res.general_notes];

@@ -9,6 +9,7 @@ textarea {
     color: inherit;
     resize: none;
     height: 100%;
+    width: 100%;
 }
 
 table {
@@ -27,7 +28,7 @@ table {
     border-bottom: none;
 }
 
-#buttons, #overlay, #confirmDelete {
+#buttons, #overlay, #confirmDelete, #tabstrip {
     background-color: inherit;
     color: inherit;
     font-family: sans-serif;
@@ -73,7 +74,6 @@ table {
 
 #buttons > .mdi {
     padding-left: 5px;
-    /* padding-right: 5px; */
 }
 
 #buttons > .mdi:first-child {
@@ -87,19 +87,6 @@ table {
 #buttons > .mdi-keyboard-backspace, #buttons > .mdi-close {
     flex-grow: 1;
 }
-
-/* .left { */
-/*     float: left; */
-/*     overflow-x: hidden; */
-/*     text-align: left; */
-/*     width: 66%; */
-/* } */
-
-/* .right { */
-/*     float: right; */
-/*     text-align: right; */
-/*     width: 33%; */
-/* } */
 
 .mdi:hover {
     cursor: pointer;
@@ -172,18 +159,17 @@ table {
 
 select {
     border: none;
-    /* background-color: #EEEEEE; */
 }
 
 /* https://stackoverflow.com/questions/90178/make-a-div-fill-the-height-of-the-remaining-screen-space */
 .box {
     display: flex;
     flex-flow: column;
-    height: 100vh;
+    height: 100%;
 }
 
 .box .row.header {
-    flex: 0 1 auto;
+    flex: 0 1 20px;
 }
 
 .box .row.content {

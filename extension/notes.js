@@ -68,6 +68,7 @@ async function loadGeneralNotes() {
     var res = await browser.storage.local.get("general_notes");
     textarea.value = res.general_notes[tabstrip.dataset.activeTab] || "";
     back.innerText = "General Notes";
+    back.title = "General Notes";
     textarea.addEventListener("input", saveGeneralNotes);
 }
 
@@ -86,11 +87,12 @@ async function siteNoteSetup(site) {
     }
     textarea.value = text;
     back.innerText = site;
+    back.title = site;
     textarea.addEventListener("input", saveSiteNotes);
 }
 
 function removeNoteFromList(name) {
-    var deleteButton = noteList.querySelector("span[data-delete-site='" + name + "']");
+    var deleteButton = noteList.querySelector(`span[data-delete-site=${name}]`);
     deleteButton.parentNode.parentNode.removeChild(deleteButton.parentNode);
 }
 
@@ -134,40 +136,31 @@ async function loadSiteNotes(manualClick = false, mode = "") {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!tabs[0].incognito || manualClick || (res.options.private_browsing && tabs[0].incognito)) {
         var url = tabs[0].url;
-        var site = await siteParser(url, mode);
+        var site = await siteParser(url, mode || res.options.default_display);
         if (site === "general_notes") {
             loadGeneralNotes();
         } else {
             siteNoteSetup(site);
+            toggle.value = mode || res.options.default_display;
         }
     } else {
         loadGeneralNotes();
     }
 }
 
-function changeNoteMode() {
+async function changeNoteMode() {
+    var tabs = await browser.tabs.query({active: true, currentWindow: true});
     switch (this.value) {
     case "url":
-        loadSiteNotes(true, "url");
-        break;
     case "domain":
-        loadSiteNotes(true, "domain");
+        // back.dataset[tabs[0].id] = await siteParser(tabs[0].url, this.value);
+        loadSiteNotes(true, this.value);
         break;
     case "general_notes":
+        // back.dataset[tabs[0].id] = "General Notes";
         loadGeneralNotes();
         break;
     }
-    // switch (this.className) {
-    //     case "mdi mdi-web":
-    //         loadSiteNotes(true, "url");
-    //         break;
-    //     case "mdi mdi-domain":
-    //         loadSiteNotes(true);
-    //         break;
-    //     case "mdi mdi-note":
-    //         loadGeneralNotes();
-    //         break;
-    // }
 }
 
 async function setTheme(mode) {
@@ -189,6 +182,7 @@ async function setTheme(mode) {
     confirmDelete.style.backgroundColor = bg_color;
     document.body.style.color = font_color;
     search.style.color = font_color;
+    toggle.style.color = font_color;
 }
 
 async function changeTheme() {
@@ -214,6 +208,7 @@ function addNoteToList(site) {
     cont.className = "container";
     var name = document.createElement("span");
     name.innerText = site;
+    name.title = site;
     name.className = "name";
     var del = document.createElement("span");
     del.dataset.deleteSite = site;
