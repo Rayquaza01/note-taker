@@ -337,7 +337,13 @@ async function tabSwitch(e) {
     e.target.className = "tab active";
     tabstrip.dataset.activeTab = Array.from(tabstrip.children).indexOf(e.target);
     var res = await browser.storage.local.get("options");
-    loadSiteNotes(true, res.options.default_display);
+    switch (res.options.default_display) {
+    case "domain":
+    case "url":
+        loadSiteNotes(true, res.options.default_display);
+    case "general_notes":
+        loadGeneralNotes();
+    }
 }
 
 settings.addEventListener("click", options);
