@@ -170,6 +170,8 @@ select {
 
 .box .row.header {
     flex: 0 1 20px;
+    /* https://stackoverflow.com/questions/33557043/shrink-to-fit-content-in-flexbox-or-flex-basis-content-workaround */
+    overflow-y: auto
 }
 
 .box .row.content {
@@ -178,4 +180,5 @@ select {
 
 .box .row.footer {
     flex: 0 1 20px;
+    overflow-y: auto
 }

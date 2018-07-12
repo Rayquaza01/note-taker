@@ -136,12 +136,12 @@ async function loadSiteNotes(manualClick = false, mode = "") {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!tabs[0].incognito || manualClick || (res.options.private_browsing && tabs[0].incognito)) {
         var url = tabs[0].url;
-        var site = await siteParser(url, mode || res.options.default_display);
+        var site = await siteParser(url, mode || toggle.value);
         if (site === "general_notes") {
             loadGeneralNotes();
         } else {
             siteNoteSetup(site);
-            toggle.value = mode || res.options.default_display;
+            toggle.value = mode || toggle.value;
         }
     } else {
         loadGeneralNotes();
@@ -150,11 +150,11 @@ async function loadSiteNotes(manualClick = false, mode = "") {
 
 async function changeNoteMode() {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    switch (this.value) {
+    switch (toggle.value) {
     case "url":
     case "domain":
-        // back.dataset[tabs[0].id] = await siteParser(tabs[0].url, this.value);
-        loadSiteNotes(true, this.value);
+        // back.dataset[tabs[0].id] = await siteParser(tabs[0].url, toggle.value);
+        loadSiteNotes(true, toggle.value);
         break;
     case "general_notes":
         // back.dataset[tabs[0].id] = "General Notes";
@@ -265,7 +265,7 @@ async function pageSetup() {
     }
     if (res.options.default_display === "general_notes") {
         loadGeneralNotes();
-    } else if (res.options.default_display === "url" || res.options.default_display === "domain") {
+    } else if (/url|domain/.test(res.options.default_display)) {
         loadSiteNotes(false, res.options.default_display);
     }
     if (res.options.tabnos < 2) {
@@ -297,10 +297,10 @@ async function perTabSidebar() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!back.dataset.hasOwnProperty(tabs[0].id)) {
-        switch (res.options.default_display) {
+        switch (toggle.value) {
         case "domain":
         case "url":
-            loadSiteNotes(false, res.options.default_display);
+            loadSiteNotes(false, toggle.value);
             break;
         case "general_notes":
             loadGeneralNotes();
@@ -337,12 +337,14 @@ async function tabSwitch(e) {
     e.target.className = "tab active";
     tabstrip.dataset.activeTab = Array.from(tabstrip.children).indexOf(e.target);
     var res = await browser.storage.local.get("options");
-    switch (res.options.default_display) {
+    switch (toggle.value) {
     case "domain":
     case "url":
-        loadSiteNotes(true, res.options.default_display);
+        loadSiteNotes(true, toggle.value);
+        break;
     case "general_notes":
         loadGeneralNotes();
+        break;
     }
 }
 
