@@ -78,39 +78,36 @@ function domainModeSync(ele) {
 }
 
 async function restoreOptions() {
-    browser.storage.local.get().then((res) => {
-        theme.value = res.options.theme;
-        background_color.value = res.options.background_color;
-        background_color_picker.value = "#" + res.options.background_color;
-        background_color_dark.value = res.options.background_color_dark;
-        background_color_picker_dark.value = "#" + res.options.background_color_dark;
-        font_color.value = res.options.font_color;
-        font_color_picker.value = "#" + res.options.font_color;
-        font_color_dark.value = res.options.font_color_dark;
-        font_color_picker_dark.value = "#" + res.options.font_color_dark;
-        document.getElementById("width").value = res.options.width;
-        width.value = res.options.width;
-        document.getElementById("height").value = res.options.height;
-        height.value = res.options.height;
-        font_family.value = res.options.font_family;
-        font_css.value = res.options.font_css;
-        font_size.value = res.options.font_size;
-        default_display.value = res.options.default_display;
-        private_browsing.value = res.options.private_browsing;
-        subdomains_mode.value = res.options.subdomains_mode;
-        subdomains.value = res.options.subdomains.join(" ");
-        notification_badge.value = res.options.notification_badge;
-        notification_badge_color.value = res.options.notification_badge_color;
-        notification_badge_color_picker.value = "#" + res.options.notification_badge_color;
-        bullet_types.value = res.options.bullet_types.join(" ");
-        get_params.value = res.options.get_params.join(" ");
-        tabnos.value = res.options.tabnos;
-        padding.value=res.options.padding;
-        if (res.options.subdomains_mode === "whitelist") {
-            domain_mode.innerText = "Enforce";
-        }
-        exportButton.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
-    });
+    var res = await browser.storage.local.get()
+    theme.value = res.options.theme;
+    background_color.value = res.options.background_color;
+    background_color_picker.value = "#" + res.options.background_color;
+    background_color_dark.value = res.options.background_color_dark;
+    background_color_picker_dark.value = "#" + res.options.background_color_dark;
+    font_color.value = res.options.font_color;
+    font_color_picker.value = "#" + res.options.font_color;
+    font_color_dark.value = res.options.font_color_dark;
+    font_color_picker_dark.value = "#" + res.options.font_color_dark;
+    width.value = res.options.width;
+    height.value = res.options.height;
+    font_family.value = res.options.font_family;
+    font_css.value = res.options.font_css;
+    font_size.value = res.options.font_size;
+    default_display.value = res.options.default_display;
+    private_browsing.value = res.options.private_browsing;
+    subdomains_mode.value = res.options.subdomains_mode;
+    subdomains.value = res.options.subdomains.join(" ");
+    notification_badge.value = res.options.notification_badge;
+    notification_badge_color.value = res.options.notification_badge_color;
+    notification_badge_color_picker.value = "#" + res.options.notification_badge_color;
+    bullet_types.value = res.options.bullet_types.join(" ");
+    get_params.value = res.options.get_params.join(" ");
+    tabnos.value = res.options.tabnos;
+    padding.value = res.options.padding;
+    if (res.options.subdomains_mode === "whitelist") {
+        domain_mode.innerText = "Enforce";
+    }
+    exportButton.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
 }
 
 function importOptions() {
