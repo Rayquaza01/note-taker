@@ -36,3 +36,6 @@ tr:hover a {
 button {
     height: 30px;
 }
+#exportTextarea {
+    height: 500px;
+}

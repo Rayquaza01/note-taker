@@ -29,6 +29,7 @@ const bullet_types = document.getElementById("bullet-types");
 const get_params = document.getElementById("get-params");
 const exportButton = document.getElementById("export");
 const importButton = document.getElementById("import");
+const exportTextarea = document.getElementById("exportTextarea");
 const tabnos = document.getElementById("tabnos");
 // End element variables
 
@@ -107,7 +108,13 @@ async function restoreOptions() {
     if (res.options.subdomains_mode === "whitelist") {
         domain_mode.innerText = "Enforce";
     }
+    exportNotesAndOptions();
+}
+
+async function exportNotesAndOptions() {
+    var res = await browser.storage.local.get();
     exportButton.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
+    exportTextarea.value = JSON.stringify(res, null, "    ");
 }
 
 function importOptions() {
@@ -148,9 +155,11 @@ table.addEventListener("input", colorSync);
 // Subdomain Sync
 subdomains_mode.addEventListener("input", domainModeSync);
 // save options
-table.addEventListener("change", saveOptions); // Event delegation is a lot simpler than what I was trying
+table.addEventListener("input", saveOptions); // Event delegation is a lot simpler than what I was trying
 // badges
 notification_badge_color.addEventListener("input", changeBadgeColor);
 notification_badge_color_picker.addEventListener("input", changeBadgeColor);
+// on storage change
+browser.storage.onChanged.addListener(exportNotesAndOptions);
 // onload
 document.addEventListener("DOMContentLoaded", restoreOptions);
