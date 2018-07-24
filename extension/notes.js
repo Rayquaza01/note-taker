@@ -106,22 +106,32 @@ async function deleteNote() {
 
 async function loadCustomNote(e) {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    console.log(e.target.innerText)
-    if (e.target.innerText !== back.innerText && e.target.className !== "mdi mdi-delete") {
-        back.dataset[tabs[0].id] = e.target.innerText;
-    } else {
-        delete back.dataset[tabs[0].id];
-        loadSiteNotes();
+    if (e.target.className === "name") {
+        if (e.target.innerText !== back.innerText) {
+            back.dataset[tabs[0].id] = e.target.innerText;
+        } else if (e.target.innerText === back.innerText) {
+            delete back.dataset[tabs[0].id];
+            loadSiteNotes();
+        }
     }
     if (e.target.innerText === "General Notes") {
         loadGeneralNotes();
-    } else if (e.target.className === "mdi mdi-delete") {
+    }
+    switch (e.target.className) {
+    case "mdi mdi-delete":
         confirmDelete.style.width = "100%";
         siteName.innerText = e.target.dataset.deleteSite;
         return;
-    } else if (e.target.className === "name") {
-        siteNoteSetup(e.target.innerText);
-    } else {
+    case "mdi mdi-open-in-new":
+        browser.tabs.create({
+            active: true,
+            url: "https://" + e.target.dataset.open
+        });
+        break;
+    case "name":
+        siteNoteSetup(back.dataset[tabs[0].id]);
+        break;
+    default:
         return;
     }
     closeList();
@@ -210,10 +220,16 @@ function addNoteToList(site) {
     name.innerText = site;
     name.title = site;
     name.className = "name";
+    cont.append(name);
+    if (site.indexOf("about:") === -1) {
+        var open = document.createElement("span");
+        open.dataset.open = site;
+        open.className = "mdi mdi-open-in-new";
+        cont.append(open);
+    }
     var del = document.createElement("span");
     del.dataset.deleteSite = site;
     del.className = "mdi mdi-delete";
-    cont.append(name);
     cont.append(del);
     noteList.append(cont);
 }

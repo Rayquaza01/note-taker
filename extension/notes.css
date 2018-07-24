@@ -183,3 +183,7 @@ select {
     flex: 0 1 20px;
     overflow-y: hidden;
 }
+
+.bold {
+    font-weight: bold;
+}
