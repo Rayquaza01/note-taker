@@ -5,7 +5,7 @@
         <link rel="stylesheet" type="text/css" href="options.css">
     </head>
     <body>
-        <table>
+        <table id="table">
             <tr>
                 <td>
                     Theme
@@ -24,8 +24,8 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#background--font-colors-light">?</a>
                 </td>
                 <td class="center">#
-                    <input type="text" id="background-color" data-colorsync="#background-color-picker">
-                    <input type="color" id="background-color-picker" data-colorsync="#background-color">
+                    <input type="text" id="background_color" data-colorsync="#background_color_picker">
+                    <input type="color" id="background_color_picker" data-colorsync="#background_color">
                 </td>
             </tr>
             <tr>
@@ -34,8 +34,8 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#background--font-colors-light">?</a>
                 </td>
                 <td class="center">#
-                    <input type="text" id="font-color" data-colorsync="#font-color-picker">
-                    <input type="color" id="font-color-picker" data-colorsync="#font-color">
+                    <input type="text" id="font_color" data-colorsync="#font_color_picker">
+                    <input type="color" id="font_color_picker" data-colorsync="#font_color">
                 </td>
             </tr>
             <tr>
@@ -44,8 +44,8 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#background--font-color-dark">?</a>
                 </td>
                 <td class="center">#
-                    <input type="text" id="background-color-dark" data-colorsync="#background-color-picker-dark">
-                    <input type="color" id="background-color-picker-dark" data-colorsync="#background-color-dark">
+                    <input type="text" id="background_color_dark" data-colorsync="#background_color_picker_dark">
+                    <input type="color" id="background_color_picker_dark" data-colorsync="#background_color_dark">
                 </td>
             </tr>
             <tr>
@@ -54,8 +54,8 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#background--font-color-dark">?</a>
                 </td>
                 <td class="center">#
-                    <input type="text" id="font-color-dark" data-colorsync="#font-color-picker-dark">
-                    <input type="color" id="font-color-picker-dark" data-colorsync="#font-color-dark">
+                    <input type="text" id="font_color_dark" data-colorsync="#font_color_picker_dark">
+                    <input type="color" id="font_color_picker_dark" data-colorsync="#font_color_dark">
                 </td>
             </tr>
             <tr>
@@ -78,7 +78,7 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#font">?</a>
                 </td>
                 <td>
-                    <select id="font-family">
+                    <select id="font_family">
                         <option value="default">Default</option>
                         <option value="sans-serif">Sans Serif</option>
                         <option value="serif">Serif</option>
@@ -92,14 +92,14 @@
                     Custom Font CSS
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#custom-font-css">?</a>
                 </td>
-                <td><input id="font-css" type="text"></td>
+                <td><input id="font_css" type="text"></td>
             </tr>
             <tr>
                 <td>
                     Font Size
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#font-size">?</a>
                 </td>
-                <td><input type="number" id="font-size"> px</td>
+                <td><input type="number" id="font_size"> px</td>
             </tr>
             <tr>
                 <td>
@@ -107,7 +107,7 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#default-display">?</a>
                 </td>
                 <td>
-                    <select id="default-display">
+                    <select id="default_display">
                         <option value="general_notes">General Notes</option>
                         <option value="domain">Domain Notes</option>
                         <option value="url">URL Notes</option>
@@ -132,7 +132,7 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#site-notes-in-private-browsing">?</a>
                 </td>
                 <td>
-                    <select id="private-browsing">
+                    <select id="private_browsing">
                         <option value=false>Disabled</option>
                         <option value=true>Enabled</option>
                     </select>
@@ -144,7 +144,7 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#subdomains-mode">?</a>
                 </td>
                 <td>
-                    <select id="subdomains-mode">
+                    <select id="subdomains_mode">
                         <option value="blacklist">Blacklist</option>
                         <option value="whitelist">Whitelist</option>
                     </select>
@@ -152,7 +152,7 @@
             </tr>
             <tr>
                 <td>
-                    <span id="domain-mode">Ignore</span> Subdomains On
+                    <span id="domain_mode">Ignore</span> Subdomains On
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#ignoreenforce-subdomains">?</a>
                 </td>
                 <td><input id="subdomains" type="text"></td>
@@ -163,7 +163,7 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#notification-badge">?</a>
                 </td>
                 <td>
-                    <select id="notification-badge">
+                    <select id="notification_badge">
                         <option value="disabled">Disabled</option>
                         <option value="enabled">Enabled</option>
                         <option value="bullets">Bullets</option>
@@ -177,8 +177,8 @@
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#notification-badge-color">?</a>
                 </td>
                 <td class="center">
-                    #<input type="text" id="notification-badge-color" data-colorsync="#notification-badge-color-picker">
-                    <input type="color" id="notification-badge-color-picker" data-colorsync="#notification-badge-color">
+                    #<input type="text" id="notification_badge_color" data-colorsync="#notification_badge_color_picker">
+                    <input type="color" id="notification_badge_color_picker" data-colorsync="#notification_badge_color">
                 </td>
             </tr>
             <tr>
@@ -186,14 +186,14 @@
                     Bullet Types
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#bullet-types">?</a>
                 </td>
-                <td><input id="bullet-types" type="text"></td>
+                <td><input id="bullet_types" type="text"></td>
             </tr>
             <tr>
                 <td>
                     URL Parameters in Site Notes
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#url-parameters-in-site-notes">?</a>
                 </td>
-                <td><input id="get-params" type="text"></td>
+                <td><input id="get_params" type="text"></td>
             </tr>
             <tr>
                 <td>
@@ -220,6 +220,7 @@
         </div>
         This text box contains the raw JSON for notes and options.
         <textarea id="exportTextarea"></textarea>
+        <script src="elements.js"></script>
         <script src="options.js"></script>
     </body>
 </html>

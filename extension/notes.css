@@ -80,11 +80,11 @@ table {
     padding-left: 0;
 }
 
-.mdi-keyboard-backspace {
+.mdi-close {
     overflow-x: hidden;
 }
 
-#buttons > .mdi-keyboard-backspace, #buttons > .mdi-close {
+#buttons > .mdi-menu, #buttons > .mdi-keyboard-backspace {
     flex-grow: 1;
     overflow-y: hidden;
 }
@@ -139,7 +139,7 @@ table {
     overflow-y: auto;
 }
 
-#buttons > .mdi-close {
+#buttons > .mdi-keyboard-backspace {
     display: none;
 }
 

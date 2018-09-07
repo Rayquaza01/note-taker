@@ -1,38 +1,5 @@
 // Element Variables
-const DOM = {
-    upload: document.getElementById("upload"),
-    download: document.getElementById("download"),
-    padding: document.getElementById("padding"),
-    table: document.getElementsByTagName("table")[0],
-    theme: document.getElementById("theme"),
-    background_color: document.getElementById("background-color"),
-    font_color: document.getElementById("font-color"),
-    background_color_dark: document.getElementById("background-color-dark"),
-    font_color_dark: document.getElementById("font-color-dark"),
-    background_color_picker: document.getElementById("background-color-picker"),
-    font_color_picker: document.getElementById("font-color-picker"),
-    background_color_picker_dark: document.getElementById("background-color-picker-dark"),
-    font_color_picker_dark: document.getElementById("font-color-picker-dark"),
-    width: document.getElementById("width"),
-    height: document.getElementById("height"),
-    font_family: document.getElementById("font-family"),
-    font_css: document.getElementById("font-css"),
-    font_size: document.getElementById("font-size"),
-    default_display: document.getElementById("default-display"),
-    private_browsing: document.getElementById("private-browsing"),
-    domain_mode: document.getElementById("domain-mode"),
-    subdomains_mode: document.getElementById("subdomains-mode"),
-    subdomains: document.getElementById("subdomains"),
-    notification_badge: document.getElementById("notification-badge"),
-    notification_badge_color: document.getElementById("notification-badge-color"),
-    notification_badge_color_picker: document.getElementById("notification-badge-color-picker"),
-    bullet_types: document.getElementById("bullet-types"),
-    get_params: document.getElementById("get-params"),
-    exportButton: document.getElementById("export"),
-    importButton: document.getElementById("import"),
-    exportTextarea: document.getElementById("exportTextarea"),
-    tabnos: document.getElementById("tabnos")
-}
+const DOM = generateElementsVariable(["upload", "download", "padding", "table", "theme", "background_color", "font_color", "background_color_dark", "font_color_dark", "background_color_picker", "font_color_picker", "background_color_picker_dark", "font_color_picker_dark", "width", "height", "font_family", "font_css", "font_size", "default_display", "private_browsing", "domain_mode", "subdomains_mode", "subdomains", "notification_badge", "notification_badge_color", "notification_badge_color_picker", "bullet_types", "get_params", "export", "import", "exportTextarea", "tabnos"]);
 
 function filterBlanks(item) {
     if (!item.match(/^$/)) {
@@ -114,7 +81,7 @@ async function restoreOptions() {
 
 async function exportNotesAndOptions() {
     var res = await browser.storage.local.get();
-    DOM.exportButton.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
+    DOM.export.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
     DOM.exportTextarea.value = JSON.stringify(res, null, "    ");
 }
 
@@ -126,12 +93,12 @@ function importOptions() {
         browser.storage.local.set(obj);
         location.reload();
     });
-    var file = DOM.importButton.files[0];
+    var file = DOM.import.files[0];
     reader.readAsText(file);
 }
 
 function changeBadgeColor() {
-    browser.browserAction.setBadgeBackgroundColor({color: "#" + notification_badge_color.value});
+    browser.browserAction.setBadgeBackgroundColor({color: "#" + DOM.notification_badge_color.value});
 }
 
 async function uploadToSync() {
@@ -150,7 +117,7 @@ async function downloadFromSync() {
 DOM.upload.addEventListener("click", uploadToSync);
 DOM.download.addEventListener("click", downloadFromSync);
 // import
-DOM.importButton.addEventListener("change", importOptions);
+DOM.import.addEventListener("change", importOptions);
 // color sync
 DOM.table.addEventListener("input", colorSync);
 // Subdomain Sync

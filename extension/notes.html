@@ -11,7 +11,7 @@
     <body>
         <div class="box">
             <div id="overlay" class="row content">
-                <div id="note-list">
+                <div id="note_list">
                     <input type="text" id="search" autocomplete="off" placeholder="Search">
                     <span class="container">
                         <span class="name">General Notes</span>
@@ -34,22 +34,23 @@
                 <span class="tab active" data-tab="0">Tab 1</span>
             </div>
             <div class="row content">
-                <textarea autofocus tabindex="1"></textarea>
+                <textarea id="textarea" autofocus tabindex="1"></textarea>
             </div>
             <div id="buttons" class="row footer">
-                <span class="mdi mdi-keyboard-backspace" id="back"></span>
-                <span class="mdi mdi-close" id="close">Close</span>
+                <span class="mdi mdi-menu" id="back"></span>
+                <span class="mdi mdi-keyboard-backspace" id="close">Close</span>
                 <select id="toggle">
                     <option value="general_notes">General Notes</option>
                     <option value="domain">Domain Notes</option>
                     <option value="url">URL Notes</option>
                 </select>
                 <!-- <span id="toggle"></span> -->
-                <span class="mdi mdi-open-in-new" title="Open in New Tab"></span>
+                <span id="open_in_new" class="mdi mdi-open-in-new" title="Open in New Tab"></span>
                 <span class="mdi mdi-theme-light-dark" id="theme"></span>
-                <span class="mdi mdi-settings" title="Settings"></span>
+                <span id="settings" class="mdi mdi-settings" title="Settings"></span>
             </div>
         </div>
+        <script src="elements.js"></script>
         <script src="third-party/psl.min.js"></script>
         <script src="site-parser.js"></script>
         <script src="notes.js"></script>

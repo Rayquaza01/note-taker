@@ -1,19 +1,4 @@
-const textarea = document.getElementsByTagName("textarea")[0];
-const back = document.getElementById("back");
-const toggle = document.getElementById("toggle");
-const theme = document.getElementById("theme");
-const overlay = document.getElementById("overlay");
-const overlayClose = document.getElementById("close");
-const settings = document.getElementsByClassName("mdi-settings")[0];
-const noteList =  document.getElementById("note-list");
-const confirmDelete = document.getElementById("confirmDelete");
-const yes = document.getElementById("yes");
-const no = document.getElementById("no");
-const siteName = document.getElementById("siteName");
-const openInTab = document.getElementsByClassName("mdi-open-in-new")[0];
-const search = document.getElementById("search");
-const tabstrip = document.getElementById("tabstrip");
-const buttons = document.getElementById("buttons");
+const DOM = generateElementsVariable(["textarea", "back", "toggle", "theme", "overlay", "close", "settings", "note_list", "confirmDelete", "yes", "no", "siteName", "open_in_new", "search", "tabstrip", "buttons"]);
 
 function getContext() {
     return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
@@ -24,93 +9,93 @@ function getContext() {
 function searchResults() {
     var names = document.getElementsByClassName("name");
     for (var name of names) {
-        name.parentNode.style.display = name.innerText.toUpperCase().indexOf(search.value.toUpperCase()) > -1 ? "flex" : "none";
+        name.parentNode.style.display = name.innerText.toUpperCase().indexOf(DOM.search.value.toUpperCase()) > -1 ? "flex" : "none";
     }
 }
 
 function openList() {
-    search.focus();
-    overlay.style.width = "100%";
-    back.style.display = "none";
-    buttons.style.zIndex = "1";
-    overlayClose.style.display = "block";
+    DOM.search.focus();
+    DOM.overlay.style.width = "100%";
+    DOM.back.style.display = "none";
+    DOM.buttons.style.zIndex = "1";
+    DOM.close.style.display = "block";
 }
 
 function closeList() {
-    overlay.style.width = "0";
-    back.style.display = "block";
-    overlayClose.style.display = "none";
-    buttons.style.zIndex = "0";
-    textarea.focus();
+    DOM.overlay.style.width = "0";
+    DOM.back.style.display = "block";
+    DOM.close.style.display = "none";
+    DOM.buttons.style.zIndex = "0";
+    DOM.textarea.focus();
 }
 
 async function saveGeneralNotes() {
     var gen = await browser.storage.local.get("general_notes");
-    gen.general_notes[tabstrip.dataset.activeTab] = textarea.value || "";
+    gen.general_notes[DOM.tabstrip.dataset.activeTab] = DOM.textarea.value || "";
     browser.storage.local.set(gen);
 }
 
 async function saveSiteNotes() {
     var res = await browser.storage.local.get("site_notes");
-    if (!res.site_notes.hasOwnProperty(back.innerText)) {
-        res.site_notes[back.innerText] = []
+    if (!res.site_notes.hasOwnProperty(DOM.back.innerText)) {
+        res.site_notes[DOM.back.innerText] = []
     }
-    res.site_notes[back.innerText][tabstrip.dataset.activeTab] = textarea.value || "";
+    res.site_notes[DOM.back.innerText][DOM.tabstrip.dataset.activeTab] = DOM.textarea.value || "";
     browser.storage.local.set({site_notes: res.site_notes});
 }
 
 async function loadGeneralNotes() {
-    textarea.focus();
-    toggle.value = "general_notes";
-    // toggle.className = "mdi mdi-web";
-    // toggle.title = "Switch to site notes"
-    textarea.removeEventListener("input", saveSiteNotes);
+    DOM.textarea.focus();
+    DOM.toggle.value = "general_notes";
+    // DOM.toggle.className = "mdi mdi-web";
+    // DOM.toggle.title = "Switch to site notes"
+    DOM.textarea.removeEventListener("input", saveSiteNotes);
     var res = await browser.storage.local.get("general_notes");
-    textarea.value = res.general_notes[tabstrip.dataset.activeTab] || "";
-    back.innerText = "General Notes";
-    back.title = "General Notes";
-    textarea.addEventListener("input", saveGeneralNotes);
+    DOM.textarea.value = res.general_notes[DOM.tabstrip.dataset.activeTab] || "";
+    DOM.back.innerText = "General Notes";
+    DOM.back.title = "General Notes";
+    DOM.textarea.addEventListener("input", saveGeneralNotes);
 }
 
 async function siteNoteSetup(site) {
-    textarea.focus();
-    textarea.removeEventListener("input", saveGeneralNotes);
+    DOM.textarea.focus();
+    DOM.textarea.removeEventListener("input", saveGeneralNotes);
     var res = await browser.storage.local.get("site_notes");
     if (res.site_notes.hasOwnProperty(site)) {
-        if (res.site_notes[site][tabstrip.dataset.activeTab] !== undefined) {
-            var text = res.site_notes[site][tabstrip.dataset.activeTab];
+        if (res.site_notes[site][DOM.tabstrip.dataset.activeTab] !== undefined) {
+            var text = res.site_notes[site][DOM.tabstrip.dataset.activeTab];
         } else {
             var text = "";
         }
     } else {
         var text = "";
     }
-    textarea.value = text;
-    back.innerText = site;
-    back.title = site;
-    textarea.addEventListener("input", saveSiteNotes);
+    DOM.textarea.value = text;
+    DOM.back.innerText = site;
+    DOM.back.title = site;
+    DOM.textarea.addEventListener("input", saveSiteNotes);
 }
 
 function removeNoteFromList(name) {
-    var deleteButton = noteList.querySelector(`span[data-delete-site=${name}]`);
+    var deleteButton = document.querySelector(`span[data-delete-site="${name}"]`);
     deleteButton.parentNode.parentNode.removeChild(deleteButton.parentNode);
 }
 
 async function deleteNote() {
     var res = await browser.storage.local.get("site_notes");
-    delete res.site_notes[siteName.innerText];
+    delete res.site_notes[DOM.siteName.innerText];
     browser.storage.local.set({site_notes: res.site_notes});
-    removeNoteFromList(siteName.innerText);
-    confirmDelete.style.width = "0";
+    removeNoteFromList(DOM.siteName.innerText);
+    DOM.confirmDelete.style.width = "0";
 }
 
 async function loadCustomNote(e) {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (e.target.className === "name") {
-        if (e.target.innerText !== back.innerText) {
-            back.dataset[tabs[0].id] = e.target.innerText;
-        } else if (e.target.innerText === back.innerText) {
-            delete back.dataset[tabs[0].id];
+        if (e.target.innerText !== DOM.back.innerText) {
+            DOM.back.dataset[tabs[0].id] = e.target.innerText;
+        } else if (e.target.innerText === DOM.back.innerText) {
+            delete DOM.back.dataset[tabs[0].id];
             loadSiteNotes();
         }
     }
@@ -119,8 +104,8 @@ async function loadCustomNote(e) {
     }
     switch (e.target.className) {
     case "mdi mdi-delete":
-        confirmDelete.style.width = "100%";
-        siteName.innerText = e.target.dataset.deleteSite;
+        DOM.confirmDelete.style.width = "100%";
+        DOM.siteName.innerText = e.target.dataset.deleteSite;
         return;
     case "mdi mdi-open-in-new":
         browser.tabs.create({
@@ -129,7 +114,7 @@ async function loadCustomNote(e) {
         });
         break;
     case "name":
-        siteNoteSetup(back.dataset[tabs[0].id]);
+        siteNoteSetup(DOM.back.dataset[tabs[0].id]);
         break;
     default:
         return;
@@ -138,7 +123,7 @@ async function loadCustomNote(e) {
 }
 
 function closeConfirm() {
-    confirmDelete.style.width = "0";
+    DOM.confirmDelete.style.width = "0";
 }
 
 async function loadSiteNotes(manualClick = false, mode = "") {
@@ -146,12 +131,12 @@ async function loadSiteNotes(manualClick = false, mode = "") {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!tabs[0].incognito || manualClick || (res.options.private_browsing && tabs[0].incognito)) {
         var url = tabs[0].url;
-        var site = await siteParser(url, mode || toggle.value);
+        var site = await siteParser(url, mode || DOM.toggle.value);
         if (site === "general_notes") {
             loadGeneralNotes();
         } else {
             siteNoteSetup(site);
-            toggle.value = mode || toggle.value;
+            DOM.toggle.value = mode || DOM.toggle.value;
         }
     } else {
         loadGeneralNotes();
@@ -160,14 +145,14 @@ async function loadSiteNotes(manualClick = false, mode = "") {
 
 async function changeNoteMode() {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    switch (toggle.value) {
+    switch (DOM.toggle.value) {
     case "url":
     case "domain":
-        // back.dataset[tabs[0].id] = await siteParser(tabs[0].url, toggle.value);
-        loadSiteNotes(true, toggle.value);
+        // DOM.back.dataset[tabs[0].id] = await siteParser(tabs[0].url, DOM.toggle.value);
+        loadSiteNotes(true, DOM.toggle.value);
         break;
     case "general_notes":
-        // back.dataset[tabs[0].id] = "General Notes";
+        // DOM.back.dataset[tabs[0].id] = "General Notes";
         loadGeneralNotes();
         break;
     }
@@ -176,23 +161,25 @@ async function changeNoteMode() {
 async function setTheme(mode) {
     var res = await browser.storage.local.get("options");
     switch (mode) {
-    case "light":
-        var theme = "";
-        break;
-    case "dark":
-        var theme = "_dark";
-        break;
+        case "light": {
+            var theme = "";
+            break;
+        }
+        case "dark": {
+            var theme = "_dark";
+            break;
+        }
     }
     bg_color = "#" + res.options["background_color" + theme];
     font_color = "#" + res.options["font_color" + theme];
-    toggle.style.backgroundColor = bg_color;
+    DOM.toggle.style.backgroundColor = bg_color;
     document.body.style.backgroundColor = bg_color;
-    search.style.backgroundColor = bg_color;
-    overlay.style.backgroundColor = bg_color;
-    confirmDelete.style.backgroundColor = bg_color;
+    DOM.search.style.backgroundColor = bg_color;
+    DOM.overlay.style.backgroundColor = bg_color;
+    DOM.confirmDelete.style.backgroundColor = bg_color;
     document.body.style.color = font_color;
-    search.style.color = font_color;
-    toggle.style.color = font_color;
+    DOM.search.style.color = font_color;
+    DOM.toggle.style.color = font_color;
 }
 
 async function changeTheme() {
@@ -200,13 +187,13 @@ async function changeTheme() {
     switch (this.title) {
     case "Switch to light theme":
         this.title = "Switch to dark theme";
-        res.options.theme = "light";
+        res.options.DOM.theme = "light";
         browser.storage.local.set({options: res.options});
         setTheme("light");
         break;
     case "Switch to dark theme":
         this.title = "Switch to light theme";
-        res.options.theme = "dark";
+        res.options.DOM.theme = "dark";
         browser.storage.local.set({options: res.options});
         setTheme("dark");
         break;
@@ -231,7 +218,7 @@ function addNoteToList(site) {
     del.dataset.deleteSite = site;
     del.className = "mdi mdi-delete";
     cont.append(del);
-    noteList.append(cont);
+    DOM.note_list.append(cont);
 }
 
 async function loadNoteList() {
@@ -247,25 +234,25 @@ async function pageSetup() {
     var res = await browser.storage.local.get("options");
     switch (res.options.theme) {
     case "light":
-        theme.title = "Switch to dark theme";
+        DOM.theme.title = "Switch to dark theme";
         break;
     case "dark":
-        theme.title = "Switch to light theme";
+        DOM.theme.title = "Switch to light theme";
         break;
     }
     setTheme(res.options.theme);
     if (res.options.font_family === "custom") {
-        textarea.style.fontFamily = res.options.font_css;
+        DOM.textarea.style.fontFamily = res.options.font_css;
     } else if (res.options.font_family !== "default") {
-        textarea.style.fontFamily = res.options.font_family;
+        DOM.textarea.style.fontFamily = res.options.font_family;
     }
-    textarea.style.fontSize = res.options.font_size + "px";
-    textarea.style.padding = res.options.padding + "px";
+    DOM.textarea.style.fontSize = res.options.font_size + "px";
+    DOM.textarea.style.padding = res.options.padding + "px";
     var context = getContext();
     switch (context) {
     case "tab":
-        openInTab.style.display = "none";
-        toggle.style.display = "none";
+        DOM.open_in_new.style.display = "none";
+        DOM.toggle.style.display = "none";
         break;
     case "sidebar":
         browser.tabs.onActivated.addListener(perTabSidebar);
@@ -274,9 +261,9 @@ async function pageSetup() {
     case "popup":
         document.body.style.width = res.options.width + "px";
         document.body.style.height = res.options.height + 40 + "px";
-        textarea.style.width = res.options.width + "px";
-        textarea.style.height = res.options.height + "px";
-        overlay.style.height = res.options.height + "px";
+        DOM.textarea.style.width = res.options.width + "px";
+        DOM.textarea.style.height = res.options.height + "px";
+        DOM.overlay.style.height = res.options.height + "px";
         break;
     }
     if (res.options.default_display === "general_notes") {
@@ -285,16 +272,16 @@ async function pageSetup() {
         loadSiteNotes(false, res.options.default_display);
     }
     if (res.options.tabnos < 2) {
-        tabstrip.style.display = "none";
+        DOM.tabstrip.style.display = "none";
     } else if (res.options.tabnos > 1) {
         for (var tab = 1; tab < res.options.tabnos; tab++) {
             var newTab = document.createElement("span");
             newTab.className = "tab";
             newTab.innerText = "Tab " + parseInt(tab + 1);
-            tabstrip.append(newTab);
+            DOM.tabstrip.append(newTab);
         }
     }
-    toggle.value = res.options.default_display;
+    DOM.toggle.value = res.options.default_display;
     loadNoteList();
 }
 
@@ -312,18 +299,18 @@ function openTab() {
 async function perTabSidebar() {
     var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    if (!back.dataset.hasOwnProperty(tabs[0].id)) {
-        switch (toggle.value) {
+    if (!DOM.back.dataset.hasOwnProperty(tabs[0].id)) {
+        switch (DOM.toggle.value) {
         case "domain":
         case "url":
-            loadSiteNotes(false, toggle.value);
+            loadSiteNotes(false, DOM.toggle.value);
             break;
         case "general_notes":
             loadGeneralNotes();
             break;
         }
     } else {
-        siteNoteSetup(back.dataset[tabs[0].id]);
+        siteNoteSetup(DOM.back.dataset[tabs[0].id]);
     }
 }
 
@@ -345,18 +332,18 @@ function listUpdate(changes) {
 }
 
 document.addEventListener("focus", () => {
-    textarea.focus();
+    DOM.textarea.focus();
 });
 
 async function tabSwitch(e) {
-    Array.from(tabstrip.children)[tabstrip.dataset.activeTab].className = "tab"
+    Array.from(DOM.tabstrip.children)[DOM.tabstrip.dataset.activeTab].className = "tab"
     e.target.className = "tab active";
-    tabstrip.dataset.activeTab = Array.from(tabstrip.children).indexOf(e.target);
+    DOM.tabstrip.dataset.activeTab = Array.from(DOM.tabstrip.children).indexOf(e.target);
     var res = await browser.storage.local.get("options");
-    switch (toggle.value) {
+    switch (DOM.toggle.value) {
     case "domain":
     case "url":
-        loadSiteNotes(true, toggle.value);
+        loadSiteNotes(true, DOM.toggle.value);
         break;
     case "general_notes":
         loadGeneralNotes();
@@ -364,17 +351,17 @@ async function tabSwitch(e) {
     }
 }
 
-settings.addEventListener("click", options);
-// toggle.addEventListener("click", changeNoteMode);
-toggle.addEventListener("change", changeNoteMode);
-theme.addEventListener("click", changeTheme);
-back.addEventListener("click", openList);
-overlayClose.addEventListener("click", closeList);
-noteList.addEventListener("click", loadCustomNote);
-no.addEventListener("click", closeConfirm);
-yes.addEventListener("click", deleteNote);
-openInTab.addEventListener("click", openTab);
-search.addEventListener("input", searchResults);
-tabstrip.addEventListener("click", tabSwitch);
+DOM.settings.addEventListener("click", options);
+// DOM.toggle.addEventListener("click", changeNoteMode);
+DOM.toggle.addEventListener("change", changeNoteMode);
+DOM.theme.addEventListener("click", changeTheme);
+DOM.back.addEventListener("click", openList);
+DOM.close.addEventListener("click", closeList);
+DOM.note_list.addEventListener("click", loadCustomNote);
+DOM.no.addEventListener("click", closeConfirm);
+DOM.yes.addEventListener("click", deleteNote);
+DOM.open_in_new.addEventListener("click", openTab);
+DOM.search.addEventListener("input", searchResults);
+DOM.tabstrip.addEventListener("click", tabSwitch);
 browser.storage.onChanged.addListener(listUpdate);
 document.addEventListener("DOMContentLoaded", pageSetup);
