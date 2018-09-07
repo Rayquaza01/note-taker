@@ -1,37 +1,38 @@
 // Element Variables
-const upload = document.getElementById("upload");
-const download = document.getElementById("download");
-const padding = document.getElementById("padding");
-const table = document.getElementsByTagName("table")[0];
-const theme = document.getElementById("theme");
-const background_color = document.getElementById("background-color");
-const font_color = document.getElementById("font-color");
-const background_color_dark = document.getElementById("background-color-dark");
-const font_color_dark = document.getElementById("font-color-dark");
-const background_color_picker = document.getElementById("background-color-picker");
-const font_color_picker = document.getElementById("font-color-picker");
-const background_color_picker_dark = document.getElementById("background-color-picker-dark");
-const font_color_picker_dark = document.getElementById("font-color-picker-dark");
-const width = document.getElementById("width");
-const height = document.getElementById("height");
-const font_family = document.getElementById("font-family");
-const font_css = document.getElementById("font-css");
-const font_size = document.getElementById("font-size");
-const default_display = document.getElementById("default-display");
-const private_browsing = document.getElementById("private-browsing");
-const domain_mode = document.getElementById("domain-mode");
-const subdomains_mode = document.getElementById("subdomains-mode");
-const subdomains = document.getElementById("subdomains");
-const notification_badge = document.getElementById("notification-badge");
-const notification_badge_color = document.getElementById("notification-badge-color");
-const notification_badge_color_picker = document.getElementById("notification-badge-color-picker");
-const bullet_types = document.getElementById("bullet-types");
-const get_params = document.getElementById("get-params");
-const exportButton = document.getElementById("export");
-const importButton = document.getElementById("import");
-const exportTextarea = document.getElementById("exportTextarea");
-const tabnos = document.getElementById("tabnos");
-// End element variables
+const DOM = {
+    upload: document.getElementById("upload"),
+    download: document.getElementById("download"),
+    padding: document.getElementById("padding"),
+    table: document.getElementsByTagName("table")[0],
+    theme: document.getElementById("theme"),
+    background_color: document.getElementById("background-color"),
+    font_color: document.getElementById("font-color"),
+    background_color_dark: document.getElementById("background-color-dark"),
+    font_color_dark: document.getElementById("font-color-dark"),
+    background_color_picker: document.getElementById("background-color-picker"),
+    font_color_picker: document.getElementById("font-color-picker"),
+    background_color_picker_dark: document.getElementById("background-color-picker-dark"),
+    font_color_picker_dark: document.getElementById("font-color-picker-dark"),
+    width: document.getElementById("width"),
+    height: document.getElementById("height"),
+    font_family: document.getElementById("font-family"),
+    font_css: document.getElementById("font-css"),
+    font_size: document.getElementById("font-size"),
+    default_display: document.getElementById("default-display"),
+    private_browsing: document.getElementById("private-browsing"),
+    domain_mode: document.getElementById("domain-mode"),
+    subdomains_mode: document.getElementById("subdomains-mode"),
+    subdomains: document.getElementById("subdomains"),
+    notification_badge: document.getElementById("notification-badge"),
+    notification_badge_color: document.getElementById("notification-badge-color"),
+    notification_badge_color_picker: document.getElementById("notification-badge-color-picker"),
+    bullet_types: document.getElementById("bullet-types"),
+    get_params: document.getElementById("get-params"),
+    exportButton: document.getElementById("export"),
+    importButton: document.getElementById("import"),
+    exportTextarea: document.getElementById("exportTextarea"),
+    tabnos: document.getElementById("tabnos")
+}
 
 function filterBlanks(item) {
     if (!item.match(/^$/)) {
@@ -41,26 +42,26 @@ function filterBlanks(item) {
 
 function saveOptions() {
     var options = {
-        theme: theme.value || "light",
-        background_color: background_color.value || "ffffff",
-        font_color: font_color.value || "000000",
-        background_color_dark: background_color_dark.value || "000000",
-        font_color_dark: font_color_dark.value || "ffffff",
-        width: parseInt(width.value) || 400,
-        height: parseInt(height.value) || 300,
-        font_family: font_family.value || "default",
-        font_css: font_css.value || "",
-        font_size: parseInt(font_size.value) || 16,
-        default_display: default_display.value || "general_notes",
-        private_browsing: JSON.parse(private_browsing.value) || false,
-        subdomains_mode: subdomains_mode.value || "blacklist",
-        subdomains: subdomains.value.split(" ").filter(filterBlanks) || [],
-        notification_badge: notification_badge.value || "disabled",
-        notification_badge_color: notification_badge_color.value || "5a5b5c",
-        bullet_types: bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"],
-        get_params: get_params.value.split(" ").filter(filterBlanks) || ["q", "v"],
-        tabnos: tabnos.value || 0,
-        padding: padding.value
+        theme: DOM.theme.value || "light",
+        background_color: DOM.background_color.value || "ffffff",
+        font_color: DOM.font_color.value || "000000",
+        background_color_dark: DOM.background_color_dark.value || "000000",
+        font_color_dark: DOM.font_color_dark.value || "ffffff",
+        width: parseInt(DOM.width.value) || 400,
+        height: parseInt(DOM.height.value) || 300,
+        font_family: DOM.font_family.value || "default",
+        font_css: DOM.font_css.value || "",
+        font_size: parseInt(DOM.font_size.value) || 16,
+        default_display: DOM.default_display.value || "general_notes",
+        private_browsing: JSON.parse(DOM.private_browsing.value) || false,
+        subdomains_mode: DOM.subdomains_mode.value || "blacklist",
+        subdomains: DOM.subdomains.value.split(" ").filter(filterBlanks) || [],
+        notification_badge: DOM.notification_badge.value || "disabled",
+        notification_badge_color: DOM.notification_badge_color.value || "5a5b5c",
+        bullet_types: DOM.bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"],
+        get_params: DOM.get_params.value.split(" ").filter(filterBlanks) || ["q", "v"],
+        tabnos: DOM.tabnos.value || 0,
+        padding: DOM.padding.value
     };
     browser.storage.local.set({
         options: options
@@ -75,46 +76,46 @@ function colorSync(ele) {
 }
 
 function domainModeSync(ele) {
-    domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
+    DOM.domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
 }
 
 async function restoreOptions() {
     var res = await browser.storage.local.get()
-    theme.value = res.options.theme;
-    background_color.value = res.options.background_color;
-    background_color_picker.value = "#" + res.options.background_color;
-    background_color_dark.value = res.options.background_color_dark;
-    background_color_picker_dark.value = "#" + res.options.background_color_dark;
-    font_color.value = res.options.font_color;
-    font_color_picker.value = "#" + res.options.font_color;
-    font_color_dark.value = res.options.font_color_dark;
-    font_color_picker_dark.value = "#" + res.options.font_color_dark;
-    width.value = res.options.width;
-    height.value = res.options.height;
-    font_family.value = res.options.font_family;
-    font_css.value = res.options.font_css;
-    font_size.value = res.options.font_size;
-    default_display.value = res.options.default_display;
-    private_browsing.value = res.options.private_browsing;
-    subdomains_mode.value = res.options.subdomains_mode;
-    subdomains.value = res.options.subdomains.join(" ");
-    notification_badge.value = res.options.notification_badge;
-    notification_badge_color.value = res.options.notification_badge_color;
-    notification_badge_color_picker.value = "#" + res.options.notification_badge_color;
-    bullet_types.value = res.options.bullet_types.join(" ");
-    get_params.value = res.options.get_params.join(" ");
-    tabnos.value = res.options.tabnos;
-    padding.value = res.options.padding;
+    DOM.theme.value = res.options.theme;
+    DOM.background_color.value = res.options.background_color;
+    DOM.background_color_picker.value = "#" + res.options.background_color;
+    DOM.background_color_dark.value = res.options.background_color_dark;
+    DOM.background_color_picker_dark.value = "#" + res.options.background_color_dark;
+    DOM.font_color.value = res.options.font_color;
+    DOM.font_color_picker.value = "#" + res.options.font_color;
+    DOM.font_color_dark.value = res.options.font_color_dark;
+    DOM.font_color_picker_dark.value = "#" + res.options.font_color_dark;
+    DOM.width.value = res.options.width;
+    DOM.height.value = res.options.height;
+    DOM.font_family.value = res.options.font_family;
+    DOM.font_css.value = res.options.font_css;
+    DOM.font_size.value = res.options.font_size;
+    DOM.default_display.value = res.options.default_display;
+    DOM.private_browsing.value = res.options.private_browsing;
+    DOM.subdomains_mode.value = res.options.subdomains_mode;
+    DOM.subdomains.value = res.options.subdomains.join(" ");
+    DOM.notification_badge.value = res.options.notification_badge;
+    DOM.notification_badge_color.value = res.options.notification_badge_color;
+    DOM.notification_badge_color_picker.value = "#" + res.options.notification_badge_color;
+    DOM.bullet_types.value = res.options.bullet_types.join(" ");
+    DOM.get_params.value = res.options.get_params.join(" ");
+    DOM.tabnos.value = res.options.tabnos;
+    DOM.padding.value = res.options.padding;
     if (res.options.subdomains_mode === "whitelist") {
-        domain_mode.innerText = "Enforce";
+        DOM.domain_mode.innerText = "Enforce";
     }
     exportNotesAndOptions();
 }
 
 async function exportNotesAndOptions() {
     var res = await browser.storage.local.get();
-    exportButton.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
-    exportTextarea.value = JSON.stringify(res, null, "    ");
+    DOM.exportButton.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
+    DOM.exportTextarea.value = JSON.stringify(res, null, "    ");
 }
 
 function importOptions() {
@@ -125,7 +126,7 @@ function importOptions() {
         browser.storage.local.set(obj);
         location.reload();
     });
-    var file = importButton.files[0];
+    var file = DOM.importButton.files[0];
     reader.readAsText(file);
 }
 
@@ -146,19 +147,19 @@ async function downloadFromSync() {
 }
 
 // sync
-upload.addEventListener("click", uploadToSync);
-download.addEventListener("click", downloadFromSync);
+DOM.upload.addEventListener("click", uploadToSync);
+DOM.download.addEventListener("click", downloadFromSync);
 // import
-importButton.addEventListener("change", importOptions);
+DOM.importButton.addEventListener("change", importOptions);
 // color sync
-table.addEventListener("input", colorSync);
+DOM.table.addEventListener("input", colorSync);
 // Subdomain Sync
-subdomains_mode.addEventListener("input", domainModeSync);
+DOM.subdomains_mode.addEventListener("input", domainModeSync);
 // save options
-table.addEventListener("input", saveOptions); // Event delegation is a lot simpler than what I was trying
+DOM.table.addEventListener("input", saveOptions); // Event delegation is a lot simpler than what I was trying
 // badges
-notification_badge_color.addEventListener("input", changeBadgeColor);
-notification_badge_color_picker.addEventListener("input", changeBadgeColor);
+DOM.notification_badge_color.addEventListener("input", changeBadgeColor);
+DOM.notification_badge_color_picker.addEventListener("input", changeBadgeColor);
 // on storage change
 browser.storage.onChanged.addListener(exportNotesAndOptions);
 // onload
