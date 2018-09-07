@@ -1,5 +1,5 @@
 // Element Variables
-const DOM = generateElementsVariable(["upload", "download", "padding", "table", "theme", "background_color", "font_color", "background_color_dark", "font_color_dark", "background_color_picker", "font_color_picker", "background_color_picker_dark", "font_color_picker_dark", "width", "height", "font_family", "font_css", "font_size", "default_display", "private_browsing", "domain_mode", "subdomains_mode", "subdomains", "notification_badge", "notification_badge_color", "notification_badge_color_picker", "bullet_types", "get_params", "export", "import", "exportTextarea", "tabnos"]);
+const DOM = generateElementsVariable(["upload", "download", "padding", "table", "theme", "background_color", "font_color", "background_color_dark", "font_color_dark", "background_color_picker", "font_color_picker", "background_color_picker_dark", "font_color_picker_dark", "width", "height", "font_family", "font_css", "font_size", "default_display", "private_browsing", "domain_mode", "subdomains_mode", "subdomains", "notification_badge", "notification_badge_color", "notification_badge_color_picker", "bullet_types", "get_params", "export", "import", "exportTextarea", "tabnos", "text_direction"]);
 
 function filterBlanks(item) {
     if (!item.match(/^$/)) {
@@ -28,7 +28,8 @@ function saveOptions() {
         bullet_types: DOM.bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"],
         get_params: DOM.get_params.value.split(" ").filter(filterBlanks) || ["q", "v"],
         tabnos: DOM.tabnos.value || 0,
-        padding: DOM.padding.value
+        padding: DOM.padding.value,
+        text_direction: DOM.text_direction.value
     };
     browser.storage.local.set({
         options: options

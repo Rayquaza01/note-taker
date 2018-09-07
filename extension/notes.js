@@ -248,6 +248,7 @@ async function pageSetup() {
     }
     DOM.textarea.style.fontSize = res.options.font_size + "px";
     DOM.textarea.style.padding = res.options.padding + "px";
+    DOM.textarea.style.direction = res.options.text_direction;
     var context = getContext();
     switch (context) {
     case "tab":
