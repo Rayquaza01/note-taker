@@ -1,4 +1,21 @@
-const DOM = generateElementsVariable(["textarea", "back", "toggle", "theme", "overlay", "close", "settings", "note_list", "confirmDelete", "yes", "no", "siteName", "open_in_new", "search", "tabstrip", "buttons"]);
+const DOM = generateElementsVariable([
+    "textarea",
+    "back",
+    "toggle",
+    "theme",
+    "overlay",
+    "close",
+    "settings",
+    "note_list",
+    "confirmDelete",
+    "yes",
+    "no",
+    "siteName",
+    "open_in_new",
+    "search",
+    "tabstrip",
+    "buttons"
+]);
 
 function getContext() {
     return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
@@ -101,6 +118,8 @@ async function loadCustomNote(e) {
     }
     if (e.target.innerText === "General Notes") {
         loadGeneralNotes();
+        closeList();
+        return;
     }
     switch (e.target.className) {
     case "mdi mdi-delete":
@@ -187,13 +206,13 @@ async function changeTheme() {
     switch (this.title) {
     case "Switch to light theme":
         this.title = "Switch to dark theme";
-        res.options.DOM.theme = "light";
+        res.options.theme = "light";
         browser.storage.local.set({options: res.options});
         setTheme("light");
         break;
     case "Switch to dark theme":
         this.title = "Switch to light theme";
-        res.options.DOM.theme = "dark";
+        res.options.theme = "dark";
         browser.storage.local.set({options: res.options});
         setTheme("dark");
         break;
