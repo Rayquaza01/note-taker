@@ -298,7 +298,6 @@ function openTab() {
 }
 
 async function perTabSidebar() {
-    var res = await browser.storage.local.get("options");
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     if (!DOM.back.dataset.hasOwnProperty(tabs[0].id)) {
         switch (DOM.toggle.value) {
@@ -340,7 +339,6 @@ async function tabSwitch(e) {
     Array.from(DOM.tabstrip.children)[DOM.tabstrip.dataset.activeTab].className = "tab"
     e.target.className = "tab active";
     DOM.tabstrip.dataset.activeTab = Array.from(DOM.tabstrip.children).indexOf(e.target);
-    var res = await browser.storage.local.get("options");
     switch (DOM.toggle.value) {
     case "domain":
     case "url":
