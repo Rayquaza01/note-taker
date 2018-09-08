@@ -1,32 +1,57 @@
+function defaultValues(object, settings) {
+    for (let key in settings) {
+        if (!object.hasOwnProperty(key)) {
+            object[key] = settings[key];
+        }
+    }
+    return object;
+}
+
 async function setOpts() {
-    var res = await browser.storage.local.get();
-    res.options = res.hasOwnProperty("options") ? res.options : {};
-    res.options.theme = res.options.hasOwnProperty("theme") ? res.options.theme : "light";
-    res.options.background_color = res.options.hasOwnProperty("background_color") ? res.options.background_color : "ffffff";
-    res.options.font_color = res.options.hasOwnProperty("font_color") ? res.options.font_color : "000000";
-    res.options.background_color_dark = res.options.hasOwnProperty("background_color_dark") ? res.options.background_color_dark : "000000";
-    res.options.font_color_dark = res.options.hasOwnProperty("font_color_dark") ? res.options.font_color_dark : "ffffff";
-    res.options.width = res.options.hasOwnProperty("width") ? res.options.width : 400;
-    res.options.height = res.options.hasOwnProperty("height") ? res.options.height : 300;
-    res.options.font_family = res.options.hasOwnProperty("font_family") ? res.options.font_family : "default";
-    res.options.font_size = res.options.hasOwnProperty("font_size") ? res.options.font_size : 16;
-    res.options.font_css = res.options.hasOwnProperty("font_css") ? res.options.font_css : "";
-    res.options.default_display = res.options.hasOwnProperty("default_display") ? res.options.default_display : "general_notes";
+    let res = await browser.storage.local.get();
+    res = defaultValues(res, {
+        options: {},
+        site_notes: {},
+        general_notes: []
+    });
+    res.options = defaultValues(res.options, {
+        theme: "light",
+        background_color: "ffffff",
+        font_color: "000000",
+        background_color_dark: "000000",
+        font_color_dark: "ffffff",
+        width: 400,
+        height: 300,
+        font_family: "default",
+        font_size: 16,
+        font_css: "",
+        default_display: "general_notes",
+        private_browsing: false,
+        subdomains_mode: "blacklist",
+        subdomains: [],
+        notification_badge: "disabled",
+        notification_badge_color: "d90000",
+        bullet_types: ["*", "-", "+"],
+        get_params: ["q", "v"],
+        tabnos: 1,
+        padding: 5,
+        text_direction: "ltr",
+        browser_action_shortcut: "Ctrl+Alt+N",
+        sidebar_action_shortcut: "Alt+Shift+N"
+    });
+    // compatibility for upgrading note storage from previous versions
+    browser.commands.update({
+        name: "_execute_browser_action",
+        shortcut: res.options.browser_action_shortcut
+    });
+    browser.commands.update({
+        name: "_execute_sidebar_action",
+        shortcut: res.options.sidebar_action_shortcut
+    });
     if (res.options.default_display === "site_notes") {
         res.options.default_display = res.options.per_site;
     }
     // res.options.per_site = res.options.hasOwnProperty("per_site") ? res.options.per_site : "domain";
-    res.options.private_browsing = res.options.hasOwnProperty("private_browsing") ? res.options.private_browsing : false;
-    res.options.subdomains_mode = res.options.hasOwnProperty("subdomains_mode") ? res.options.subdomains_mode : "blacklist";
-    res.options.subdomains = res.options.hasOwnProperty("subdomains") ? res.options.subdomains : [];
-    res.options.notification_badge = res.options.hasOwnProperty("notification_badge") ? res.options.notification_badge : "disabled";
-    res.options.notification_badge_color = res.options.hasOwnProperty("notification_badge_color") ? res.options.notification_badge_color : "d90000";
-    res.options.bullet_types = res.options.hasOwnProperty("bullet_types") ? res.options.bullet_types : ["*", "-", "+"];
-    res.options.get_params = res.options.hasOwnProperty("get_params") ? res.options.get_params : ["q", "v"];
-    res.options.tabnos = res.options.hasOwnProperty("tabnos") ? res.options.tabnos : 1;
-    res.options.padding = res.options.hasOwnProperty("padding") ? res.options.padding : 5;
-    res.options.text_direction = res.options.hasOwnProperty("text_direction") ? res.options.text_direction : "ltr";
-    res.site_notes = res.hasOwnProperty("site_notes") ? res.site_notes : {};
     if (!Array.isArray(res.general_notes)) {
         res.general_notes = [res.general_notes];
     }
