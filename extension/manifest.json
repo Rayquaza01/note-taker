@@ -44,7 +44,7 @@
     "commands": {
         "_execute_browser_action": {
             "suggested_key": {
-                "default": "Ctrl+Alt+N"
+                "default": "Alt+Shift+M"
             }
         },
         "_execute_sidebar_action": {

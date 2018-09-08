@@ -36,7 +36,7 @@ async function setOpts() {
         tabnos: 1,
         padding: 5,
         text_direction: "ltr",
-        browser_action_shortcut: "Ctrl+Alt+N",
+        browser_action_shortcut: "Alt+Shift+M",
         sidebar_action_shortcut: "Alt+Shift+N"
     });
     // compatibility for upgrading note storage from previous versions
