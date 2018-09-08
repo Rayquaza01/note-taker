@@ -13,7 +13,7 @@ td, select, input {
     line-height: 30px;
     width: 50%;
 }
-#background-color, #font-color, #background-color-dark, #font-color-dark, #notification-badge-color {
+#background_color, #font_color, #background_color_dark, #font_color_dark, #notification_badge_color {
     text-transform: uppercase;
 }
 tr {
