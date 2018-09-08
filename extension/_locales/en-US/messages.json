@@ -1,0 +1,10 @@
+{
+    "extensionName": {
+        "message": "Note Taker",
+        "description": "Note Taker"
+    },
+    "extensionDescription": {
+        "message": "Adds a text box to a toolbar button for taking notes",
+        "description": "extension description"
+    }
+}
