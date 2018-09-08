@@ -1,5 +1,5 @@
 // Element Variables
-const DOM = generateElementsVariable(["upload", "download", "padding", "table", "theme", "background_color", "font_color", "background_color_dark", "font_color_dark", "background_color_picker", "font_color_picker", "background_color_picker_dark", "font_color_picker_dark", "width", "height", "font_family", "font_css", "font_size", "default_display", "private_browsing", "domain_mode", "subdomains_mode", "subdomains", "notification_badge", "notification_badge_color", "notification_badge_color_picker", "bullet_types", "get_params", "export", "import", "exportTextarea", "tabnos", "text_direction"]);
+const DOM = generateElementsVariable(["upload", "download", "padding", "table", "theme", "background_color", "font_color", "background_color_dark", "font_color_dark", "background_color_picker", "font_color_picker", "background_color_picker_dark", "font_color_picker_dark", "width", "height", "font_family", "font_css", "font_size", "default_display", "private_browsing", "domain_mode", "subdomains_mode", "subdomains", "notification_badge", "notification_badge_color", "notification_badge_color_picker", "bullet_types", "get_params", "export", "import", "exportTextarea", "tabnos", "text_direction", "browser_action_shortcut", "sidebar_action_shortcut"]);
 
 function filterBlanks(item) {
     if (!item.match(/^$/)) {
@@ -8,7 +8,7 @@ function filterBlanks(item) {
 }
 
 function saveOptions() {
-    var options = {
+    const options = {
         theme: DOM.theme.value || "light",
         background_color: DOM.background_color.value || "ffffff",
         font_color: DOM.font_color.value || "000000",
@@ -28,11 +28,19 @@ function saveOptions() {
         bullet_types: DOM.bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"],
         get_params: DOM.get_params.value.split(" ").filter(filterBlanks) || ["q", "v"],
         tabnos: DOM.tabnos.value || 0,
-        padding: DOM.padding.value,
-        text_direction: DOM.text_direction.value
+        padding: DOM.padding.value || 5,
+        text_direction: DOM.text_direction.value || "ltr",
+        browser_action_shortcut: DOM.browser_action_shortcut.value || "Ctrl+Alt+N",
+        sidebar_action_shortcut: DOM.sidebar_action_shortcut.value || "Alt+Shift+N"
     };
-    browser.storage.local.set({
-        options: options
+    browser.storage.local.set({options: options});
+    browser.commands.update({
+        name: "_execute_browser_action",
+        shortcut: DOM.browser_action_shortcut.value || "Ctrl+Alt+N"
+    });
+    browser.commands.update({
+        name: "_execute_sidebar_action",
+        shortcut: DOM.sidebar_action_shortcut.value || "Alt+Shift+N"
     });
 }
 
@@ -48,7 +56,7 @@ function domainModeSync(ele) {
 }
 
 async function restoreOptions() {
-    var res = await browser.storage.local.get()
+    const res = await browser.storage.local.get()
     DOM.theme.value = res.options.theme;
     DOM.background_color.value = res.options.background_color;
     DOM.background_color_picker.value = "#" + res.options.background_color;
@@ -74,6 +82,9 @@ async function restoreOptions() {
     DOM.get_params.value = res.options.get_params.join(" ");
     DOM.tabnos.value = res.options.tabnos;
     DOM.padding.value = res.options.padding;
+    DOM.text_direction.value = res.options.text_direction;
+    DOM.browser_action_shortcut.value = res.options.browser_action_shortcut;
+    DOM.sidebar_action_shortcut.value = res.options.sidebar_action_shortcut;
     if (res.options.subdomains_mode === "whitelist") {
         DOM.domain_mode.innerText = "Enforce";
     }
@@ -103,13 +114,13 @@ function changeBadgeColor() {
 }
 
 async function uploadToSync() {
-    var res = await browser.storage.local.get();
+    const res = await browser.storage.local.get();
     await browser.storage.sync.clear();
     browser.storage.sync.set(res);
 }
 
 async function downloadFromSync() {
-    var res = await browser.storage.sync.get();
+    const res = await browser.storage.sync.get();
     await browser.storage.local.clear();
     browser.storage.local.set(res);
 }
