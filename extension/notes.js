@@ -189,8 +189,8 @@ async function setTheme(mode) {
             break;
         }
     }
-    bg_color = "#" + res.options["background_color" + theme];
-    font_color = "#" + res.options["font_color" + theme];
+    let bg_color = "#" + res.options["background_color" + theme];
+    let font_color = "#" + res.options["font_color" + theme];
     DOM.toggle.style.backgroundColor = bg_color;
     document.body.style.backgroundColor = bg_color;
     DOM.search.style.backgroundColor = bg_color;
@@ -277,6 +277,7 @@ async function pageSetup() {
     case "sidebar":
         browser.tabs.onActivated.addListener(perTabSidebar);
         browser.tabs.onUpdated.addListener(perTabSidebar);
+        window.focus;
         break;
     case "popup":
         document.body.style.width = res.options.width + "px";
@@ -317,9 +318,11 @@ function openTab() {
 }
 
 async function perTabSidebar() {
-    var tabs = await browser.tabs.query({active: true, currentWindow: true});
+    const tabs = await browser.tabs.query({active: true, currentWindow: true});
+    const res = await browser.storage.local.get("options");
+    DOM.toggle.value = res.options.default_display;
     if (!DOM.back.dataset.hasOwnProperty(tabs[0].id)) {
-        switch (DOM.toggle.value) {
+        switch (res.options.default_display) {
         case "domain":
         case "url":
             loadSiteNotes(false, DOM.toggle.value);
@@ -350,10 +353,6 @@ function listUpdate(changes) {
     }
 }
 
-document.addEventListener("focus", () => {
-    DOM.textarea.focus();
-});
-
 async function tabSwitch(e) {
     Array.from(DOM.tabstrip.children)[DOM.tabstrip.dataset.activeTab].className = "tab"
     e.target.className = "tab active";
@@ -369,6 +368,7 @@ async function tabSwitch(e) {
     }
 }
 
+document.addEventListener("focus", () => DOM.textarea.focus());
 DOM.settings.addEventListener("click", options);
 // DOM.toggle.addEventListener("click", changeNoteMode);
 DOM.toggle.addEventListener("change", changeNoteMode);
