@@ -122,21 +122,25 @@ async function loadCustomNote(e) {
         return;
     }
     switch (e.target.className) {
-    case "mdi mdi-delete":
-        DOM.confirmDelete.style.width = "100%";
-        DOM.siteName.innerText = e.target.dataset.deleteSite;
-        return;
-    case "mdi mdi-open-in-new":
-        browser.tabs.create({
-            active: true,
-            url: "https://" + e.target.dataset.open
-        });
-        break;
-    case "name":
-        siteNoteSetup(DOM.back.dataset[tabs[0].id]);
-        break;
-    default:
-        return;
+        case "mdi mdi-delete":
+            DOM.confirmDelete.style.width = "100%";
+            DOM.siteName.innerText = e.target.dataset.deleteSite;
+            return;
+        case "mdi mdi-open-in-new":
+            let tab = await browser.tabs.create({
+                active: true,
+                url: "https://" + e.target.dataset.open
+            });
+            // open to note in sidebar
+            DOM.back.dataset[tab.id] = e.target.dataset.open;
+            // open to note in popup
+            siteNoteSetup(e.target.dataset.open);
+            break;
+        case "name":
+            siteNoteSetup(DOM.back.dataset[tabs[0].id]);
+            break;
+        default:
+            return;
     }
     closeList();
 }
@@ -165,15 +169,15 @@ async function loadSiteNotes(manualClick = false, mode = "") {
 async function changeNoteMode() {
     var tabs = await browser.tabs.query({active: true, currentWindow: true});
     switch (DOM.toggle.value) {
-    case "url":
-    case "domain":
-        // DOM.back.dataset[tabs[0].id] = await siteParser(tabs[0].url, DOM.toggle.value);
-        loadSiteNotes(true, DOM.toggle.value);
-        break;
-    case "general_notes":
-        // DOM.back.dataset[tabs[0].id] = "General Notes";
-        loadGeneralNotes();
-        break;
+        case "url":
+        case "domain":
+            // DOM.back.dataset[tabs[0].id] = await siteParser(tabs[0].url, DOM.toggle.value);
+            loadSiteNotes(true, DOM.toggle.value);
+            break;
+        case "general_notes":
+            // DOM.back.dataset[tabs[0].id] = "General Notes";
+            loadGeneralNotes();
+            break;
     }
 }
 
@@ -204,18 +208,18 @@ async function setTheme(mode) {
 async function changeTheme() {
     var res = await browser.storage.local.get("options");
     switch (this.title) {
-    case "Switch to light theme":
-        this.title = "Switch to dark theme";
-        res.options.theme = "light";
-        browser.storage.local.set({options: res.options});
-        setTheme("light");
-        break;
-    case "Switch to dark theme":
-        this.title = "Switch to light theme";
-        res.options.theme = "dark";
-        browser.storage.local.set({options: res.options});
-        setTheme("dark");
-        break;
+        case "Switch to light theme":
+            this.title = "Switch to dark theme";
+            res.options.theme = "light";
+            browser.storage.local.set({options: res.options});
+            setTheme("light");
+            break;
+        case "Switch to dark theme":
+            this.title = "Switch to light theme";
+            res.options.theme = "dark";
+            browser.storage.local.set({options: res.options});
+            setTheme("dark");
+            break;
     }
 }
 
@@ -252,12 +256,12 @@ async function loadNoteList() {
 async function pageSetup() {
     var res = await browser.storage.local.get("options");
     switch (res.options.theme) {
-    case "light":
-        DOM.theme.title = "Switch to dark theme";
-        break;
-    case "dark":
-        DOM.theme.title = "Switch to light theme";
-        break;
+        case "light":
+            DOM.theme.title = "Switch to dark theme";
+            break;
+        case "dark":
+            DOM.theme.title = "Switch to light theme";
+            break;
     }
     setTheme(res.options.theme);
     if (res.options.font_family === "custom") {
@@ -270,22 +274,22 @@ async function pageSetup() {
     DOM.textarea.style.direction = res.options.text_direction;
     var context = getContext();
     switch (context) {
-    case "tab":
-        DOM.open_in_new.style.display = "none";
-        DOM.toggle.style.display = "none";
-        break;
-    case "sidebar":
-        browser.tabs.onActivated.addListener(perTabSidebar);
-        browser.tabs.onUpdated.addListener(perTabSidebar);
-        window.focus;
-        break;
-    case "popup":
-        document.body.style.width = res.options.width + "px";
-        document.body.style.height = res.options.height + 40 + "px";
-        DOM.textarea.style.width = res.options.width + "px";
-        DOM.textarea.style.height = res.options.height + "px";
-        DOM.overlay.style.height = res.options.height + "px";
-        break;
+        case "tab":
+            DOM.open_in_new.style.display = "none";
+            DOM.toggle.style.display = "none";
+            break;
+        case "sidebar":
+            browser.tabs.onActivated.addListener(perTabSidebar);
+            browser.tabs.onUpdated.addListener(perTabSidebar);
+            window.focus;
+            break;
+        case "popup":
+            document.body.style.width = res.options.width + "px";
+            document.body.style.height = res.options.height + 40 + "px";
+            DOM.textarea.style.width = res.options.width + "px";
+            DOM.textarea.style.height = res.options.height + "px";
+            DOM.overlay.style.height = res.options.height + "px";
+            break;
     }
     if (res.options.default_display === "general_notes") {
         loadGeneralNotes();
@@ -323,13 +327,13 @@ async function perTabSidebar() {
     DOM.toggle.value = res.options.default_display;
     if (!DOM.back.dataset.hasOwnProperty(tabs[0].id)) {
         switch (res.options.default_display) {
-        case "domain":
-        case "url":
-            loadSiteNotes(false, DOM.toggle.value);
-            break;
-        case "general_notes":
-            loadGeneralNotes();
-            break;
+            case "domain":
+            case "url":
+                loadSiteNotes(false, DOM.toggle.value);
+                break;
+            case "general_notes":
+                loadGeneralNotes();
+                break;
         }
     } else {
         siteNoteSetup(DOM.back.dataset[tabs[0].id]);
@@ -358,13 +362,13 @@ async function tabSwitch(e) {
     e.target.className = "tab active";
     DOM.tabstrip.dataset.activeTab = Array.from(DOM.tabstrip.children).indexOf(e.target);
     switch (DOM.toggle.value) {
-    case "domain":
-    case "url":
-        loadSiteNotes(true, DOM.toggle.value);
-        break;
-    case "general_notes":
-        loadGeneralNotes();
-        break;
+        case "domain":
+        case "url":
+            loadSiteNotes(true, DOM.toggle.value);
+            break;
+        case "general_notes":
+            loadGeneralNotes();
+            break;
     }
 }
 
