@@ -103,7 +103,7 @@ async function setBadgeSite(tab) {
     if (site === "general_notes") {
         setBadgeGeneral(tab);
     } else if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {
-        if (res.site_notes.hasOwnProperty(site)) {
+        if (res.site_notes.hasOwnProperty(site) && res.site_notes[site].hasOwnProperty(0)) {
             setBadge(res.options.bullet_types, res.options.notification_badge, res.site_notes[site][0], tab.id);
         } else {
             browser.browserAction.setBadgeText({text: "", tabId: tab.id});

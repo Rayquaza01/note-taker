@@ -54,11 +54,40 @@ async function saveGeneralNotes() {
 
 async function saveSiteNotes() {
     var res = await browser.storage.local.get("site_notes");
-    if (!res.site_notes.hasOwnProperty(DOM.back.innerText)) {
-        res.site_notes[DOM.back.innerText] = []
+    if (!res.site_notes.hasOwnProperty(DOM.back.dataset.currentSite)) {
+        res.site_notes[DOM.back.dataset.currentSite] = []
     }
-    res.site_notes[DOM.back.innerText][DOM.tabstrip.dataset.activeTab] = DOM.textarea.value || "";
+    res.site_notes[DOM.back.dataset.currentSite][DOM.tabstrip.dataset.activeTab] = DOM.textarea.value || "";
     browser.storage.local.set({site_notes: res.site_notes});
+}
+
+function bold(tab_ele, tab) {
+    if (tab !== "" && tab !== null) {
+        tab_ele.style.fontWeight = "bold";
+    } else {
+        tab_ele.style.fontWeight = "normal";
+    }
+}
+
+async function emboldenNotes(note) {
+    let res = await browser.storage.local.get();
+    let tabstrip = Array.from(DOM.tabstrip.children);
+    if (note === "general_notes") {
+        var parent = res;
+    } else {
+        var parent = res.site_notes;
+    }
+    if (parent.hasOwnProperty(note)) {
+        for (let index = 0; index < parent[note].length; index++) {
+            if (parent[note].hasOwnProperty(index)){
+                bold(tabstrip[index], parent[note][index]);
+            }
+        }
+    } else {
+        for (let tab of tabstrip) {
+            tab.style.fontWeight = "normal";
+        }
+    }
 }
 
 async function loadGeneralNotes() {
@@ -71,6 +100,8 @@ async function loadGeneralNotes() {
     DOM.textarea.value = res.general_notes[DOM.tabstrip.dataset.activeTab] || "";
     DOM.back.innerText = "General Notes";
     DOM.back.title = "General Notes";
+    DOM.back.dataset.currentSite = "general_notes"
+    emboldenNotes("general_notes")
     DOM.textarea.addEventListener("input", saveGeneralNotes);
 }
 
@@ -90,6 +121,8 @@ async function siteNoteSetup(site) {
     DOM.textarea.value = text;
     DOM.back.innerText = site;
     DOM.back.title = site;
+    DOM.back.dataset.currentSite = site;
+    emboldenNotes(site)
     DOM.textarea.addEventListener("input", saveSiteNotes);
 }
 
@@ -355,12 +388,14 @@ function listUpdate(changes) {
             }
         }
     }
+    emboldenNotes(DOM.back.dataset.currentSite)
 }
 
 async function tabSwitch(e) {
-    Array.from(DOM.tabstrip.children)[DOM.tabstrip.dataset.activeTab].className = "tab"
+    let tabstrip = Array.from(DOM.tabstrip.children);
+    tabstrip[DOM.tabstrip.dataset.activeTab].className = "tab";
     e.target.className = "tab active";
-    DOM.tabstrip.dataset.activeTab = Array.from(DOM.tabstrip.children).indexOf(e.target);
+    DOM.tabstrip.dataset.activeTab = tabstrip.indexOf(e.target);
     switch (DOM.toggle.value) {
         case "domain":
         case "url":
