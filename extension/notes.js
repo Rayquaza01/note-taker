@@ -115,7 +115,7 @@ async function loadGeneralNotes() {
 async function siteNoteSetup(site) {
     DOM.textarea.focus();
     DOM.textarea.removeEventListener("input", saveGeneralNotes);
-    if (site === "general_notes") {
+    if (site === "general_notes" || site === "General Notes") {
         loadGeneralNotes();
         return;
     }
