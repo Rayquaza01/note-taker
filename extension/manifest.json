@@ -20,6 +20,9 @@
         "tabs",
         "unlimitedStorage"
     ],
+    "optional_permissions": [
+        "http://localhost/*"
+    ],
     "browser_action": {
         "browser_style": true,
         "default_popup": "notes.html",
