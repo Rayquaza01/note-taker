@@ -14,7 +14,12 @@ const DOM = generateElementsVariable([
     "open_in_new",
     "search",
     "tabstrip",
-    "buttons"
+    "buttons",
+    "ok",
+    "cancel",
+    "confirm",
+    "newNoteName",
+    "newNote"
 ]);
 
 function getContext() {
@@ -78,9 +83,11 @@ async function emboldenNotes(note) {
         var parent = res.site_notes;
     }
     if (parent.hasOwnProperty(note)) {
-        for (let index = 0; index < parent[note].length; index++) {
+        for (let index = 0; index < tabstrip.length; index++) {
             if (parent[note].hasOwnProperty(index)){
                 bold(tabstrip[index], parent[note][index]);
+            } else {
+                bold(tabstrip[index], null)
             }
         }
     } else {
@@ -108,6 +115,10 @@ async function loadGeneralNotes() {
 async function siteNoteSetup(site) {
     DOM.textarea.focus();
     DOM.textarea.removeEventListener("input", saveGeneralNotes);
+    if (site === "general_notes") {
+        loadGeneralNotes();
+        return;
+    }
     var res = await browser.storage.local.get("site_notes");
     if (res.site_notes.hasOwnProperty(site)) {
         if (res.site_notes[site][DOM.tabstrip.dataset.activeTab] !== undefined) {
@@ -168,14 +179,18 @@ async function loadCustomNote(e) {
             DOM.back.dataset[tab.id] = e.target.dataset.open;
             // open to note in popup
             siteNoteSetup(e.target.dataset.open);
+            closeList();
             break;
         case "name":
             siteNoteSetup(DOM.back.dataset[tabs[0].id]);
+            closeList();
+            break;
+        case "mdi mdi-plus":
+            openNewNote();
             break;
         default:
             return;
     }
-    closeList();
 }
 
 function closeConfirm() {
@@ -233,6 +248,8 @@ async function setTheme(mode) {
     DOM.search.style.backgroundColor = bg_color;
     DOM.overlay.style.backgroundColor = bg_color;
     DOM.confirmDelete.style.backgroundColor = bg_color;
+    DOM.newNote.style.backgroundColor = bg_color;
+    DOM.newNoteName.style.backgroundColor = bg_color;
     document.body.style.color = font_color;
     DOM.search.style.color = font_color;
     DOM.toggle.style.color = font_color;
@@ -396,15 +413,34 @@ async function tabSwitch(e) {
     tabstrip[DOM.tabstrip.dataset.activeTab].className = "tab";
     e.target.className = "tab active";
     DOM.tabstrip.dataset.activeTab = tabstrip.indexOf(e.target);
-    switch (DOM.toggle.value) {
-        case "domain":
-        case "url":
-            loadSiteNotes(true, DOM.toggle.value);
-            break;
-        case "general_notes":
-            loadGeneralNotes();
-            break;
-    }
+    siteNoteSetup(DOM.back.dataset.currentSite);
+    // switch (DOM.toggle.value) {
+    //     case "domain":
+    //     case "url":
+    //         siteNoteSetup(DOM.back.dataset.currentSite);
+    //         break;
+    //     case "general_notes":
+    //         loadGeneralNotes();
+    //         break;
+    // }
+}
+
+function closeNewNote() {
+    DOM.newNote.style.width = 0;
+    DOM.textarea.focus();
+}
+
+function openNewNote() {
+    DOM.newNote.style.width = "100%";
+    DOM.newNoteName.value = "";
+    DOM.newNoteName.focus();
+}
+
+async function newNote() {
+    let res = await browser.storage.local.get("site_notes");
+    res.site_notes[DOM.newNoteName.value] = [];
+    browser.storage.local.set(res);
+    closeNewNote();
 }
 
 document.addEventListener("focus", () => DOM.textarea.focus());
@@ -420,5 +456,7 @@ DOM.yes.addEventListener("click", deleteNote);
 DOM.open_in_new.addEventListener("click", openTab);
 DOM.search.addEventListener("input", searchResults);
 DOM.tabstrip.addEventListener("click", tabSwitch);
+DOM.ok.addEventListener("click", newNote);
+DOM.cancel.addEventListener("click", closeNewNote);
 browser.storage.onChanged.addListener(listUpdate);
 document.addEventListener("DOMContentLoaded", pageSetup);
