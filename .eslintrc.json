@@ -6,16 +6,19 @@
     },
     "extends": "eslint:recommended",
     "rules": {
-        "indent": ["error", 4],
+        "indent": ["error", 4, { "SwitchCase": 1 }],
         "quotes": ["error", "double"],
         "semi": ["error", "always"],
         "curly": ["error", "all"],
         "eqeqeq": ["error", "always"],
-        "padding-line-between-statements": ["error", {
-            "blankLine": "always",
-            "prev": "*",
-            "next": "function"
-        }]
+        "padding-line-between-statements": [
+            "error",
+            {
+                "blankLine": "always",
+                "prev": "*",
+                "next": "function"
+            }
+        ]
     },
     "parserOptions": {
         "ecmaVersion": 2018

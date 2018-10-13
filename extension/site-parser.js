@@ -1,3 +1,5 @@
+/* globals psl */
+/* eslint no-unused-vars: 0 */
 function allowedParams(search, allowed) {
     var params = [];
     for (var item of search.substring(1).split("&")) {
@@ -19,13 +21,19 @@ async function siteParser(rawUrl, mode) {
             var params = allowedParams(url.search, res.options.get_params);
             return url.hostname + url.pathname + params;
         } else if (res.options.subdomains_mode === "blacklist") {
-            if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
+            if (
+                res.options.subdomains.indexOf(site.domain) > -1 ||
+                res.options.subdomains.length === 0
+            ) {
                 return site.domain;
             } else {
                 return url.hostname;
             }
         } else if (res.options.subdomains_mode === "whitelist") {
-            if (res.options.subdomains.indexOf(site.domain) > -1 || res.options.subdomains.length === 0) {
+            if (
+                res.options.subdomains.indexOf(site.domain) > -1 ||
+                res.options.subdomains.length === 0
+            ) {
                 return url.hostname;
             } else {
                 return site.domain;

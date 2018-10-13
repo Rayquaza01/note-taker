@@ -15,23 +15,19 @@
     "background": {
         "scripts": ["setup.js", "third-party/psl.min.js", "site-parser.js"]
     },
-    "permissions": [
-        "storage",
-        "tabs",
-        "unlimitedStorage"
-    ],
-    "optional_permissions": [
-        "http://localhost/*"
-    ],
+    "permissions": ["storage", "tabs", "unlimitedStorage"],
+    "optional_permissions": ["http://localhost/*"],
     "browser_action": {
         "browser_style": true,
         "default_popup": "notes.html",
         "default_icon": "icons/icon.svg",
-        "theme_icons": [{
-            "light": "icons/icon-light.svg",
-            "dark": "icons/icon.svg",
-            "size": 16
-        }]
+        "theme_icons": [
+            {
+                "light": "icons/icon-light.svg",
+                "dark": "icons/icon.svg",
+                "size": 16
+            }
+        ]
     },
     "sidebar_action": {
         "default_panel": "notes.html",

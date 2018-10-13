@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     margin: 0;
     height: 100%;
 }
@@ -28,7 +29,11 @@ table {
     border-bottom: none;
 }
 
-#buttons, #overlay, #confirmDelete, #newNote, #tabstrip {
+#buttons,
+#overlay,
+#confirmDelete,
+#newNote,
+#tabstrip {
     background-color: inherit;
     color: inherit;
     font-family: sans-serif;
@@ -37,7 +42,9 @@ table {
     width: 100%;
 }
 
-#buttons, #tabstrip, .tab {
+#buttons,
+#tabstrip,
+.tab {
     display: flex;
     flex-direction: row;
 }
@@ -67,7 +74,8 @@ table {
     padding-left: 5px;
 }
 
-#buttons > #back, #buttons > #close {
+#buttons > #back,
+#buttons > #close {
     padding-left: 0;
 }
 
@@ -75,7 +83,8 @@ table {
     overflow-x: hidden;
 }
 
-#back, #close {
+#back,
+#close {
     flex-grow: 1;
     overflow-y: hidden;
 }
@@ -84,13 +93,15 @@ table {
     cursor: pointer;
 }
 
-#overlay, #confirmDelete, #newNote {
+#overlay,
+#confirmDelete,
+#newNote {
     height: 100%;
     left: 0;
     overflow-x: hidden;
     position: fixed;
     top: 0;
-    transition: .5s;
+    transition: 0.5s;
     width: 0;
 }
 
@@ -98,7 +109,8 @@ table {
     z-index: 1;
 }
 
-#confirmDelete, #newNote {
+#confirmDelete,
+#newNote {
     align-items: center;
     display: flex;
     justify-content: center;
@@ -114,12 +126,16 @@ table {
     z-index: 3;
 }
 
-#ynbox, #confirm {
+#ynbox,
+#confirm {
     display: flex;
     justify-content: center;
 }
 
-#yes, #no, #ok, #cancel {
+#yes,
+#no,
+#ok,
+#cancel {
     border: 1px solid;
     cursor: pointer;
     margin: 5px;

@@ -1,3 +1,4 @@
+/* globals generateElementsVariable */
 // Element Variables
 const DOM = generateElementsVariable([
     "upload",
@@ -60,16 +61,24 @@ function saveOptions() {
         subdomains_mode: DOM.subdomains_mode.value || "blacklist",
         subdomains: DOM.subdomains.value.split(" ").filter(filterBlanks) || [],
         notification_badge: DOM.notification_badge.value || "disabled",
-        notification_badge_color: DOM.notification_badge_color.value || "5a5b5c",
-        bullet_types: DOM.bullet_types.value.split(" ").filter(filterBlanks) || ["*", "-", "+"],
-        get_params: DOM.get_params.value.split(" ").filter(filterBlanks) || ["q", "v"],
+        notification_badge_color:
+            DOM.notification_badge_color.value || "5a5b5c",
+        bullet_types: DOM.bullet_types.value
+            .split(" ")
+            .filter(filterBlanks) || ["*", "-", "+"],
+        get_params: DOM.get_params.value.split(" ").filter(filterBlanks) || [
+            "q",
+            "v"
+        ],
         tabnos: DOM.tabnos.value || 0,
         padding: DOM.padding.value || 5,
         text_direction: DOM.text_direction.value || "ltr",
-        browser_action_shortcut: DOM.browser_action_shortcut.value || "Ctrl+Alt+N",
-        sidebar_action_shortcut: DOM.sidebar_action_shortcut.value || "Alt+Shift+N"
+        browser_action_shortcut:
+            DOM.browser_action_shortcut.value || "Ctrl+Alt+N",
+        sidebar_action_shortcut:
+            DOM.sidebar_action_shortcut.value || "Alt+Shift+N"
     };
-    browser.storage.local.set({options: options});
+    browser.storage.local.set({ options: options });
     browser.commands.update({
         name: "_execute_browser_action",
         shortcut: DOM.browser_action_shortcut.value || "Ctrl+Alt+N"
@@ -83,21 +92,26 @@ function saveOptions() {
 function colorSync(ele) {
     if (ele.target.dataset.hasOwnProperty("colorsync")) {
         var target = document.querySelector(ele.target.dataset.colorsync);
-        target.value = target.type === "color" ? "#" + ele.target.value : ele.target.value.substring(1);
+        target.value =
+            target.type === "color"
+                ? "#" + ele.target.value
+                : ele.target.value.substring(1);
     }
 }
 
 function domainModeSync(ele) {
-    DOM.domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
+    DOM.domain_mode.innerText =
+        ele.target.value === "blacklist" ? "Ignore" : "Enforce";
 }
 
 async function restoreOptions() {
-    const res = await browser.storage.local.get()
+    const res = await browser.storage.local.get();
     DOM.theme.value = res.options.theme;
     DOM.background_color.value = res.options.background_color;
     DOM.background_color_picker.value = "#" + res.options.background_color;
     DOM.background_color_dark.value = res.options.background_color_dark;
-    DOM.background_color_picker_dark.value = "#" + res.options.background_color_dark;
+    DOM.background_color_picker_dark.value =
+        "#" + res.options.background_color_dark;
     DOM.font_color.value = res.options.font_color;
     DOM.font_color_picker.value = "#" + res.options.font_color;
     DOM.font_color_dark.value = res.options.font_color_dark;
@@ -113,7 +127,8 @@ async function restoreOptions() {
     DOM.subdomains.value = res.options.subdomains.join(" ");
     DOM.notification_badge.value = res.options.notification_badge;
     DOM.notification_badge_color.value = res.options.notification_badge_color;
-    DOM.notification_badge_color_picker.value = "#" + res.options.notification_badge_color;
+    DOM.notification_badge_color_picker.value =
+        "#" + res.options.notification_badge_color;
     DOM.bullet_types.value = res.options.bullet_types.join(" ");
     DOM.get_params.value = res.options.get_params.join(" ");
     DOM.tabnos.value = res.options.tabnos;
@@ -146,7 +161,9 @@ function importOptions() {
 }
 
 function changeBadgeColor() {
-    browser.browserAction.setBadgeBackgroundColor({color: "#" + DOM.notification_badge_color.value});
+    browser.browserAction.setBadgeBackgroundColor({
+        color: "#" + DOM.notification_badge_color.value
+    });
 }
 
 async function uploadToSync() {

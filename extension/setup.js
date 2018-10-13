@@ -1,3 +1,4 @@
+/* globals siteParser */
 function defaultValues(object, settings) {
     for (let key in settings) {
         if (!object.hasOwnProperty(key)) {
@@ -82,18 +83,21 @@ function bulletCounter(bulletTypes, note) {
 function setBadge(bullet_types, notification_badge, notes, tabId) {
     if (notes !== null && notes !== "") {
         if (notification_badge.indexOf("enabled") > -1) {
-            browser.browserAction.setBadgeText({text: "!", tabId: tabId});
+            browser.browserAction.setBadgeText({ text: "!", tabId: tabId });
         }
         if (notification_badge.indexOf("bullets") > -1) {
             var bulletCount = bulletCounter(bullet_types, notes);
             if (bulletCount > 0) {
-                browser.browserAction.setBadgeText({text: bulletCount.toString(), tabId: tabId});
+                browser.browserAction.setBadgeText({
+                    text: bulletCount.toString(),
+                    tabId: tabId
+                });
             } else if (notification_badge.indexOf("enabled") === -1) {
-                browser.browserAction.setBadgeText({text: "", tabId: tabId});
+                browser.browserAction.setBadgeText({ text: "", tabId: tabId });
             }
         }
     } else {
-        browser.browserAction.setBadgeText({text: "", tabId: tabId});
+        browser.browserAction.setBadgeText({ text: "", tabId: tabId });
     }
 }
 
@@ -102,11 +106,22 @@ async function setBadgeSite(tab) {
     var site = await siteParser(tab.url, res.options.default_display);
     if (site === "general_notes") {
         setBadgeGeneral(tab);
-    } else if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {
-        if (res.site_notes.hasOwnProperty(site) && res.site_notes[site].hasOwnProperty(0)) {
-            setBadge(res.options.bullet_types, res.options.notification_badge, res.site_notes[site][0], tab.id);
+    } else if (
+        !tab.incognito ||
+        (res.options.private_browsing && tab.incognito)
+    ) {
+        if (
+            res.site_notes.hasOwnProperty(site) &&
+            res.site_notes[site].hasOwnProperty(0)
+        ) {
+            setBadge(
+                res.options.bullet_types,
+                res.options.notification_badge,
+                res.site_notes[site][0],
+                tab.id
+            );
         } else {
-            browser.browserAction.setBadgeText({text: "", tabId: tab.id});
+            browser.browserAction.setBadgeText({ text: "", tabId: tab.id });
         }
     } else {
         setBadgeGeneral(tab);
@@ -115,32 +130,39 @@ async function setBadgeSite(tab) {
 
 async function setBadgeGeneral(tab) {
     var res = await browser.storage.local.get(["general_notes", "options"]);
-    setBadge(res.options.bullet_types, res.options.notification_badge, res.general_notes[0], tab.id);
+    setBadge(
+        res.options.bullet_types,
+        res.options.notification_badge,
+        res.general_notes[0],
+        tab.id
+    );
 }
 
 async function updateBadge() {
     var res = await browser.storage.local.get("options");
-    var tabs = await browser.tabs.query({active: true});
+    var tabs = await browser.tabs.query({ active: true });
     if (res.options.notification_badge !== "disabled") {
         switch (res.options.default_display) {
-        case "domain":
-        case "url":
-            tabs.forEach(setBadgeSite);
-            break;
-        case "general_notes":
-            tabs.forEach(setBadgeGeneral);
-            break;
+            case "domain":
+            case "url":
+                tabs.forEach(setBadgeSite);
+                break;
+            case "general_notes":
+                tabs.forEach(setBadgeGeneral);
+                break;
         }
     } else {
         var allTabs = await browser.tabs.query({});
         for (var tab of allTabs) {
-            browser.browserAction.setBadgeText({text: "", tabId: tab.id});
+            browser.browserAction.setBadgeText({ text: "", tabId: tab.id });
         }
     }
 }
 
-browser.storage.local.get("options").then((res) => {
-    browser.browserAction.setBadgeBackgroundColor({color: "#" + res.options.notification_badge_color});
+browser.storage.local.get("options").then(res => {
+    browser.browserAction.setBadgeBackgroundColor({
+        color: "#" + res.options.notification_badge_color
+    });
 });
 browser.tabs.onActivated.addListener(updateBadge);
 browser.tabs.onUpdated.addListener(updateBadge);

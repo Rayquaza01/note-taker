@@ -1,41 +1,60 @@
-body, input {
+body,
+input {
     font-size: 1.25rem;
 }
+
 table {
     border-collapse: collapse;
     width: 100%;
 }
+
 tr:last-child {
     border-bottom: none;
 }
-td, select, input {
+
+td,
+select,
+input {
     height: 30px;
     line-height: 30px;
     width: 50%;
 }
-#background_color, #font_color, #background_color_dark, #font_color_dark, #notification_badge_color {
+
+#background_color,
+#font_color,
+#background_color_dark,
+#font_color_dark,
+#notification_badge_color {
     text-transform: uppercase;
 }
+
 tr {
     border-bottom: 1px solid black;
     border-color: #c1c1c1;
 }
+
 .center {
     align-items: center;
     display: flex;
 }
+
 tr a {
     display: none;
 }
+
 tr:hover a {
     display: inline;
 }
-#import, #export {
+
+#import,
+#export {
     height: 30px;
 }
+
 button {
     height: 30px;
 }
+
 #exportTextarea {
     height: 500px;
 }

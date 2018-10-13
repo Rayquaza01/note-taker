@@ -1,3 +1,5 @@
+/* eslint-env webextensions */
+/* globals generateElementsVariable siteParser */
 const DOM = generateElementsVariable([
     "textarea",
     "back",
@@ -23,15 +25,24 @@ const DOM = generateElementsVariable([
 ]);
 
 function getContext() {
-    return browser.extension.getViews({type: "popup"}).indexOf(window) > -1 ? "popup" :
-        browser.extension.getViews({type: "sidebar"}).indexOf(window) > -1 ? "sidebar" :
-            browser.extension.getViews({type: "tab"}).indexOf(window) > -1 ? "tab" : undefined;
+    return browser.extension.getViews({ type: "popup" }).indexOf(window) > -1
+        ? "popup"
+        : browser.extension.getViews({ type: "sidebar" }).indexOf(window) > -1
+            ? "sidebar"
+            : browser.extension.getViews({ type: "tab" }).indexOf(window) > -1
+                ? "tab"
+                : undefined;
 }
 
 function searchResults() {
     var names = document.getElementsByClassName("name");
     for (var name of names) {
-        name.parentNode.style.display = name.innerText.toUpperCase().indexOf(DOM.search.value.toUpperCase()) > -1 ? "flex" : "none";
+        name.parentNode.style.display =
+            name.innerText
+                .toUpperCase()
+                .indexOf(DOM.search.value.toUpperCase()) > -1
+                ? "flex"
+                : "none";
     }
 }
 
@@ -53,17 +64,20 @@ function closeList() {
 
 async function saveGeneralNotes() {
     var gen = await browser.storage.local.get("general_notes");
-    gen.general_notes[DOM.tabstrip.dataset.activeTab] = DOM.textarea.value || "";
+    gen.general_notes[DOM.tabstrip.dataset.activeTab] =
+        DOM.textarea.value || "";
     browser.storage.local.set(gen);
 }
 
 async function saveSiteNotes() {
     var res = await browser.storage.local.get("site_notes");
     if (!res.site_notes.hasOwnProperty(DOM.back.dataset.currentSite)) {
-        res.site_notes[DOM.back.dataset.currentSite] = []
+        res.site_notes[DOM.back.dataset.currentSite] = [];
     }
-    res.site_notes[DOM.back.dataset.currentSite][DOM.tabstrip.dataset.activeTab] = DOM.textarea.value || "";
-    browser.storage.local.set({site_notes: res.site_notes});
+    res.site_notes[DOM.back.dataset.currentSite][
+        DOM.tabstrip.dataset.activeTab
+    ] = DOM.textarea.value || "";
+    browser.storage.local.set({ site_notes: res.site_notes });
 }
 
 function bold(tab_ele, tab) {
@@ -77,17 +91,18 @@ function bold(tab_ele, tab) {
 async function emboldenNotes(note) {
     let res = await browser.storage.local.get();
     let tabstrip = Array.from(DOM.tabstrip.children);
+    let parent;
     if (note === "general_notes") {
-        var parent = res;
+        parent = res;
     } else {
-        var parent = res.site_notes;
+        parent = res.site_notes;
     }
     if (parent.hasOwnProperty(note)) {
         for (let index = 0; index < tabstrip.length; index++) {
-            if (parent[note].hasOwnProperty(index)){
+            if (parent[note].hasOwnProperty(index)) {
                 bold(tabstrip[index], parent[note][index]);
             } else {
-                bold(tabstrip[index], null)
+                bold(tabstrip[index], null);
             }
         }
     } else {
@@ -104,11 +119,12 @@ async function loadGeneralNotes() {
     // DOM.toggle.title = "Switch to site notes"
     DOM.textarea.removeEventListener("input", saveSiteNotes);
     var res = await browser.storage.local.get("general_notes");
-    DOM.textarea.value = res.general_notes[DOM.tabstrip.dataset.activeTab] || "";
+    DOM.textarea.value =
+        res.general_notes[DOM.tabstrip.dataset.activeTab] || "";
     DOM.back.innerText = "General Notes";
     DOM.back.title = "General Notes";
-    DOM.back.dataset.currentSite = "general_notes"
-    emboldenNotes("general_notes")
+    DOM.back.dataset.currentSite = "general_notes";
+    emboldenNotes("general_notes");
     DOM.textarea.addEventListener("input", saveGeneralNotes);
 }
 
@@ -120,38 +136,43 @@ async function siteNoteSetup(site) {
         return;
     }
     var res = await browser.storage.local.get("site_notes");
+    let text;
     if (res.site_notes.hasOwnProperty(site)) {
-        if (res.site_notes[site][DOM.tabstrip.dataset.activeTab] !== undefined) {
-            var text = res.site_notes[site][DOM.tabstrip.dataset.activeTab];
+        if (
+            res.site_notes[site][DOM.tabstrip.dataset.activeTab] !== undefined
+        ) {
+            text = res.site_notes[site][DOM.tabstrip.dataset.activeTab];
         } else {
-            var text = "";
+            text = "";
         }
     } else {
-        var text = "";
+        text = "";
     }
     DOM.textarea.value = text;
     DOM.back.innerText = site;
     DOM.back.title = site;
     DOM.back.dataset.currentSite = site;
-    emboldenNotes(site)
+    emboldenNotes(site);
     DOM.textarea.addEventListener("input", saveSiteNotes);
 }
 
 function removeNoteFromList(name) {
-    var deleteButton = document.querySelector(`span[data-delete-site="${name}"]`);
+    var deleteButton = document.querySelector(
+        `span[data-delete-site="${name}"]`
+    );
     deleteButton.parentNode.parentNode.removeChild(deleteButton.parentNode);
 }
 
 async function deleteNote() {
     var res = await browser.storage.local.get("site_notes");
     delete res.site_notes[DOM.siteName.innerText];
-    browser.storage.local.set({site_notes: res.site_notes});
+    browser.storage.local.set({ site_notes: res.site_notes });
     removeNoteFromList(DOM.siteName.innerText);
     DOM.confirmDelete.style.width = "0";
 }
 
 async function loadCustomNote(e) {
-    var tabs = await browser.tabs.query({active: true, currentWindow: true});
+    var tabs = await browser.tabs.query({ active: true, currentWindow: true });
     if (e.target.className === "name") {
         if (e.target.innerText !== DOM.back.innerText) {
             DOM.back.dataset[tabs[0].id] = e.target.innerText;
@@ -165,13 +186,14 @@ async function loadCustomNote(e) {
         closeList();
         return;
     }
+    let tab;
     switch (e.target.className) {
         case "mdi mdi-delete":
             DOM.confirmDelete.style.width = "100%";
             DOM.siteName.innerText = e.target.dataset.deleteSite;
             return;
         case "mdi mdi-open-in-new":
-            let tab = await browser.tabs.create({
+            tab = await browser.tabs.create({
                 active: true,
                 url: "https://" + e.target.dataset.open
             });
@@ -199,8 +221,12 @@ function closeConfirm() {
 
 async function loadSiteNotes(manualClick = false, mode = "") {
     var res = await browser.storage.local.get("options");
-    var tabs = await browser.tabs.query({active: true, currentWindow: true});
-    if (!tabs[0].incognito || manualClick || (res.options.private_browsing && tabs[0].incognito)) {
+    var tabs = await browser.tabs.query({ active: true, currentWindow: true });
+    if (
+        !tabs[0].incognito ||
+        manualClick ||
+        (res.options.private_browsing && tabs[0].incognito)
+    ) {
         var url = tabs[0].url;
         var site = await siteParser(url, mode || DOM.toggle.value);
         if (site === "general_notes") {
@@ -215,7 +241,6 @@ async function loadSiteNotes(manualClick = false, mode = "") {
 }
 
 async function changeNoteMode() {
-    var tabs = await browser.tabs.query({active: true, currentWindow: true});
     switch (DOM.toggle.value) {
         case "url":
         case "domain":
@@ -231,15 +256,14 @@ async function changeNoteMode() {
 
 async function setTheme(mode) {
     var res = await browser.storage.local.get("options");
+    let theme;
     switch (mode) {
-        case "light": {
-            var theme = "";
+        case "light":
+            theme = "";
             break;
-        }
-        case "dark": {
-            var theme = "_dark";
+        case "dark":
+            theme = "_dark";
             break;
-        }
     }
     let bg_color = "#" + res.options["background_color" + theme];
     let font_color = "#" + res.options["font_color" + theme];
@@ -261,13 +285,13 @@ async function changeTheme() {
         case "Switch to light theme":
             this.title = "Switch to dark theme";
             res.options.theme = "light";
-            browser.storage.local.set({options: res.options});
+            browser.storage.local.set({ options: res.options });
             setTheme("light");
             break;
         case "Switch to dark theme":
             this.title = "Switch to light theme";
             res.options.theme = "dark";
-            browser.storage.local.set({options: res.options});
+            browser.storage.local.set({ options: res.options });
             setTheme("dark");
             break;
     }
@@ -372,7 +396,10 @@ function openTab() {
 }
 
 async function perTabSidebar() {
-    const tabs = await browser.tabs.query({active: true, currentWindow: true});
+    const tabs = await browser.tabs.query({
+        active: true,
+        currentWindow: true
+    });
     const res = await browser.storage.local.get("options");
     DOM.toggle.value = res.options.default_display;
     if (!DOM.back.dataset.hasOwnProperty(tabs[0].id)) {
@@ -405,7 +432,7 @@ function listUpdate(changes) {
             }
         }
     }
-    emboldenNotes(DOM.back.dataset.currentSite)
+    emboldenNotes(DOM.back.dataset.currentSite);
 }
 
 async function tabSwitch(e) {
