@@ -18,7 +18,11 @@
                 "prev": "*",
                 "next": "function"
             }
-        ]
+        ],
+        "no-trailing-spaces": "error",
+        "comma-spacing": "error",
+        "no-nested-ternary": "error",
+        "max-depth": ["error", 4]
     },
     "parserOptions": {
         "ecmaVersion": 2018

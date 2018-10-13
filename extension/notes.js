@@ -25,22 +25,19 @@ const DOM = generateElementsVariable([
 ]);
 
 function getContext() {
-    return browser.extension.getViews({ type: "popup" }).indexOf(window) > -1
-        ? "popup"
-        : browser.extension.getViews({ type: "sidebar" }).indexOf(window) > -1
-            ? "sidebar"
-            : browser.extension.getViews({ type: "tab" }).indexOf(window) > -1
-                ? "tab"
-                : undefined;
+    for (let context of ["popup", "sidebar", "tab"]) {
+        if (browser.extension.getViews({ type: context }).indexOf(window) > -1) {
+            return context;
+        }
+    }
+    return undefined;
 }
 
 function searchResults() {
     var names = document.getElementsByClassName("name");
     for (var name of names) {
         name.parentNode.style.display =
-            name.innerText
-                .toUpperCase()
-                .indexOf(DOM.search.value.toUpperCase()) > -1
+            name.innerText.toUpperCase().indexOf(DOM.search.value.toUpperCase()) > -1
                 ? "flex"
                 : "none";
     }
@@ -64,8 +61,7 @@ function closeList() {
 
 async function saveGeneralNotes() {
     var gen = await browser.storage.local.get("general_notes");
-    gen.general_notes[DOM.tabstrip.dataset.activeTab] =
-        DOM.textarea.value || "";
+    gen.general_notes[DOM.tabstrip.dataset.activeTab] = DOM.textarea.value || "";
     browser.storage.local.set(gen);
 }
 
@@ -74,9 +70,8 @@ async function saveSiteNotes() {
     if (!res.site_notes.hasOwnProperty(DOM.back.dataset.currentSite)) {
         res.site_notes[DOM.back.dataset.currentSite] = [];
     }
-    res.site_notes[DOM.back.dataset.currentSite][
-        DOM.tabstrip.dataset.activeTab
-    ] = DOM.textarea.value || "";
+    res.site_notes[DOM.back.dataset.currentSite][DOM.tabstrip.dataset.activeTab] =
+        DOM.textarea.value || "";
     browser.storage.local.set({ site_notes: res.site_notes });
 }
 
@@ -119,8 +114,7 @@ async function loadGeneralNotes() {
     // DOM.toggle.title = "Switch to site notes"
     DOM.textarea.removeEventListener("input", saveSiteNotes);
     var res = await browser.storage.local.get("general_notes");
-    DOM.textarea.value =
-        res.general_notes[DOM.tabstrip.dataset.activeTab] || "";
+    DOM.textarea.value = res.general_notes[DOM.tabstrip.dataset.activeTab] || "";
     DOM.back.innerText = "General Notes";
     DOM.back.title = "General Notes";
     DOM.back.dataset.currentSite = "general_notes";
@@ -138,9 +132,7 @@ async function siteNoteSetup(site) {
     var res = await browser.storage.local.get("site_notes");
     let text;
     if (res.site_notes.hasOwnProperty(site)) {
-        if (
-            res.site_notes[site][DOM.tabstrip.dataset.activeTab] !== undefined
-        ) {
+        if (res.site_notes[site][DOM.tabstrip.dataset.activeTab] !== undefined) {
             text = res.site_notes[site][DOM.tabstrip.dataset.activeTab];
         } else {
             text = "";
@@ -157,9 +149,7 @@ async function siteNoteSetup(site) {
 }
 
 function removeNoteFromList(name) {
-    var deleteButton = document.querySelector(
-        `span[data-delete-site="${name}"]`
-    );
+    var deleteButton = document.querySelector(`span[data-delete-site="${name}"]`);
     deleteButton.parentNode.parentNode.removeChild(deleteButton.parentNode);
 }
 
