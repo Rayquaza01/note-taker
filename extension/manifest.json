@@ -15,8 +15,7 @@
     "background": {
         "scripts": ["setup.js", "third-party/psl.min.js", "site-parser.js"]
     },
-    "permissions": ["storage", "tabs", "unlimitedStorage"],
-    "optional_permissions": ["http://localhost/*"],
+    "permissions": ["storage", "tabs", "unlimitedStorage", "nativeMessaging"],
     "browser_action": {
         "browser_style": true,
         "default_popup": "notes.html",
