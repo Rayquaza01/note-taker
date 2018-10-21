@@ -68,25 +68,16 @@ function escapeRegex(regex) {
     return regex.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function bulletCounter(bulletTypes, note) {
-    var bulletCount = 0;
-    var escaped = bulletTypes.map(escapeRegex);
-    var regex = new RegExp("^\\s*(" + escaped.join("|") + ")");
-    for (var line of note.split("\n")) {
-        if (line.search(regex) > -1) {
-            ++bulletCount;
-        }
-    }
-    return bulletCount;
-}
-
 function setBadge(bullet_types, notification_badge, notes, tabId) {
     if (notes !== null && notes !== "") {
         if (notification_badge.indexOf("enabled") > -1) {
             browser.browserAction.setBadgeText({ text: "!", tabId: tabId });
         }
         if (notification_badge.indexOf("bullets") > -1) {
-            var bulletCount = bulletCounter(bullet_types, notes);
+            console.time("ESCAPE");
+            let escaped = bullet_types.map(escapeRegex);
+            let regex = new RegExp("^\\s*(" + escaped.join("|") + ").*");
+            let bulletCount = notes.match(regex).length;
             if (bulletCount > 0) {
                 browser.browserAction.setBadgeText({
                     text: bulletCount.toString(),
@@ -95,21 +86,18 @@ function setBadge(bullet_types, notification_badge, notes, tabId) {
             } else if (notification_badge.indexOf("enabled") === -1) {
                 browser.browserAction.setBadgeText({ text: "", tabId: tabId });
             }
+            console.timeEnd("ESCAPE");
         }
     } else {
         browser.browserAction.setBadgeText({ text: "", tabId: tabId });
     }
 }
 
-async function setBadgeSite(tab) {
-    var res = await browser.storage.local.get(["site_notes", "options"]);
-    var site = await siteParser(tab.url, res.options.default_display);
+function setBadgeSite(res, tab) {
+    let site = siteParser(tab.url, res.options.default_display, res);
     if (site === "general_notes") {
-        setBadgeGeneral(tab);
-    } else if (
-        !tab.incognito ||
-        (res.options.private_browsing && tab.incognito)
-    ) {
+        setBadgeGeneral(res, tab);
+    } else if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {
         if (
             res.site_notes.hasOwnProperty(site) &&
             res.site_notes[site].hasOwnProperty(0)
@@ -124,12 +112,11 @@ async function setBadgeSite(tab) {
             browser.browserAction.setBadgeText({ text: "", tabId: tab.id });
         }
     } else {
-        setBadgeGeneral(tab);
+        setBadgeGeneral(res, tab);
     }
 }
 
-async function setBadgeGeneral(tab) {
-    var res = await browser.storage.local.get(["general_notes", "options"]);
+function setBadgeGeneral(res, tab) {
     setBadge(
         res.options.bullet_types,
         res.options.notification_badge,
@@ -139,21 +126,20 @@ async function setBadgeGeneral(tab) {
 }
 
 async function updateBadge() {
-    var res = await browser.storage.local.get("options");
-    var tabs = await browser.tabs.query({ active: true });
+    let res = await browser.storage.local.get();
+    let tabs = await browser.tabs.query({ active: true });
     if (res.options.notification_badge !== "disabled") {
         switch (res.options.default_display) {
             case "domain":
             case "url":
-                tabs.forEach(setBadgeSite);
+                tabs.forEach(setBadgeSite.bind(null, res));
                 break;
             case "general_notes":
-                tabs.forEach(setBadgeGeneral);
+                tabs.forEach(setBadgeGeneral.bind(null, res));
                 break;
         }
     } else {
-        var allTabs = await browser.tabs.query({});
-        for (var tab of allTabs) {
+        for (let tab of tabs) {
             browser.browserAction.setBadgeText({ text: "", tabId: tab.id });
         }
     }

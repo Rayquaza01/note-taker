@@ -1,24 +1,21 @@
 /* globals psl */
 /* eslint no-unused-vars: 0 */
 function allowedParams(search, allowed) {
-    var params = [];
-    for (var item of search.substring(1).split("&")) {
-        if (allowed.indexOf(item.split("=")[0]) > -1) {
-            params.push(item);
-        }
-    }
+    let params = search
+        .substring(1)
+        .split("&")
+        .filter(item => allowed.indexOf(item.split("=")[0]) > -1);
     return params.length > 0 ? "?" + params.join("&") : "";
 }
 
-async function siteParser(rawUrl, mode) {
-    var res = await browser.storage.local.get("options");
-    var url = new URL(rawUrl);
+function siteParser(rawUrl, res) {
+    let url = new URL(rawUrl);
     if (url.protocol === "about:") {
         return url.protocol + url.pathname;
     } else if (url.protocol.match(/https?:/g)) {
-        var site = psl.parse(url.hostname);
-        if (mode === "url") {
-            var params = allowedParams(url.search, res.options.get_params);
+        let site = psl.parse(url.hostname);
+        if (res.options.default_display === "url") {
+            let params = allowedParams(url.search, res.options.get_params);
             return url.hostname + url.pathname + params;
         } else if (res.options.subdomains_mode === "blacklist") {
             if (
