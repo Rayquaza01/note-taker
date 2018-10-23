@@ -8,13 +8,13 @@ function allowedParams(search, allowed) {
     return params.length > 0 ? "?" + params.join("&") : "";
 }
 
-function siteParser(rawUrl, res) {
+function siteParser(rawUrl, mode, res) {
     let url = new URL(rawUrl);
     if (url.protocol === "about:") {
         return url.protocol + url.pathname;
     } else if (url.protocol.match(/https?:/g)) {
         let site = psl.parse(url.hostname);
-        if (res.options.default_display === "url") {
+        if (mode === "url") {
             let params = allowedParams(url.search, res.options.get_params);
             return url.hostname + url.pathname + params;
         } else if (res.options.subdomains_mode === "blacklist") {

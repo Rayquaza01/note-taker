@@ -3,7 +3,6 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="notes.css">
-        <link rel="stylesheet" type="text/css" href="third-party/mdi/css/materialdesignicons.min.css">
         <link rel="icon" type="img/png" href="icons/icon-96.png">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Note Taker</title>
@@ -15,7 +14,7 @@
                     <input type="text" id="search" autocomplete="off" placeholder="Search">
                     <span class="container">
                         <span class="name">General Notes</span>
-                        <span class="mdi mdi-plus"></span>
+                        <span class="mdi mdi-plus" data-icon="mdi-plus"></span>
                     </span>
                 </div>
             </div>
@@ -50,17 +49,17 @@
                 <textarea id="textarea" autofocus tabindex="1"></textarea>
             </div>
             <div id="buttons" class="row footer">
-                <span class="mdi mdi-menu" id="back"></span>
-                <span class="mdi mdi-backburger" id="close">Close</span>
+                <span id="back"><span class="mdi mdi-menu" data-icon="mdi-menu"></span><span id="back_text"></span></span>
+                <span id="close"><span class="mdi mdi-backburger" data-icon="mdi-backburger"></span>Close</span>
                 <select id="toggle">
                     <option value="general_notes">General Notes</option>
                     <option value="domain">Domain Notes</option>
                     <option value="url">URL Notes</option>
                 </select>
                 <!-- <span id="toggle"></span> -->
-                <span id="open_in_new" class="mdi mdi-open-in-new" title="Open in New Tab"></span>
-                <span class="mdi mdi-theme-light-dark" id="theme"></span>
-                <span id="settings" class="mdi mdi-settings" title="Settings"></span>
+                <span id="open_in_new" class="mdi mdi-open-in-new" data-icon="mdi-open-in-new" title="Open in New Tab"></span>
+                <span class="mdi mdi-theme-light-dark" data-icon="mdi-theme-light-dark" id="theme"></span>
+                <span id="settings" class="mdi mdi-settings" data-icon="mdi-settings" title="Settings"></span>
             </div>
         </div>
         <script src="elements.js"></script>

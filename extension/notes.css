@@ -89,7 +89,9 @@ table {
     overflow-y: hidden;
 }
 
-.mdi:hover {
+.mdi:hover,
+#back:hover,
+#close:hover {
     cursor: pointer;
 }
 
@@ -155,6 +157,11 @@ table {
 
 #close {
     display: none;
+}
+
+.mdi svg {
+    width: 16px;
+    height: 16px;
 }
 
 .mdi {

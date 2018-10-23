@@ -3,6 +3,7 @@
 const DOM = generateElementsVariable([
     "textarea",
     "back",
+    "back_text",
     "toggle",
     "theme",
     "overlay",
@@ -23,6 +24,12 @@ const DOM = generateElementsVariable([
     "newNoteName",
     "newNote"
 ]);
+
+async function loadSVG(url) {
+    let svg = await fetch(url);
+    return new DOMParser().parseFromString(await svg.text(), "image/svg+xml")
+        .documentElement;
+}
 
 function getContext() {
     for (let context of ["popup", "sidebar", "tab"]) {
@@ -115,7 +122,7 @@ async function loadGeneralNotes() {
     DOM.textarea.removeEventListener("input", saveSiteNotes);
     var res = await browser.storage.local.get("general_notes");
     DOM.textarea.value = res.general_notes[DOM.tabstrip.dataset.activeTab] || "";
-    DOM.back.innerText = "General Notes";
+    DOM.back_text.innerText = "General Notes";
     DOM.back.title = "General Notes";
     DOM.back.dataset.currentSite = "general_notes";
     emboldenNotes("general_notes");
@@ -141,7 +148,7 @@ async function siteNoteSetup(site) {
         text = "";
     }
     DOM.textarea.value = text;
-    DOM.back.innerText = site;
+    DOM.back_text.innerText = site;
     DOM.back.title = site;
     DOM.back.dataset.currentSite = site;
     emboldenNotes(site);
@@ -163,34 +170,36 @@ async function deleteNote() {
 
 async function loadCustomNote(e) {
     var tabs = await browser.tabs.query({ active: true, currentWindow: true });
-    if (e.target.className === "name") {
-        if (e.target.innerText !== DOM.back.innerText) {
-            DOM.back.dataset[tabs[0].id] = e.target.innerText;
-        } else if (e.target.innerText === DOM.back.innerText) {
+    // return parent element if svg
+    let target = e.target.tagName === "svg" ? e.target.parentNode : e.target;
+    if (target.className === "name") {
+        if (target.innerText !== DOM.back_text.innerText) {
+            DOM.back.dataset[tabs[0].id] = target.innerText;
+        } else if (target.innerText === DOM.back_text.innerText) {
             delete DOM.back.dataset[tabs[0].id];
             loadSiteNotes();
         }
     }
-    if (e.target.innerText === "General Notes") {
+    if (target.innerText === "General Notes") {
         loadGeneralNotes();
         closeList();
         return;
     }
     let tab;
-    switch (e.target.className) {
+    switch (target.className) {
         case "mdi mdi-delete":
             DOM.confirmDelete.style.width = "100%";
-            DOM.siteName.innerText = e.target.dataset.deleteSite;
+            DOM.siteName.innerText = target.dataset.deleteSite;
             return;
         case "mdi mdi-open-in-new":
             tab = await browser.tabs.create({
                 active: true,
-                url: "https://" + e.target.dataset.open
+                url: "https://" + target.dataset.open
             });
             // open to note in sidebar
-            DOM.back.dataset[tab.id] = e.target.dataset.open;
+            DOM.back.dataset[tab.id] = target.dataset.open;
             // open to note in popup
-            siteNoteSetup(e.target.dataset.open);
+            siteNoteSetup(target.dataset.open);
             closeList();
             break;
         case "name":
@@ -218,7 +227,7 @@ async function loadSiteNotes(manualClick = false, mode = "") {
         (res.options.private_browsing && tabs[0].incognito)
     ) {
         var url = tabs[0].url;
-        var site = await siteParser(url, mode || DOM.toggle.value);
+        var site = await siteParser(url, mode || DOM.toggle.value, res);
         if (site === "general_notes") {
             loadGeneralNotes();
         } else {
@@ -287,25 +296,29 @@ async function changeTheme() {
     }
 }
 
-function addNoteToList(site) {
+async function addNoteToList(site) {
     var cont = document.createElement("div");
     cont.className = "container";
     var name = document.createElement("span");
     name.innerText = site;
     name.title = site;
     name.className = "name";
-    cont.append(name);
+    cont.appendChild(name);
     if (site.indexOf("about:") === -1) {
         var open = document.createElement("span");
         open.dataset.open = site;
         open.className = "mdi mdi-open-in-new";
-        cont.append(open);
+        open.appendChild(
+            await loadSVG(browser.extension.getURL("icons/mdi/mdi-open-in-new.svg"))
+        );
+        cont.appendChild(open);
     }
     var del = document.createElement("span");
     del.dataset.deleteSite = site;
     del.className = "mdi mdi-delete";
-    cont.append(del);
-    DOM.note_list.append(cont);
+    del.appendChild(await loadSVG(browser.extension.getURL("icons/mdi/mdi-delete.svg")));
+    cont.appendChild(del);
+    DOM.note_list.appendChild(cont);
 }
 
 async function loadNoteList() {
@@ -319,6 +332,13 @@ async function loadNoteList() {
 
 async function pageSetup() {
     var res = await browser.storage.local.get("options");
+    for (let icon of document.getElementsByClassName("mdi")) {
+        icon.appendChild(
+            await loadSVG(
+                browser.extension.getURL("icons/mdi/" + icon.dataset.icon + ".svg")
+            )
+        );
+    }
     switch (res.options.theme) {
         case "light":
             DOM.theme.title = "Switch to dark theme";
@@ -367,7 +387,7 @@ async function pageSetup() {
             var newTab = document.createElement("span");
             newTab.className = "tab";
             newTab.innerText = "Tab " + parseInt(tab + 1);
-            DOM.tabstrip.append(newTab);
+            DOM.tabstrip.appendChild(newTab);
         }
     }
     DOM.toggle.value = res.options.default_display;

@@ -74,10 +74,9 @@ function setBadge(bullet_types, notification_badge, notes, tabId) {
             browser.browserAction.setBadgeText({ text: "!", tabId: tabId });
         }
         if (notification_badge.indexOf("bullets") > -1) {
-            console.time("ESCAPE");
             let escaped = bullet_types.map(escapeRegex);
-            let regex = new RegExp("^\\s*(" + escaped.join("|") + ").*");
-            let bulletCount = notes.match(regex).length;
+            let regex = new RegExp("^\\s*(" + escaped.join("|") + ").*$", "gm");
+            let bulletCount = (notes.match(regex) || []).length;
             if (bulletCount > 0) {
                 browser.browserAction.setBadgeText({
                     text: bulletCount.toString(),
@@ -86,7 +85,6 @@ function setBadge(bullet_types, notification_badge, notes, tabId) {
             } else if (notification_badge.indexOf("enabled") === -1) {
                 browser.browserAction.setBadgeText({ text: "", tabId: tabId });
             }
-            console.timeEnd("ESCAPE");
         }
     } else {
         browser.browserAction.setBadgeText({ text: "", tabId: tabId });
