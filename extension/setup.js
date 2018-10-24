@@ -1,4 +1,50 @@
 /* globals siteParser */
+function compareObjs(obj1, obj2) {
+    // Deep compare objects.
+    // Works for arrays and objects containing items comparable with ===
+    if (typeof obj1 === typeof obj2) {
+        if (Array.isArray(obj1) && Array.isArray(obj2)) {
+            // if both are arrays
+            if (obj1.length === obj2.length) {
+                // if arrays of same length
+                for (let i = 0; i < obj1.length; i++) {
+                    // return false on first failed comparison
+                    if (!compareObjs(obj1[i], obj2[i])) {
+                        return false;
+                    }
+                }
+                // return true no failed comparisons
+                return true;
+            } else {
+                // arrays not same length
+                return false;
+            }
+        } else if (typeof obj1 === "object" && typeof obj2 === "object") {
+            // typeof returns object for both objects and arrays.
+            // Array.isArray detects only arrays, so only objects reach this point
+
+            // get keys from objects and sort
+            let keys1 = Object.keys(obj1).sort();
+            let keys2 = Object.keys(obj2).sort();
+            if (compareObjs(keys1, keys2)) {
+                // get array of values
+                let values1 = keys1.map(key => obj1[key]);
+                let values2 = keys2.map(key => obj2[key]);
+                return compareObjs(values1, values2);
+            } else {
+                // keys are different
+                return false;
+            }
+        } else {
+            // not array or object, return direct comparison
+            return obj1 === obj2;
+        }
+    } else {
+        // not array, not same type
+        return false;
+    }
+}
+
 function defaultValues(object, settings) {
     for (let key in settings) {
         if (!object.hasOwnProperty(key)) {
@@ -13,7 +59,9 @@ async function setOpts() {
     res = defaultValues(res, {
         options: {},
         site_notes: {},
-        general_notes: []
+        general_notes: [],
+        sync: {},
+        backup: {}
     });
     res.options = defaultValues(res.options, {
         theme: "light",
@@ -39,6 +87,10 @@ async function setOpts() {
         text_direction: "ltr",
         browser_action_shortcut: "Alt+Shift+M",
         sidebar_action_shortcut: "Alt+Shift+N"
+    });
+    res.sync = defaultValues(res.sync, {
+        interval: 0,
+        notify: false
     });
     // compatibility for upgrading note storage from previous versions
     browser.commands.update({
@@ -70,10 +122,10 @@ function escapeRegex(regex) {
 
 function setBadge(bullet_types, notification_badge, notes, tabId) {
     if (notes !== null && notes !== "") {
-        if (notification_badge.indexOf("enabled") > -1) {
+        if (notification_badge.includes("enabled")) {
             browser.browserAction.setBadgeText({ text: "!", tabId: tabId });
         }
-        if (notification_badge.indexOf("bullets") > -1) {
+        if (notification_badge.includes("bullets")) {
             let escaped = bullet_types.map(escapeRegex);
             let regex = new RegExp("^\\s*(" + escaped.join("|") + ").*$", "gm");
             let bulletCount = (notes.match(regex) || []).length;
@@ -82,7 +134,7 @@ function setBadge(bullet_types, notification_badge, notes, tabId) {
                     text: bulletCount.toString(),
                     tabId: tabId
                 });
-            } else if (notification_badge.indexOf("enabled") === -1) {
+            } else if (!notification_badge.includes("enabled")) {
                 browser.browserAction.setBadgeText({ text: "", tabId: tabId });
             }
         }
@@ -140,6 +192,34 @@ async function updateBadge() {
         for (let tab of tabs) {
             browser.browserAction.setBadgeText({ text: "", tabId: tab.id });
         }
+    }
+}
+
+async function autoSync() {
+    let local = await browser.storage.local.get(["general_notes", "site_notes"]);
+    let sync = await browser.storage.sync.get(["general_notes", "site_notes"]);
+    let res = await browser.storage.local.get(["sync", "backup"]);
+    // compare sync and local against backup
+    let localChanges = compareObjs(res.backup, local);
+    let syncChanges = compareObjs(res.backup, sync);
+    if (localChanges && syncChanges) {
+        // conflict
+    } else if (localChanges) {
+        // remove old sync and backup
+        await browser.storage.sync.remove(["general_notes", "site_notes"]);
+        await browser.storage.local.remove("backup");
+        // set sync and backup to local
+        browser.storage.sync.set(local);
+        browser.storage.local.set({ backup: local });
+    } else if (syncChanges) {
+        // remove old local and backup
+        await browser.storage.local.remove(["general_notes", "site_notes"]);
+        await browser.storage.local.remove("backup");
+        // set local and backup to sync
+        browser.storage.local.set(sync);
+        browser.storage.local.set({ backup: sync });
+    } else {
+        // everything is already synced.
     }
 }
 
