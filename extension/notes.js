@@ -227,7 +227,7 @@ async function loadSiteNotes(manualClick = false, mode = "") {
         (res.options.private_browsing && tabs[0].incognito)
     ) {
         var url = tabs[0].url;
-        var site = await siteParser(url, mode || DOM.toggle.value, res);
+        var site = await siteParser(url, res, mode || DOM.toggle.value);
         if (site === "general_notes") {
             loadGeneralNotes();
         } else {
@@ -330,7 +330,7 @@ async function loadNoteList() {
     }
 }
 
-async function pageSetup() {
+async function main() {
     var res = await browser.storage.local.get("options");
     for (let icon of document.getElementsByClassName("mdi")) {
         icon.appendChild(
@@ -403,6 +403,43 @@ function openTab() {
         active: true,
         url: "notes.html"
     });
+}
+
+async function displayNotes(site = "general_notes", note = "", tab = 0) {
+    DOM.textarea.value = note;
+    DOM.textarea.dataset.currentNote = site;
+    DOM.textarea.dataset.currentTab = tab;
+}
+
+async function saveNotes() {
+    let res = await browser.storage.local.get();
+    let parent =
+        DOM.textarea.dataset.currentNote === "general_notes" ? res : res.site_notes;
+    parent[DOM.textarea.dataset.currentNote][DOM.textarea.dataset.currentTab] =
+        DOM.textarea.value;
+    await browser.storage.local.set(res);
+}
+
+async function loadNotes(note = "general_notes", tab = 0, manualClick = false) {
+    let tabs = (await browser.tabs.query({
+        active: true,
+        currentWindow: true
+    }))[0];
+    let res = await browser.storage.local.get();
+    if (note === "general_notes") {
+        displayNotes("general_notes", res.general_notes[tab]);
+    }
+    if (
+        !tabs.incognito ||
+        manualClick ||
+        (res.options.private_browsing && tabs.incognito)
+    ) {
+        let site = await siteParser(tabs.url, res, DOM.toggle.value);
+        let parent = site === "general_notes" ? res.general_notes : res.site_notes[site];
+        displayNotes(site, parent[tab]);
+    } else {
+        displayNotes("general_notes", res.general_notes[tab]);
+    }
 }
 
 async function perTabSidebar() {
@@ -496,4 +533,4 @@ DOM.tabstrip.addEventListener("click", tabSwitch);
 DOM.ok.addEventListener("click", newNote);
 DOM.cancel.addEventListener("click", closeNewNote);
 browser.storage.onChanged.addListener(listUpdate);
-document.addEventListener("DOMContentLoaded", pageSetup);
+document.addEventListener("DOMContentLoaded", main);

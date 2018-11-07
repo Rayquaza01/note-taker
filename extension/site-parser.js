@@ -8,7 +8,8 @@ function allowedParams(search, allowed) {
     return params.length > 0 ? "?" + params.join("&") : "";
 }
 
-function siteParser(rawUrl, mode, res) {
+function siteParser(rawUrl, res, mode = null) {
+    mode = mode === null ? res.options.default_display : mode;
     let url = new URL(rawUrl);
     if (url.protocol === "about:") {
         return url.protocol + url.pathname;
