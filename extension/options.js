@@ -35,14 +35,11 @@ const DOM = generateElementsVariable([
     "tabnos",
     "text_direction",
     "browser_action_shortcut",
-    "sidebar_action_shortcut"
+    "sidebar_action_shortcut",
+    "api"
 ]);
 
-function filterBlanks(item) {
-    if (!item.match(/^$/)) {
-        return item;
-    }
-}
+const filterBlanks = item => !/^$/.test(item);
 
 function saveOptions() {
     const options = {
@@ -61,22 +58,19 @@ function saveOptions() {
         subdomains_mode: DOM.subdomains_mode.value || "blacklist",
         subdomains: DOM.subdomains.value.split(" ").filter(filterBlanks) || [],
         notification_badge: DOM.notification_badge.value || "disabled",
-        notification_badge_color:
-            DOM.notification_badge_color.value || "5a5b5c",
-        bullet_types: DOM.bullet_types.value
-            .split(" ")
-            .filter(filterBlanks) || ["*", "-", "+"],
-        get_params: DOM.get_params.value.split(" ").filter(filterBlanks) || [
-            "q",
-            "v"
+        notification_badge_color: DOM.notification_badge_color.value || "5a5b5c",
+        bullet_types: DOM.bullet_types.value.split(" ").filter(filterBlanks) || [
+            "*",
+            "-",
+            "+"
         ],
+        get_params: DOM.get_params.value.split(" ").filter(filterBlanks) || ["q", "v"],
         tabnos: DOM.tabnos.value || 0,
         padding: DOM.padding.value || 5,
         text_direction: DOM.text_direction.value || "ltr",
-        browser_action_shortcut:
-            DOM.browser_action_shortcut.value || "Ctrl+Alt+N",
-        sidebar_action_shortcut:
-            DOM.sidebar_action_shortcut.value || "Alt+Shift+N"
+        browser_action_shortcut: DOM.browser_action_shortcut.value || "Ctrl+Alt+N",
+        sidebar_action_shortcut: DOM.sidebar_action_shortcut.value || "Alt+Shift+N",
+        api: DOM.api.value.split(" ").filter(filterBlanks) || []
     };
     browser.storage.local.set({ options: options });
     browser.commands.update({
@@ -100,8 +94,7 @@ function colorSync(ele) {
 }
 
 function domainModeSync(ele) {
-    DOM.domain_mode.innerText =
-        ele.target.value === "blacklist" ? "Ignore" : "Enforce";
+    DOM.domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
 }
 
 async function restoreOptions() {
@@ -110,8 +103,7 @@ async function restoreOptions() {
     DOM.background_color.value = res.options.background_color;
     DOM.background_color_picker.value = "#" + res.options.background_color;
     DOM.background_color_dark.value = res.options.background_color_dark;
-    DOM.background_color_picker_dark.value =
-        "#" + res.options.background_color_dark;
+    DOM.background_color_picker_dark.value = "#" + res.options.background_color_dark;
     DOM.font_color.value = res.options.font_color;
     DOM.font_color_picker.value = "#" + res.options.font_color;
     DOM.font_color_dark.value = res.options.font_color_dark;
@@ -136,6 +128,7 @@ async function restoreOptions() {
     DOM.text_direction.value = res.options.text_direction;
     DOM.browser_action_shortcut.value = res.options.browser_action_shortcut;
     DOM.sidebar_action_shortcut.value = res.options.sidebar_action_shortcut;
+    DOM.api.value = res.options.api.join(" ");
     if (res.options.subdomains_mode === "whitelist") {
         DOM.domain_mode.innerText = "Enforce";
     }

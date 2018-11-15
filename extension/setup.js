@@ -86,7 +86,8 @@ async function setOpts() {
         padding: 5,
         text_direction: "ltr",
         browser_action_shortcut: "Alt+Shift+M",
-        sidebar_action_shortcut: "Alt+Shift+N"
+        sidebar_action_shortcut: "Alt+Shift+N",
+        api: []
     });
     res.sync = defaultValues(res.sync, {
         interval: 0,
