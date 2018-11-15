@@ -137,7 +137,10 @@ async function restoreOptions() {
 
 async function exportNotesAndOptions() {
     var res = await browser.storage.local.get();
-    DOM.export.href = "data:text/json;charset=utf-8," + JSON.stringify(res);
+    // escape tabs and newlines and encode string to prevent breakage
+    DOM.export.href =
+        "data:text/json;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(res).replace(/\n|\t/g, "\\$&"));
     DOM.exportTextarea.value = JSON.stringify(res, null, "    ");
 }
 

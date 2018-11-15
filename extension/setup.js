@@ -1,49 +1,4 @@
 /* globals siteParser */
-function compareObjs(obj1, obj2) {
-    // Deep compare objects.
-    // Works for arrays and objects containing items comparable with ===
-    if (typeof obj1 === typeof obj2) {
-        if (Array.isArray(obj1) && Array.isArray(obj2)) {
-            // if both are arrays
-            if (obj1.length === obj2.length) {
-                // if arrays of same length
-                for (let i = 0; i < obj1.length; i++) {
-                    // return false on first failed comparison
-                    if (!compareObjs(obj1[i], obj2[i])) {
-                        return false;
-                    }
-                }
-                // return true no failed comparisons
-                return true;
-            } else {
-                // arrays not same length
-                return false;
-            }
-        } else if (typeof obj1 === "object" && typeof obj2 === "object") {
-            // typeof returns object for both objects and arrays.
-            // Array.isArray detects only arrays, so only objects reach this point
-
-            // get keys from objects and sort
-            let keys1 = Object.keys(obj1).sort();
-            let keys2 = Object.keys(obj2).sort();
-            if (compareObjs(keys1, keys2)) {
-                // get array of values
-                let values1 = keys1.map(key => obj1[key]);
-                let values2 = keys2.map(key => obj2[key]);
-                return compareObjs(values1, values2);
-            } else {
-                // keys are different
-                return false;
-            }
-        } else {
-            // not array or object, return direct comparison
-            return obj1 === obj2;
-        }
-    } else {
-        // not array, not same type
-        return false;
-    }
-}
 
 function defaultValues(object, settings) {
     for (let key in settings) {
@@ -201,8 +156,8 @@ async function autoSync() {
     let sync = await browser.storage.sync.get(["general_notes", "site_notes"]);
     let res = await browser.storage.local.get(["sync", "backup"]);
     // compare sync and local against backup
-    let localChanges = compareObjs(res.backup, local);
-    let syncChanges = compareObjs(res.backup, sync);
+    let localChanges = compare.compare(res.backup, local);
+    let syncChanges = compare.compare(res.backup, sync);
     if (localChanges && syncChanges) {
         // conflict
     } else if (localChanges) {
