@@ -24,6 +24,10 @@ const DOM = generateElementsVariable([
     "newNoteName",
     "newNote"
 ]);
+const global = {
+    activeTab: 0,
+    activeNote: "general_notes"
+};
 
 async function loadSVG(url) {
     let svg = await fetch(url);
@@ -323,22 +327,16 @@ async function addNoteToList(site) {
 
 async function loadNoteList() {
     var res = await browser.storage.local.get("site_notes");
-    for (var site in res.site_notes) {
-        if (res.site_notes.hasOwnProperty(site)) {
-            addNoteToList(site);
-        }
-    }
+    Object.keys(res.site_notes).forEach(addNoteToList);
 }
 
 async function main() {
     var res = await browser.storage.local.get("options");
-    for (let icon of document.getElementsByClassName("mdi")) {
-        icon.appendChild(
-            await loadSVG(
-                browser.extension.getURL("icons/mdi/" + icon.dataset.icon + ".svg")
-            )
-        );
-    }
+    Array.from(document.getElementsByClassName("mdi")).forEach(icon =>
+        loadSVG(browser.extension.getURL("icons/mdi" + icon.dataset.icon + ".svg")).then(
+            icon.appendChild
+        )
+    );
     switch (res.options.theme) {
         case "light":
             DOM.theme.title = "Switch to dark theme";
@@ -383,12 +381,12 @@ async function main() {
     if (res.options.tabnos < 2) {
         DOM.tabstrip.style.display = "none";
     } else if (res.options.tabnos > 1) {
-        for (var tab = 1; tab < res.options.tabnos; tab++) {
-            var newTab = document.createElement("span");
+        Array.from(Array(res.options.tabnos)).forEach((item, index) => {
+            let newTab = document.createElement("span");
             newTab.className = "tab";
-            newTab.innerText = "Tab " + parseInt(tab + 1);
+            newTab.innerText = "Tab " + parseInt(index + 1);
             DOM.tabstrip.appendChild(newTab);
-        }
+        });
     }
     DOM.toggle.value = res.options.default_display;
     loadNoteList();
@@ -413,19 +411,34 @@ async function displayNotes(site = "general_notes", note = "", tab = 0) {
 
 async function saveNotes() {
     let res = await browser.storage.local.get();
-    let parent =
-        DOM.textarea.dataset.currentNote === "general_notes" ? res : res.site_notes;
-    parent[DOM.textarea.dataset.currentNote][DOM.textarea.dataset.currentTab] =
-        DOM.textarea.value;
+    let parent = global.currentNote === "general_notes" ? res : res.site_notes;
+    if (!parent.hasOwnProperty(global.currentNote)) {
+        parent[global.currentNote] = [];
+    }
+    parent[global.currentNote][global.currentTab] = DOM.textarea.value;
     await browser.storage.local.set(res);
 }
 
-async function loadNotes(note = "general_notes", tab = 0, manualClick = false) {
+async function loadNotes(
+    note = "general_notes",
+    tab = null,
+    manualClick = false,
+    parser = null
+) {
+    // note: the note to load, can be general_notes, url, domain, or a specific note
+    // tab: the tab to load (null defaults to current active tab)
+    // manual click: whether to respect private_browsing
+    // parser: mode to use (null defaults to default_display), NONE will not parse the text
     let tabs = (await browser.tabs.query({
         active: true,
         currentWindow: true
     }))[0];
     let res = await browser.storage.local.get();
+
+    // default values
+    tab = tab === null ? global.activeTab : tab;
+    parser = parser === null ? res.options.default_display : parser;
+
     if (note === "general_notes") {
         displayNotes("general_notes", res.general_notes[tab]);
     }
@@ -434,9 +447,13 @@ async function loadNotes(note = "general_notes", tab = 0, manualClick = false) {
         manualClick ||
         (res.options.private_browsing && tabs.incognito)
     ) {
-        let site = await siteParser(tabs.url, res, DOM.toggle.value);
-        let parent = site === "general_notes" ? res.general_notes : res.site_notes[site];
-        displayNotes(site, parent[tab]);
+        let site =
+            parser !== "NONE" ? await siteParser(tabs.url, res, DOM.toggle.value) : note;
+        let parent = site === "general_notes" ? res : res.site_notes;
+        if (!parent.hasOwnProperty(site)) {
+            parent[site] = [];
+        }
+        displayNotes(site, parent[site][tab]);
     } else {
         displayNotes("general_notes", res.general_notes[tab]);
     }
