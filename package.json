@@ -4,7 +4,7 @@
     "description": "Adds a text box to a toolbar button for taking notes",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build:i18n": "python ./scripts/i18n.py --"
     },
     "repository": {
         "type": "git",

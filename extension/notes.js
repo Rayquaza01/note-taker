@@ -205,9 +205,11 @@ async function loadCustomNote(e) {
             DOM.back.dataset[tab.id] = target.dataset.open;
             // open to note in popup
             // siteNoteSetup(target.dataset.open);
+            loadNotes(target.dataset.open, null, true, "NONE");
             closeList();
             break;
         case "name":
+            loadNotes(target.innerText, null, true, "NONE");
             // siteNoteSetup(DOM.back.dataset[tabs[0].id]);
             closeList();
             break;
@@ -344,14 +346,19 @@ function openTab() {
 }
 
 async function displayNotes(site = "general_notes", note = "", tab = 0) {
+    DOM.back_text.innerText =
+        site === "general_notes" ? browser.i18n.getMessage("general") : site;
     DOM.textarea.value = note;
-    DOM.textarea.dataset.currentNote = site;
-    DOM.textarea.dataset.currentTab = tab;
+    global.currentNote = site;
+    global.currentTab = tab;
 }
 
 async function saveNotes() {
     let res = await browser.storage.local.get();
     let parent = global.currentNote === "general_notes" ? res : res.site_notes;
+    if (!parent.hasOwnProperty(global.currentNote)) {
+        parent[global.currentNote] = [];
+    }
     parent[global.currentNote][global.currentTab] = DOM.textarea.value;
     await browser.storage.local.set(res);
 }
@@ -385,8 +392,11 @@ async function loadNotes(
     ) {
         let site =
             parser !== "NONE" ? await siteParser(tabs.url, res, DOM.toggle.value) : note;
-        let parent = site === "general_notes" ? res.general_notes : res.site_notes[site];
-        displayNotes(site, parent[tab]);
+        let parent = site === "general_notes" ? res : res.site_notes;
+        if (!parent.hasOwnProperty(site)) {
+            parent[site] = [];
+        }
+        displayNotes(site, parent[site][tab]);
     } else {
         displayNotes("general_notes", res.general_notes[tab]);
     }
@@ -435,9 +445,10 @@ function listUpdate(changes) {
 
 async function tabSwitch(e) {
     let tabstrip = Array.from(DOM.tabstrip.children);
-    tabstrip[DOM.tabstrip.dataset.activeTab].className = "tab";
+    tabstrip[global.activeTab].className = "tab";
     e.target.className = "tab active";
-    DOM.tabstrip.dataset.activeTab = tabstrip.indexOf(e.target);
+    global.activeTab = tabstrip.indexOf(e.target);
+    loadNotes(global.currentNote, global.activeTab, true, null);
     // siteNoteSetup(DOM.back.dataset.currentSite);
     // switch (DOM.toggle.value) {
     //     case "domain":
@@ -469,12 +480,14 @@ async function newNote() {
 }
 
 async function main() {
-    Array.from(document.getElementsByClassName("mdi")).forEach(icon =>
-        loadSVG(browser.extension.getURL("icons/mdi" + icon.dataset.icon + ".svg")).then(
-            icon.appendChild
-        )
-    );
-    var res = await browser.storage.local.get("options");
+    Array.from(document.getElementsByClassName("mdi")).forEach(async icon => {
+        icon.appendChild(
+            await loadSVG(
+                browser.extension.getURL("icons/mdi/" + icon.dataset.icon + ".svg")
+            )
+        );
+    });
+    let res = await browser.storage.local.get("options");
     DOM.theme.title =
         res.options.theme === "light" ? "Switch to dark theme" : "Switch to light theme";
     setTheme(res.options.theme);
