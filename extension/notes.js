@@ -24,9 +24,9 @@ const DOM = generateElementsVariable([
     "newNoteName",
     "newNote"
 ]);
-const global = {
-    activeTab: 0,
-    activeNote: "general_notes"
+var global = {
+    currentTab: 0,
+    currentNote: "general_notes"
 };
 
 async function loadSVG(url) {
@@ -70,22 +70,6 @@ function closeList() {
     DOM.textarea.focus();
 }
 
-// async function saveGeneralNotes() {
-//     var gen = await browser.storage.local.get("general_notes");
-//     gen.general_notes[DOM.tabstrip.dataset.activeTab] = DOM.textarea.value || "";
-//     browser.storage.local.set(gen);
-// }
-
-// async function saveSiteNotes() {
-//     var res = await browser.storage.local.get("site_notes");
-//     if (!res.site_notes.hasOwnProperty(DOM.back.dataset.currentSite)) {
-//         res.site_notes[DOM.back.dataset.currentSite] = [];
-//     }
-//     res.site_notes[DOM.back.dataset.currentSite][DOM.tabstrip.dataset.activeTab] =
-//         DOM.textarea.value || "";
-//     browser.storage.local.set({ site_notes: res.site_notes });
-// }
-
 function bold(tab_ele, tab) {
     if (tab !== "" && tab !== null) {
         tab_ele.style.fontWeight = "bold";
@@ -117,47 +101,6 @@ async function emboldenNotes(note) {
         }
     }
 }
-
-// async function loadGeneralNotes() {
-//     DOM.textarea.focus();
-//     DOM.toggle.value = "general_notes";
-//     // DOM.toggle.className = "mdi mdi-web";
-//     // DOM.toggle.title = "Switch to site notes"
-//     DOM.textarea.removeEventListener("input", saveSiteNotes);
-//     var res = await browser.storage.local.get("general_notes");
-//     DOM.textarea.value = res.general_notes[DOM.tabstrip.dataset.activeTab] || "";
-//     DOM.back_text.innerText = "General Notes";
-//     DOM.back.title = "General Notes";
-//     DOM.back.dataset.currentSite = "general_notes";
-//     emboldenNotes("general_notes");
-//     DOM.textarea.addEventListener("input", saveGeneralNotes);
-// }
-
-// async function siteNoteSetup(site) {
-//     DOM.textarea.focus();
-//     DOM.textarea.removeEventListener("input", saveGeneralNotes);
-//     if (site === "general_notes" || site === "General Notes") {
-//         loadGeneralNotes();
-//         return;
-//     }
-//     var res = await browser.storage.local.get("site_notes");
-//     let text;
-//     if (res.site_notes.hasOwnProperty(site)) {
-//         if (res.site_notes[site][DOM.tabstrip.dataset.activeTab] !== undefined) {
-//             text = res.site_notes[site][DOM.tabstrip.dataset.activeTab];
-//         } else {
-//             text = "";
-//         }
-//     } else {
-//         text = "";
-//     }
-//     DOM.textarea.value = text;
-//     DOM.back_text.innerText = site;
-//     DOM.back.title = site;
-//     DOM.back.dataset.currentSite = site;
-//     emboldenNotes(site);
-//     DOM.textarea.addEventListener("input", saveSiteNotes);
-// }
 
 function removeNoteFromList(name) {
     var deleteButton = document.querySelector(`span[data-delete-site="${name}"]`);
@@ -224,27 +167,6 @@ async function loadCustomNote(e) {
 function closeConfirm() {
     DOM.confirmDelete.style.width = "0";
 }
-
-// async function loadSiteNotes(manualClick = false, mode = "") {
-//     var res = await browser.storage.local.get("options");
-//     var tabs = await browser.tabs.query({ active: true, currentWindow: true });
-//     if (
-//         !tabs[0].incognito ||
-//         manualClick ||
-//         (res.options.private_browsing && tabs[0].incognito)
-//     ) {
-//         var url = tabs[0].url;
-//         var site = await siteParser(url, res, mode || DOM.toggle.value);
-//         if (site === "general_notes") {
-//             // loadGeneralNotes();
-//         } else {
-//             // siteNoteSetup(site);
-//             DOM.toggle.value = mode || DOM.toggle.value;
-//         }
-//     } else {
-//         // loadGeneralNotes();
-//     }
-// }
 
 async function changeNoteMode() {
     switch (DOM.toggle.value) {
@@ -345,12 +267,11 @@ function openTab() {
     });
 }
 
-async function displayNotes(site = "general_notes", note = "", tab = 0) {
+async function displayNotes(site = "general_notes", note = "") {
     DOM.back_text.innerText =
         site === "general_notes" ? browser.i18n.getMessage("general") : site;
     DOM.textarea.value = note;
     global.currentNote = site;
-    global.currentTab = tab;
 }
 
 async function saveNotes() {
@@ -372,7 +293,7 @@ async function loadNotes(
     // note: the note to load, can be general_notes, site
     // tab: the tab to load (null defaults to current active tab)
     // manual click: whether to respect private_browsing
-    // parser: mode to use (null defaults to default_display), NONE will not parse the text
+    // parser: mode to use (NONE will not parse the text)
     let tabs = (await browser.tabs.query({
         active: true,
         currentWindow: true
@@ -380,11 +301,12 @@ async function loadNotes(
     let res = await browser.storage.local.get();
 
     // default values
-    tab = tab === null ? global.activeTab : tab;
+    tab = tab === null ? global.currentTab : tab;
     parser = parser === null ? res.options.default_display : parser;
 
     if (note === "general_notes") {
         displayNotes("general_notes", res.general_notes[tab]);
+        emboldenNotes("general_notes");
     } else if (
         !tabs.incognito ||
         manualClick ||
@@ -397,8 +319,10 @@ async function loadNotes(
             parent[site] = [];
         }
         displayNotes(site, parent[site][tab]);
+        emboldenNotes(site);
     } else {
         displayNotes("general_notes", res.general_notes[tab]);
+        emboldenNotes("general_notes");
     }
 }
 
@@ -440,25 +364,15 @@ function listUpdate(changes) {
             }
         }
     }
-    emboldenNotes(DOM.back.dataset.currentSite);
+    emboldenNotes(global.currentNote);
 }
 
 async function tabSwitch(e) {
     let tabstrip = Array.from(DOM.tabstrip.children);
-    tabstrip[global.activeTab].className = "tab";
+    tabstrip[global.currentTab].className = "tab";
     e.target.className = "tab active";
-    global.activeTab = tabstrip.indexOf(e.target);
-    loadNotes(global.currentNote, global.activeTab, true, null);
-    // siteNoteSetup(DOM.back.dataset.currentSite);
-    // switch (DOM.toggle.value) {
-    //     case "domain":
-    //     case "url":
-    //         siteNoteSetup(DOM.back.dataset.currentSite);
-    //         break;
-    //     case "general_notes":
-    //         loadGeneralNotes();
-    //         break;
-    // }
+    global.currentTab = e.target.dataset.number;
+    loadNotes(global.currentNote, global.currentTab, true, null);
 }
 
 function closeNewNote() {
@@ -524,6 +438,7 @@ async function main() {
     } else if (res.options.tabnos > 1) {
         for (var tab = 1; tab < res.options.tabnos; tab++) {
             var newTab = document.createElement("span");
+            newTab.dataset.number = tab;
             newTab.className = "tab";
             newTab.innerText = "Tab " + parseInt(tab + 1);
             DOM.tabstrip.appendChild(newTab);
@@ -536,7 +451,6 @@ async function main() {
 document.addEventListener("focus", () => DOM.textarea.focus());
 DOM.settings.addEventListener("click", options);
 DOM.textarea.addEventListener("input", saveNotes);
-// DOM.toggle.addEventListener("click", changeNoteMode);
 DOM.toggle.addEventListener("change", changeNoteMode);
 DOM.theme.addEventListener("click", changeTheme);
 DOM.back.addEventListener("click", openList);
