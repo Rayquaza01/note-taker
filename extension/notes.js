@@ -122,14 +122,13 @@ async function loadCustomNote(e) {
     if (target.className === "name") {
         if (target.innerText !== DOM.back_text.innerText) {
             DOM.back.dataset[tabs[0].id] = target.innerText;
+            loadNotes(target.innerText, null, true, "NONE");
+        } else if (target.innerText === browser.i18n.getMessage("general")) {
+            loadNotes();
         } else if (target.innerText === DOM.back_text.innerText) {
             delete DOM.back.dataset[tabs[0].id];
             loadNotes(DOM.toggle.value);
-            // loadSiteNotes();
         }
-    }
-    if (target.innerText === "General Notes") {
-        loadNotes();
         closeList();
         return;
     }
@@ -149,11 +148,6 @@ async function loadCustomNote(e) {
             // open to note in popup
             // siteNoteSetup(target.dataset.open);
             loadNotes(target.dataset.open, null, true, "NONE");
-            closeList();
-            break;
-        case "name":
-            loadNotes(target.innerText, null, true, "NONE");
-            // siteNoteSetup(DOM.back.dataset[tabs[0].id]);
             closeList();
             break;
         case "mdi mdi-plus":
