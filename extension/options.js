@@ -139,8 +139,12 @@ async function exportNotesAndOptions() {
     var res = await browser.storage.local.get();
     // escape tabs and newlines and encode string to prevent breakage
     DOM.export.href =
-        "data:text/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(res).replace(/\n|\t/g, "\\$&"));
+        "data:application/json;charset=utf-8," +
+        encodeURIComponent(
+            JSON.stringify(res)
+                .replace(/\n/g, "\\n")
+                .replace(/\t/g, "\\t")
+        );
     DOM.exportTextarea.value = JSON.stringify(res, null, "    ");
 }
 
