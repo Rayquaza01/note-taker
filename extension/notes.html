@@ -13,7 +13,7 @@
                 <div id="note_list">
                     <input type="text" id="search" autocomplete="off" placeholder="Search">
                     <span class="container">
-                        <span class="name">General Notes</span>
+                        <span class="name" class="i18n">general</span>
                         <span class="mdi mdi-plus" data-icon="mdi-plus"></span>
                     </span>
                 </div>
@@ -21,24 +21,24 @@
             <div id="newNote" class="row content">
                 <div>
                     <span>
-                        New Note Name:<br>
+                        <span class="i18n">newNote</span><br>
                         <input id="newNoteName" type="text">
                     </span>
                     <div id="confirm">
-                        <div id="ok">OK</div>
-                        <div id="cancel">Cancel</div>
+                        <div id="ok" class="i18n">ok</div>
+                        <div id="cancel" class="i18n">cancel</div>
                     </div>
                 </div>
             </div>
             <div id="confirmDelete" class="row content">
                 <div>
                     <span>
-                        Are you sure you want to delete the note:<br>
+                        <span class="i18n">deleteNote</span><br>
                         <span id="siteName"></span>
                     </span>
                     <div id="ynbox">
-                        <div id="yes">Yes</div>
-                        <div id="no">No</div>
+                        <div id="yes" class="i18n">yes</div>
+                        <div id="no" class="i18n">no</div>
                     </div>
                 </div>
             </div>
@@ -50,23 +50,26 @@
             </div>
             <div id="buttons" class="row footer">
                 <span id="back"><span class="mdi mdi-menu" data-icon="mdi-menu"></span><span id="back_text"></span></span>
-                <span id="close"><span class="mdi mdi-backburger" data-icon="mdi-backburger"></span>Close</span>
+                <span id="close"><span class="mdi mdi-backburger" data-icon="mdi-backburger"></span><span class="i18n">Close</span></span>
                 <select id="toggle">
-                    <option value="general_notes">General Notes</option>
-                    <option value="domain">Domain Notes</option>
-                    <option value="url">URL Notes</option>
+                    <option value="general_notes" class="i18n">general</option>
+                    <option value="domain" class="i18n">domain</option>
+                    <option value="url" class="i18n">url</option>
                 </select>
                 <!-- <span id="toggle"></span> -->
-                <span id="sync" class="mdi mdi-sync" data-icon="mdi-sync" title="Sync"></span>
-                <span id="sync_alert" class="mdi mdi-sync-alert" data-icon="mdi-sync-alert" title="Sync"></span>
-                <span id="open_in_new" class="mdi mdi-open-in-new" data-icon="mdi-open-in-new" title="Open in New Tab"></span>
+                <span id="sync" class="mdi mdi-sync" data-icon="mdi-sync" title="sync" data-attribute="title" class="i18n"></span>
+                <span id="sync_alert" class="mdi mdi-sync-alert" data-icon="mdi-sync-alert" title="sync" data-attribute="title" class="i18n"></span>
+                <span id="open_in_new" class="mdi mdi-open-in-new" data-icon="mdi-open-in-new" title="openNewTab" data-attribute="title" class="i18n"></span>
                 <span class="mdi mdi-theme-light-dark" data-icon="mdi-theme-light-dark" id="theme"></span>
-                <span id="settings" class="mdi mdi-settings" data-icon="mdi-settings" title="Settings"></span>
+                <span id="settings" class="mdi mdi-settings" data-icon="mdi-settings" title="settings" data-attribute="title" class="i18n"></span>
             </div>
         </div>
         <script src="elements.js"></script>
         <script src="third-party/psl.min.js"></script>
         <script src="site-parser.js"></script>
+        <script src="compare.js"></script>
+        <script src="sync.js"></script>
+        <script src="i18n.js"></script>
         <script src="notes.js"></script>
     </body>
 </html>

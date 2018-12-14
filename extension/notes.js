@@ -1,5 +1,5 @@
 /* eslint-env webextensions */
-/* globals generateElementsVariable siteParser */
+/* globals generateElementsVariable siteParser replacei18n sync */
 const DOM = generateElementsVariable([
     "textarea",
     "back",
@@ -22,7 +22,9 @@ const DOM = generateElementsVariable([
     "cancel",
     "confirm",
     "newNoteName",
-    "newNote"
+    "newNote",
+    "sync",
+    "sync_alert"
 ]);
 var global = {
     currentTab: 0,
@@ -205,14 +207,14 @@ async function setTheme(mode) {
 async function changeTheme() {
     var res = await browser.storage.local.get("options");
     switch (this.title) {
-        case "Switch to light theme":
-            this.title = "Switch to dark theme";
+        case browser.i18n.getMessage("switchTheme"):
+            this.title = browser.i18n.getMessage("switchThemeDark");
             res.options.theme = "light";
             browser.storage.local.set({ options: res.options });
             setTheme("light");
             break;
-        case "Switch to dark theme":
-            this.title = "Switch to light theme";
+        case browser.i18n.getMessage("switchThemeDark"):
+            this.title = browser.i18n.getMessage("switchThemeDark");
             res.options.theme = "dark";
             browser.storage.local.set({ options: res.options });
             setTheme("dark");
@@ -395,9 +397,12 @@ async function main() {
             )
         );
     });
+    Array.from(document.getElementsByClassName("i18n")).forEach(replacei18n);
     let res = await browser.storage.local.get("options");
     DOM.theme.title =
-        res.options.theme === "light" ? "Switch to dark theme" : "Switch to light theme";
+        res.options.theme === "light"
+            ? browser.i18n.getMessage("switchThemeDark")
+            : browser.i18n.getMessage("switchTheme");
     setTheme(res.options.theme);
     if (res.options.font_family === "custom") {
         DOM.textarea.style.fontFamily = res.options.font_css;
@@ -416,7 +421,6 @@ async function main() {
         case "sidebar":
             browser.tabs.onActivated.addListener(perTabSidebar);
             browser.tabs.onUpdated.addListener(perTabSidebar);
-            window.focus;
             break;
         case "popup":
             document.body.style.width = res.options.width + "px";
@@ -430,16 +434,46 @@ async function main() {
     if (res.options.tabnos < 2) {
         DOM.tabstrip.style.display = "none";
     } else if (res.options.tabnos > 1) {
-        for (var tab = 1; tab < res.options.tabnos; tab++) {
-            var newTab = document.createElement("span");
+        for (let tab = 1; tab < res.options.tabnos; tab++) {
+            let newTab = document.createElement("span");
             newTab.dataset.number = tab;
             newTab.className = "tab";
-            newTab.innerText = "Tab " + parseInt(tab + 1);
+            newTab.innerText = browser.i18n.getMessage("tab") + " " + (tab + 1);
             DOM.tabstrip.appendChild(newTab);
         }
     }
     DOM.toggle.value = res.options.default_display;
+    let syncState = await sync();
+    if (syncState === "ok") {
+        DOM.sync_alert.style.display = "none";
+    } else {
+        if (syncState === "conflict") {
+            DOM.sync_alert.style.color = "red";
+        }
+        DOM.sync.style.display = "none";
+    }
     loadNoteList();
+}
+
+async function syncNotes() {
+    let syncState = await sync();
+    if (syncState === "ok") {
+        DOM.sync_alert.style.display = "none";
+        DOM.sync.style.display = "inherit";
+    } else {
+        if (syncState === "conflict") {
+            DOM.sync.style.display = "none";
+            DOM.sync_alert.style.display = "inherit";
+            DOM.sync_alert.style.color = "red";
+            browser.tabs.create({
+                active: true,
+                url: "conflict.html"
+            });
+        } else {
+            await sync(true);
+            syncNotes();
+        }
+    }
 }
 
 document.addEventListener("focus", () => DOM.textarea.focus());
@@ -457,5 +491,7 @@ DOM.search.addEventListener("input", searchResults);
 DOM.tabstrip.addEventListener("click", tabSwitch);
 DOM.ok.addEventListener("click", newNote);
 DOM.cancel.addEventListener("click", closeNewNote);
+DOM.sync.addEventListener("click", syncNotes);
+DOM.sync_alert.addEventListener("click", syncNotes);
 browser.storage.onChanged.addListener(listUpdate);
 document.addEventListener("DOMContentLoaded", main);
