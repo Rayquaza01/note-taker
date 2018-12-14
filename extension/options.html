@@ -8,19 +8,19 @@
         <table id="table">
             <tr>
                 <td>
-                    Theme
+                    <span class="i18n">optionTheme</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#theme">?</a>
                 </td>
                 <td>
                     <select id="theme">
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
+                        <option value="light" class="i18n">optionThemeLight</option>
+                        <option value="dark" class="i18n">optionThemeDark</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td>
-                    Background Color (Light)
+                    <span class="i18n">optionBGColorLight</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#background--font-colors-light">?</a>
                 </td>
                 <td class="center">#
@@ -30,7 +30,7 @@
             </tr>
             <tr>
                 <td>
-                    Text Color (Light)
+                    <span class="i18n">optionTextColorLight</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#background--font-colors-light">?</a>
                 </td>
                 <td class="center">#
@@ -40,7 +40,7 @@
             </tr>
             <tr>
                 <td>
-                    Background Color (Dark)
+                    <span class="i18n">optionBGColorDark</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#background--font-color-dark">?</a>
                 </td>
                 <td class="center">#
@@ -50,7 +50,7 @@
             </tr>
             <tr>
                 <td>
-                    Text Color (Dark)
+                    <span class="i18n">optionTextColorDark</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#background--font-color-dark">?</a>
                 </td>
                 <td class="center">#
@@ -60,57 +60,57 @@
             </tr>
             <tr>
                 <td>
-                    Text Box Width
+                    <span class="i18n">optionWidth</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#text-box-width">?</a>
                 </td>
                 <td><input type="number" id="width"> px</td>
             </tr>
             <tr>
                 <td>
-                    Text Box Height
+                    <span class="i18n">optionHeight</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#text-box-height">?</a>
                 </td>
                 <td><input type="number" id="height"> px</td>
             </tr>
             <tr>
                 <td>
-                    Font
+                    <span class="i18n">optionFont</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#font">?</a>
                 </td>
                 <td>
                     <select id="font_family">
-                        <option value="default">Default</option>
-                        <option value="sans-serif">Sans Serif</option>
-                        <option value="serif">Serif</option>
-                        <option value="monospace">Monospace</option>
-                        <option value="custom">Custom</option>
+                        <option value="default" class="i18n">default</option>
+                        <option value="sans-serif" class="i18n">optionFontSansSerif</option>
+                        <option value="serif" class="i18n">optionFontSerif</option>
+                        <option value="monospace" class="i18n">optionFontMonospace</option>
+                        <option value="custom" class="i18n">optionFontCustom</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td>
-                    Custom Font CSS
+                    <span class="i18n">optionCustomFontCSS</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#custom-font-css">?</a>
                 </td>
                 <td><input id="font_css" type="text"></td>
             </tr>
             <tr>
                 <td>
-                    Font Size
+                    <span class="i18n">optionFontSize</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#font-size">?</a>
                 </td>
                 <td><input type="number" id="font_size"> px</td>
             </tr>
             <tr>
                 <td>
-                    Default Display
+                    <span class="i18n">optionDefaultDisplay</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#default-display">?</a>
                 </td>
                 <td>
                     <select id="default_display">
-                        <option value="general_notes">General Notes</option>
-                        <option value="domain">Domain Notes</option>
-                        <option value="url">URL Notes</option>
+                        <option value="general_notes" class="i18n">general</option>
+                        <option value="domain" class="i18n">domain</option>
+                        <option value="url" class="i18n">url</option>
                     </select>
                 </td>
             </tr>
@@ -128,52 +128,53 @@
             <!-- </tr> -->
             <tr>
                 <td>
-                    Site Notes in Private Browsing
+                    <span class="i18n">optionPrivateBrowsing</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#site-notes-in-private-browsing">?</a>
                 </td>
                 <td>
                     <select id="private_browsing">
-                        <option value=false>Disabled</option>
-                        <option value=true>Enabled</option>
+                        <option value=false class="i18n">enabled</option>
+                        <option value=true class="i18n">disabled</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td>
-                    Subdomains Mode
+                    <span class="i18n">optionSubdomainsMode</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#subdomains-mode">?</a>
                 </td>
                 <td>
                     <select id="subdomains_mode">
-                        <option value="blacklist">Blacklist</option>
-                        <option value="whitelist">Whitelist</option>
+                        <option value="blacklist" class="i18n">blacklist</option>
+                        <option value="whitelist" class="i18n">whitelist</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <span id="domain_mode">Ignore</span> Subdomains On
+                    <span id="domain_mode">Ignore Subdomains On</span> <!-- TODO -->
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#ignoreenforce-subdomains">?</a>
                 </td>
                 <td><input id="subdomains" type="text"></td>
             </tr>
             <tr>
                 <td>
-                    Notification Badge
+                    <span class="i18n">optionNotificationBadge</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#notification-badge">?</a>
                 </td>
                 <td>
                     <select id="notification_badge">
-                        <option value="disabled">Disabled</option>
-                        <option value="enabled">Enabled</option>
-                        <option value="bullets">Bullets</option>
-                        <option value="enabled,bullets">Enabled + Bullets</option>
+                        <option value="disabled" class="i18n">disabled</option>
+                        <option value="enabled" class="i18n">enabled</option>
+                        <option value="bullets" class="i18n">optionBulletMode</option>
+                        <option value="enabled,bullets" class="i18n">optionBulletEnabledMode</option>
+                        <option value="enabled,background" class="i18n">optionBGEnabledMode</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td>
-                    Notification Badge Color
+                    <span class="i18n">optionNotificationBadgeColor</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#notification-badge-color">?</a>
                 </td>
                 <td class="center">
@@ -183,77 +184,63 @@
             </tr>
             <tr>
                 <td>
-                    Bullet Types
+                    <span class="i18n">optionBulletTypes</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#bullet-types">?</a>
                 </td>
                 <td><input id="bullet_types" type="text"></td>
             </tr>
             <tr>
                 <td>
-                    URL Parameters in Site Notes
+                    <span class="i18n">optionURLParams</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#url-parameters-in-site-notes">?</a>
                 </td>
                 <td><input id="get_params" type="text"></td>
             </tr>
             <tr>
                 <td>
-                    Number of Tabs
+                    <span class="i18n">optionTabs</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#number-of-tabs">?</a>
                 </td>
                 <td><input id="tabnos" type="number" min="0"></td>
             </tr>
             <tr>
                 <td>
-                    Padding
+                    <span class="i18n">optionPadding</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#padding">?</a>
                 </td>
                 <td><input id="padding" type="number" min="0">px</td>
             </tr>
             <tr>
                 <td>
-                    Text Direction
+                    <span class="i18n">optionTextDirection</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#text-direction">?</a>
                 </td>
                 <td>
                     <select id="text_direction">
-                        <option value="ltr">Left to Right</option>
-                        <option value="rtl">Right to Left</option>
+                        <option value="ltr" class="i18n">optionLTR</option>
+                        <option value="rtl" class="i18n">optionRTL</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td>
-                    Popup Shortcut
+                    <span class="i18n">optionPopupShortcut</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#shortcuts">?</a>
                 </td>
                 <td><input id="browser_action_shortcut" type="text"></td>
             </tr>
             <tr>
                 <td>
-                    Sidebar Shortcut
+                    <span class="i18n">optionSidebarShortcut</span>
                     <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#shortcuts">?</a>
                 </td>
                 <td><input id="sidebar_action_shortcut" type="text"></td>
             </tr>
-            <tr>
-                <td>
-                    API
-                    <a target="_blank" href="https://github.com/Rayquaza01/note-taker/wiki/Options#api">?</a>
-                </td>
-                <td><input id="api" type="text"></td>
-            </tr>
         </table>
         <div class="center">
-            <a id="export" download="notetaker.json"><button>Export Notes and Options</button></a>
+            <a id="export" download="notetaker.json"><button class="i18n">export</button></a>
             <input id="import" type="file" accept=".json">
         </div>
-        <div class="center">
-            <button id="upload">Upload to Sync</button>
-            <button id="download">Download from Sync</button> (Please export notes and options before downloading from sync, just in case.)
-        </div>
-        This text box contains the raw JSON for notes and options.
-        <textarea id="exportTextarea"></textarea><br>
-        <a href="notes_native.html" style="display: inline;" target="_blank">Note Taker Python</a>
         <script src="elements.js"></script>
         <script src="options.js"></script>
     </body>

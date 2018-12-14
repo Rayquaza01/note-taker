@@ -10,6 +10,8 @@ yes,Yes,Yes text
 no,No,No text
 ok,OK,OK text
 cancel,Cancel,Cancel text
+whitelist,Whitelist,whitelist
+blacklist,Blacklist,blacklist
 optionTheme,Theme,theme option
 optionThemeLight,Light,light theme
 optionThemeDark,Dark,dark theme
@@ -20,16 +22,22 @@ optionTextColorDark,Text Color (Dark),font color dark option
 optionWidth,Text Box Width,textbox width
 optionHeight,Text Box Height,textbox height
 optionFont,Font,font
-optionFontSerif,Sans Serif,Sans Serif font option
+optionFontSerif,Serif,Serif font option
+optionFontSansSerif,Sans Serif,Sans Serif font option
 optionFontMonospace,Monospace,Monospace font option
 optionFontCustom,Custom,Custom font option
 optionCustomFontCSS,Custom Font CSS,custom for css option
+optionFontSize,Font Size,font size option
 optionDefaultDisplay,Default Display,default display option
 optionPrivateBrowsing,Site Notes in Private Browsing,Private Browsing option
+optionSubdomainsMode,Subdomains Mode,subdomains mode option
 optionSubdomainsWhitelist,Enforce Subdomains On,enforcing subdomains
 optionSubdomainsBlacklist,Ignore Subdomains On,ignoring subdomains
 optionNotificationBadge,Notification Badge,notification badge option
 optionNotificationBadgeColor,Notification Badge Color,notif badge color option
+optionBulletMode,Bullets,bullets option
+optionBulletEnabledMode,Enabled + Bullets,enabled + bullets option
+optionBGEnabledMode,Enabled + Background,enabled + background option
 optionBulletTypes,Bullet Types,bullet types option
 optionURLParams,URL Parameters In Site Notes,URL Params option
 optionTabs,Number of Tabs,tabs option
