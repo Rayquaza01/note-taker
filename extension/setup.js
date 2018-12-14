@@ -151,15 +151,19 @@ async function updateBadge() {
     }
 }
 
-async function autoSync() {
+async function sync() {
+    // local.site_notes and local.general_notes contain current locally stored notes
     let local = await browser.storage.local.get(["general_notes", "site_notes"]);
+    // sync.site_notes and sync.general_notes contain current synced stored notes
     let sync = await browser.storage.sync.get(["general_notes", "site_notes"]);
-    let res = await browser.storage.local.get(["sync", "backup"]);
+    // res.backup contains the backup notes
+    let res = await browser.storage.local.get("backup");
     // compare sync and local against backup
-    let localChanges = compare.compare(res.backup, local);
-    let syncChanges = compare.compare(res.backup, sync);
+    // local changes
+    let localChanges = compare.compare(res.backup, local); // true if local and backup are different
+    let syncChanges = compare.compare(res.backup, sync); // true if sync and backup are different
     if (localChanges && syncChanges) {
-        // conflict
+        // conflict, both were changed
     } else if (localChanges) {
         // remove old sync and backup
         await browser.storage.sync.remove(["general_notes", "site_notes"]);
