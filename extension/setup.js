@@ -15,7 +15,6 @@ async function setOpts() {
         options: {},
         site_notes: {},
         general_notes: [],
-        sync: {},
         backup: {}
     });
     res.options = defaultValues(res.options, {
@@ -44,9 +43,10 @@ async function setOpts() {
         sidebar_action_shortcut: "Alt+Shift+N",
         api: []
     });
-    res.sync = defaultValues(res.sync, {
-        interval: 0,
-        notify: false
+    let sync = browser.storage.sync.get(["general_notes", "site_notes"]);
+    sync = defaultValues(sync, {
+        general_notes: [],
+        site_notes: {}
     });
     // compatibility for upgrading note storage from previous versions
     browser.commands.update({
@@ -70,6 +70,7 @@ async function setOpts() {
         }
     }
     browser.storage.local.set(res);
+    browser.storage.sync.set(sync);
 }
 
 function escapeRegex(regex) {
@@ -148,38 +149,6 @@ async function updateBadge() {
         for (let tab of tabs) {
             browser.browserAction.setBadgeText({ text: "", tabId: tab.id });
         }
-    }
-}
-
-async function sync() {
-    // local.site_notes and local.general_notes contain current locally stored notes
-    let local = await browser.storage.local.get(["general_notes", "site_notes"]);
-    // sync.site_notes and sync.general_notes contain current synced stored notes
-    let sync = await browser.storage.sync.get(["general_notes", "site_notes"]);
-    // res.backup contains the backup notes
-    let res = await browser.storage.local.get("backup");
-    // compare sync and local against backup
-    // local changes
-    let localChanges = compare.compare(res.backup, local); // true if local and backup are different
-    let syncChanges = compare.compare(res.backup, sync); // true if sync and backup are different
-    if (localChanges && syncChanges) {
-        // conflict, both were changed
-    } else if (localChanges) {
-        // remove old sync and backup
-        await browser.storage.sync.remove(["general_notes", "site_notes"]);
-        await browser.storage.local.remove("backup");
-        // set sync and backup to local
-        browser.storage.sync.set(local);
-        browser.storage.local.set({ backup: local });
-    } else if (syncChanges) {
-        // remove old local and backup
-        await browser.storage.local.remove(["general_notes", "site_notes"]);
-        await browser.storage.local.remove("backup");
-        // set local and backup to sync
-        browser.storage.local.set(sync);
-        browser.storage.local.set({ backup: sync });
-    } else {
-        // everything is already synced.
     }
 }
 
