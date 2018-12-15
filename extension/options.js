@@ -1,8 +1,6 @@
-/* globals generateElementsVariable */
+/* globals generateElementsVariable replacei18n */
 // Element Variables
 const DOM = generateElementsVariable([
-    "upload",
-    "download",
     "padding",
     "table",
     "theme",
@@ -31,12 +29,10 @@ const DOM = generateElementsVariable([
     "get_params",
     "export",
     "import",
-    "exportTextarea",
     "tabnos",
     "text_direction",
     "browser_action_shortcut",
-    "sidebar_action_shortcut",
-    "api"
+    "sidebar_action_shortcut"
 ]);
 
 const filterBlanks = item => !/^$/.test(item);
@@ -69,8 +65,7 @@ function saveOptions() {
         padding: DOM.padding.value || 5,
         text_direction: DOM.text_direction.value || "ltr",
         browser_action_shortcut: DOM.browser_action_shortcut.value || "Ctrl+Alt+N",
-        sidebar_action_shortcut: DOM.sidebar_action_shortcut.value || "Alt+Shift+N",
-        api: DOM.api.value.split(" ").filter(filterBlanks) || []
+        sidebar_action_shortcut: DOM.sidebar_action_shortcut.value || "Alt+Shift+N"
     };
     browser.storage.local.set({ options: options });
     browser.commands.update({
@@ -94,10 +89,14 @@ function colorSync(ele) {
 }
 
 function domainModeSync(ele) {
-    DOM.domain_mode.innerText = ele.target.value === "blacklist" ? "Ignore" : "Enforce";
+    DOM.domain_mode.innerText =
+        ele.target.value === "blacklist"
+            ? browser.i18n.getMessage("optionSubdomainsBlacklist")
+            : browser.i18n.getMessage("optionSubdomainsWhitelist");
 }
 
 async function restoreOptions() {
+    Array.from(document.getElementsByClassName("i18n")).forEach(replacei18n);
     const res = await browser.storage.local.get();
     DOM.theme.value = res.options.theme;
     DOM.background_color.value = res.options.background_color;
@@ -128,9 +127,10 @@ async function restoreOptions() {
     DOM.text_direction.value = res.options.text_direction;
     DOM.browser_action_shortcut.value = res.options.browser_action_shortcut;
     DOM.sidebar_action_shortcut.value = res.options.sidebar_action_shortcut;
-    DOM.api.value = res.options.api.join(" ");
     if (res.options.subdomains_mode === "whitelist") {
-        DOM.domain_mode.innerText = "Enforce";
+        DOM.domain_mode.innerText = browser.i18n.getMessage("optionSubdomainsWhitelist");
+    } else {
+        DOM.domain_mode.innerText = browser.i18n.getMessage("optionSubdomainsBlacklist");
     }
     exportNotesAndOptions();
 }
@@ -145,7 +145,6 @@ async function exportNotesAndOptions() {
                 .replace(/\n/g, "\\n")
                 .replace(/\t/g, "\\t")
         );
-    DOM.exportTextarea.value = JSON.stringify(res, null, "    ");
 }
 
 function importOptions() {
@@ -166,21 +165,6 @@ function changeBadgeColor() {
     });
 }
 
-async function uploadToSync() {
-    const res = await browser.storage.local.get();
-    await browser.storage.sync.clear();
-    browser.storage.sync.set(res);
-}
-
-async function downloadFromSync() {
-    const res = await browser.storage.sync.get();
-    await browser.storage.local.clear();
-    browser.storage.local.set(res);
-}
-
-// sync
-DOM.upload.addEventListener("click", uploadToSync);
-DOM.download.addEventListener("click", downloadFromSync);
 // import
 DOM.import.addEventListener("change", importOptions);
 // color sync

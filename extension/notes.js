@@ -214,7 +214,7 @@ async function changeTheme() {
             setTheme("light");
             break;
         case browser.i18n.getMessage("switchThemeDark"):
-            this.title = browser.i18n.getMessage("switchThemeDark");
+            this.title = browser.i18n.getMessage("switchTheme");
             res.options.theme = "dark";
             browser.storage.local.set({ options: res.options });
             setTheme("dark");
