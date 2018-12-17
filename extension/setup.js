@@ -10,6 +10,7 @@ function defaultValues(object, settings) {
 }
 
 async function setOpts() {
+    // initialize storage
     let res = await browser.storage.local.get();
     res = defaultValues(res, {
         options: {},
@@ -43,7 +44,11 @@ async function setOpts() {
         sidebar_action_shortcut: "Alt+Shift+N",
         api: []
     });
-    let sync = browser.storage.sync.get(["general_notes", "site_notes"]);
+    res.backup = defaultValues(res.backup, {
+        general_notes: [],
+        site_notes: {}
+    });
+    let sync = await browser.storage.sync.get(["general_notes", "site_notes"]);
     sync = defaultValues(sync, {
         general_notes: [],
         site_notes: {}
@@ -57,10 +62,11 @@ async function setOpts() {
         name: "_execute_sidebar_action",
         shortcut: res.options.sidebar_action_shortcut
     });
+    // convert per-site option to default display
     if (res.options.default_display === "site_notes") {
         res.options.default_display = res.options.per_site;
     }
-    // res.options.per_site = res.options.hasOwnProperty("per_site") ? res.options.per_site : "domain";
+    // convert to array if using old, single tab design
     if (!Array.isArray(res.general_notes)) {
         res.general_notes = [res.general_notes];
     }
