@@ -136,7 +136,7 @@ async function restoreOptions() {
 }
 
 async function exportNotesAndOptions() {
-    var res = await browser.storage.local.get();
+    var res = await browser.storage.local.get(["general_notes", "site_notes", "options"]);
     // escape tabs and newlines and encode string to prevent breakage
     DOM.export.href =
         "data:application/json;charset=utf-8," +
