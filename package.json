@@ -19,8 +19,7 @@
     },
     "homepage": "https://github.com/Rayquaza01/note-taker#readme",
     "dependencies": {
-        "mdi": "^2.0.46",
-        "psl": "^1.1.20"
+        "psl": "^1.1.31"
     },
     "devDependencies": {
         "eslint": "^5.7.0",
