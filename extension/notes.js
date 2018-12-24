@@ -120,8 +120,18 @@ async function deleteNote() {
 async function loadCustomNote(e) {
     var tabs = await browser.tabs.query({ active: true, currentWindow: true });
     // return parent element if svg
-    let target = e.target.tagName === "svg" ? e.target.parentNode : e.target;
-    if (target.className === "name") {
+    let target = e.target;
+    switch (target.tagName) {
+        case "svg":
+            // select container instead of svg
+            target = target.parentNode;
+            break;
+        case "path":
+            // sometimes the path (inside of svg) is selected, select container instead
+            target = target.parentNode.parentNode;
+            break;
+    }
+    if (target.classList.contains("name")) {
         if (target.innerText !== DOM.back_text.innerText) {
             DOM.back.dataset[tabs[0].id] = target.innerText;
             loadNotes(target.innerText, null, true, "NONE");
@@ -135,28 +145,22 @@ async function loadCustomNote(e) {
         return;
     }
     let tab;
-    switch (target.className) {
-        case "mdi mdi-delete":
-            DOM.confirmDelete.style.width = "100%";
-            DOM.siteName.innerText = target.dataset.deleteSite;
-            return;
-        case "mdi mdi-open-in-new":
-            tab = await browser.tabs.create({
-                active: true,
-                url: "https://" + target.dataset.open
-            });
-            // open to note in sidebar
-            DOM.back.dataset[tab.id] = target.dataset.open;
-            // open to note in popup
-            // siteNoteSetup(target.dataset.open);
-            loadNotes(target.dataset.open, null, true, "NONE");
-            closeList();
-            break;
-        case "mdi mdi-plus":
-            openNewNote();
-            break;
-        default:
-            return;
+    if (target.classList.contains("mdi-delete")) {
+        DOM.confirmDelete.style.width = "100%";
+        DOM.siteName.innerText = target.dataset.deleteSite;
+    } else if (target.classList.contains("mdi-open-in-new")) {
+        tab = await browser.tabs.create({
+            active: true,
+            url: "https://" + target.dataset.open
+        });
+        // open to note in sidebar
+        DOM.back.dataset[tab.id] = target.dataset.open;
+        // open to note in popup
+        // siteNoteSetup(target.dataset.open);
+        loadNotes(target.dataset.open, null, true, "NONE");
+        closeList();
+    } else if (target.classList.contains("mdi-plus")) {
+        openNewNote();
     }
 }
 

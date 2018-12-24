@@ -6,7 +6,7 @@
     "scripts": {
         "build": "web-ext build -s ./extension",
         "build:i18n": "python ./scripts/i18n.py --",
-        "firefox": "web-ext run --source-dir ./extension"
+        "firefox": "web-ext run --source-dir ./extension --"
     },
     "repository": {
         "type": "git",

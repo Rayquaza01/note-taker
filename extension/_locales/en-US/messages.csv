@@ -10,6 +10,7 @@ yes,Yes,Yes text
 no,No,No text
 ok,OK,OK text
 cancel,Cancel,Cancel text
+close,Close,Close text
 whitelist,Whitelist,whitelist
 blacklist,Blacklist,blacklist
 optionTheme,Theme,theme option
