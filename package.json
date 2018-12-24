@@ -4,6 +4,7 @@
     "description": "Adds a text box to a toolbar button for taking notes",
     "main": "index.js",
     "scripts": {
+        "lint": "web-ext lint --source-dir ./extension",
         "build": "web-ext build -s ./extension",
         "build:i18n": "python ./scripts/i18n.py --",
         "firefox": "web-ext run --source-dir ./extension --"

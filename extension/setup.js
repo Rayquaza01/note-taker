@@ -107,7 +107,7 @@ function setBadge(bullet_types, notification_badge, notes, tabId) {
 }
 
 function setBadgeSite(res, tab) {
-    let site = siteParser(tab.url, res.options.default_display, res);
+    let site = siteParser(tab.url, res);
     if (site === "general_notes") {
         setBadgeGeneral(res, tab);
     } else if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {
