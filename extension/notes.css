@@ -70,15 +70,6 @@ table {
     flex-grow: 1;
 }
 
-#buttons > .mdi {
-    padding-left: 5px;
-}
-
-#buttons > #back,
-#buttons > #close {
-    padding-left: 0;
-}
-
 #back {
     overflow-x: hidden;
 }
@@ -89,10 +80,27 @@ table {
     overflow-y: hidden;
 }
 
+#close {
+    display: none;
+}
+
+.mdi {
+    cursor: pointer;
+}
+
 .mdi:hover,
 #back:hover,
 #close:hover {
     cursor: pointer;
+}
+
+#buttons > .mdi {
+    padding-left: 5px;
+}
+
+#buttons > #back,
+#buttons > #close {
+    padding-left: 0;
 }
 
 #overlay,
@@ -148,6 +156,9 @@ table {
 .name {
     cursor: pointer;
     flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #noteList {
@@ -155,17 +166,9 @@ table {
     overflow-y: auto;
 }
 
-#close {
-    display: none;
-}
-
 .mdi svg {
     width: 16px;
     height: 16px;
-}
-
-.mdi {
-    cursor: pointer;
 }
 
 #siteName {
