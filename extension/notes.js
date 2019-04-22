@@ -372,7 +372,7 @@ async function tabSwitch(e) {
     tabstrip[global.currentTab].className = "tab";
     e.target.className = "tab active";
     global.currentTab = e.target.dataset.number;
-    loadNotes(global.currentNote, global.currentTab, true, null);
+    loadNotes(global.currentNote, global.currentTab, true, "NONE");
 }
 
 function closeNewNote() {
@@ -459,27 +459,45 @@ async function main() {
     loadNoteList();
 }
 
-async function syncNotes() {
-    let syncState = await sync();
-    if (syncState === "ok") {
-        DOM.sync_alert.style.display = "none";
-        DOM.sync.style.display = "inherit";
+async function syncNotes(e) {
+    if (e.ctrlKey && e.type === "click") {
+        browser.tabs.create({
+            active: true,
+            url: "conflict.html"
+        });
     } else {
-        if (syncState === "conflict") {
-            DOM.sync.style.display = "none";
-            DOM.sync_alert.style.display = "inherit";
-            DOM.sync_alert.style.color = "red";
-            browser.tabs.create({
-                active: true,
-                url: "conflict.html"
-            });
+        let syncState = await sync();
+        if (syncState === "ok") {
+            DOM.sync_alert.style.display = "none";
+            DOM.sync.style.display = "inherit";
         } else {
-            await sync(true);
-            syncNotes();
+            if (syncState === "conflict") {
+                DOM.sync.style.display = "none";
+                DOM.sync_alert.style.display = "inherit";
+                DOM.sync_alert.style.color = "red";
+                browser.tabs.create({
+                    active: true,
+                    url: "conflict.html"
+                });
+            } else {
+                await sync(true);
+                syncNotes();
+            }
         }
     }
 }
 
+function shortcuts(e) {
+    if (e.key === "s" && e.ctrlKey) {
+        syncNotes(e);
+    } else if (e.key === "l" && e.ctrlKey) {
+        openList();
+    } else if (e.key === "n" && e.ctrlKey) {
+        openNewNote();
+    }
+}
+
+document.addEventListener("keypress", shortcuts);
 document.addEventListener("focus", () => DOM.textarea.focus());
 DOM.settings.addEventListener("click", options);
 DOM.textarea.addEventListener("input", saveNotes);
