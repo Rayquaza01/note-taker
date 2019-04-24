@@ -28,7 +28,12 @@ const DOM = generateElementsVariable([
 ]);
 var global = {
     currentTab: 0,
-    currentNote: "general_notes"
+    currentNote: "general_notes",
+    tabs: {
+        note: {},
+        dropdown: {},
+        menu: {}
+    }
 };
 
 async function loadSVG(url) {
@@ -133,12 +138,12 @@ async function loadCustomNote(e) {
     }
     if (target.classList.contains("name")) {
         if (target.innerText !== DOM.back_text.innerText) {
-            DOM.back.dataset[tabs[0].id] = target.innerText;
+            global.tabs.note[tabs[0].id] = target.innerText;
             loadNotes(target.innerText, null, true, "NONE");
         } else if (target.innerText === browser.i18n.getMessage("general")) {
             loadNotes();
         } else if (target.innerText === DOM.back_text.innerText) {
-            delete DOM.back.dataset[tabs[0].id];
+            delete global.tabs.note[tabs[0].id];
             loadNotes(DOM.toggle.value);
         }
         closeList();
@@ -154,7 +159,7 @@ async function loadCustomNote(e) {
             url: "https://" + target.dataset.open
         });
         // open to note in sidebar
-        DOM.back.dataset[tab.id] = target.dataset.open;
+        global.tabs.note[tab.id] = target.dataset.open;
         // open to note in popup
         // siteNoteSetup(target.dataset.open);
         loadNotes(target.dataset.open, null, true, "NONE");
@@ -169,16 +174,27 @@ function closeConfirm() {
 }
 
 async function changeNoteMode() {
+    let tab = (await browser.tabs.query({ currentWindow: true, active: true }))[0];
+    let res = await browser.storage.local.get();
     switch (DOM.toggle.value) {
         case "url":
         case "domain":
             // DOM.back.dataset[tabs[0].id] = await siteParser(tabs[0].url, DOM.toggle.value);
             // loadSiteNotes(true, DOM.toggle.value);
-            loadNotes(DOM.toggle.value, null, true, DOM.toggle.value);
+            // global.tabs.note[tab.id] = siteParser(tab.url, res, DOM.toggle.value, false);
+            global.tabs.dropdown[tab.id] = DOM.toggle.value;
+            loadNotes(
+                siteParser(tab.url, res, DOM.toggle.value, false),
+                null,
+                true,
+                "NONE",
+                false
+            );
             break;
         case "general_notes":
             // DOM.back.dataset[tabs[0].id] = "General Notes";
-            loadNotes();
+            global.tabs.note[tab.id] = "general_notes";
+            loadNotes(global.tabs.note[tab.id], null, true, "NONE");
             break;
     }
 }
@@ -288,7 +304,8 @@ async function loadNotes(
     note = "general_notes",
     tab = null,
     manualClick = false,
-    parser = null
+    parser = null,
+    priority = null
 ) {
     // note: the note to load, can be general_notes, site
     // tab: the tab to load (null defaults to current active tab)
@@ -301,26 +318,38 @@ async function loadNotes(
     let res = await browser.storage.local.get();
 
     // default values
+    if (global.tabs.dropdown.hasOwnProperty(tabs.id) && parser !== null) {
+        parser = global.tabs.dropdown[tabs.id];
+    }
     tab = tab === null ? global.currentTab : tab;
     parser = parser === null ? res.options.default_display : parser;
+    priority = priority === null ? res.options.priority_loading : priority;
 
     if (note === "general_notes") {
-        displayNotes("general_notes", res.general_notes[tab]);
-        emboldenNotes("general_notes");
+        if (priority) {
+            loadNotes(tabs.url, tab, manualClick, parser, priority);
+        } else {
+            displayNotes("general_notes", res.general_notes[tab]);
+            emboldenNotes("general_notes");
+        }
     } else if (
         !tabs.incognito ||
         manualClick ||
         (res.options.private_browsing && tabs.incognito)
     ) {
         let site =
-            parser !== "NONE" ? await siteParser(tabs.url, res, DOM.toggle.value) : note;
-        let parent = site === "general_notes" ? res : res.site_notes;
-        if (!parent.hasOwnProperty(site)) {
-            parent[site] = [];
+            parser !== "NONE"
+                ? siteParser(tabs.url, res, DOM.toggle.value, priority)
+                : note;
+        DOM.toggle.value = site[1];
+        let parent = site[0] === "general_notes" ? res : res.site_notes;
+        if (!parent.hasOwnProperty(site[0])) {
+            parent[site[0]] = [];
         }
-        displayNotes(site, parent[site][tab]);
-        emboldenNotes(site);
+        displayNotes(site[0], parent[site[0]][tab]);
+        emboldenNotes(site[0]);
     } else {
+        DOM.toggle.value = "general_notes";
         displayNotes("general_notes", res.general_notes[tab]);
         emboldenNotes("general_notes");
     }
@@ -331,21 +360,33 @@ async function perTabSidebar() {
         active: true,
         currentWindow: true
     });
+    closeList();
     const res = await browser.storage.local.get("options");
-    DOM.toggle.value = res.options.default_display;
-    if (!DOM.back.dataset.hasOwnProperty(tabs[0].id)) {
-        switch (res.options.default_display) {
-            case "domain":
-            case "url":
-                loadNotes(DOM.toggle.value, null, true, null);
-                break;
-            case "general_notes":
-                loadNotes();
-                break;
-        }
+    if (global.tabs.dropdown.hasOwnProperty(tabs[0].id)) {
+        DOM.toggle.value = global.tabs.dropdown[tabs[0].id];
+        loadNotes(
+            siteParser(tabs[0].url, res, DOM.toggle.value, false),
+            null,
+            true,
+            "NONE",
+            false
+        );
     } else {
-        loadNotes(DOM.back.dataset[tabs[0].id], null, true, "NONE");
-        // siteNoteSetup(DOM.back.dataset[tabs[0].id]);
+        DOM.toggle.value = res.options.default_display;
+        if (!global.tabs.note.hasOwnProperty(tabs[0].id)) {
+            switch (res.options.default_display) {
+                case "domain":
+                case "url":
+                    loadNotes(DOM.toggle.value, null, true);
+                    break;
+                case "general_notes":
+                    loadNotes();
+                    break;
+            }
+        } else {
+            loadNotes(global.tabs.note[tabs[0].id], null, true, "NONE");
+            // siteNoteSetup(DOM.back.dataset[tabs[0].id]);
+        }
     }
 }
 
@@ -434,7 +475,13 @@ async function main() {
             DOM.overlay.style.height = res.options.height + "px";
             break;
     }
-    loadNotes(res.options.default_display);
+    loadNotes(
+        res.options.default_display,
+        null,
+        false,
+        null,
+        res.options.priority_loading
+    );
     if (res.options.tabnos < 2) {
         DOM.tabstrip.style.display = "none";
     } else if (res.options.tabnos > 1) {
