@@ -30,6 +30,7 @@ async function setOpts() {
         font_size: 16,
         font_css: "",
         default_display: "general_notes",
+        fallback: "none",
         private_browsing: false,
         subdomains_mode: "blacklist",
         subdomains: [],
@@ -107,7 +108,7 @@ function setBadge(bullet_types, notification_badge, notes, tabId) {
 }
 
 function setBadgeSite(res, tab) {
-    let site = siteParser(tab.url, res);
+    let site = siteParser(tab.url, res)[0];
     if (site === "general_notes") {
         setBadgeGeneral(res, tab);
     } else if (!tab.incognito || (res.options.private_browsing && tab.incognito)) {

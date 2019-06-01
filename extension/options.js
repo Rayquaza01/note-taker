@@ -32,7 +32,8 @@ const DOM = generateElementsVariable([
     "tabnos",
     "text_direction",
     "browser_action_shortcut",
-    "sidebar_action_shortcut"
+    "sidebar_action_shortcut",
+    "fallback"
 ]);
 
 const filterBlanks = item => !/^$/.test(item);
@@ -50,6 +51,7 @@ function saveOptions() {
         font_css: DOM.font_css.value || "",
         font_size: parseInt(DOM.font_size.value) || 16,
         default_display: DOM.default_display.value || "general_notes",
+        fallback: DOM.fallback.value || "none",
         private_browsing: JSON.parse(DOM.private_browsing.value) || false,
         subdomains_mode: DOM.subdomains_mode.value || "blacklist",
         subdomains: DOM.subdomains.value.split(" ").filter(filterBlanks) || [],

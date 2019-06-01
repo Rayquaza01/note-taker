@@ -10,9 +10,9 @@ const compare = {
             if (Array.isArray(ob1) && Array.isArray(ob2)) {
                 // both are arrays
                 return "array";
-            } else if (ob1 === null && ob2 === null) {
-                // both are null
-                return "null";
+            } else if ([ob1, ob2].includes(null)) {
+                // null is one of them. Null can be directly compared, so they aren't equal
+                return false;
             } else if (!Array.isArray(ob1) && !Array.isArray(ob2)) {
                 // both are not arrays
                 return typeof ob1;
@@ -48,10 +48,12 @@ const compare = {
         }
     },
 
-    other: (ob1, ob2) => ob1 === ob2 || (Number.isNaN(ob1) && Number.isNaN(ob2)),
-
     compare: (ob1, ob2) => {
         // compare ob1 and ob2 using type, object, and array compares
+        // check direct comparison first, just in case
+        if (ob1 === ob2 || (Number.isNaN(ob1) && Number.isNaN(ob2))) {
+            return true;
+        }
         // same type (accounting for arrays)
         let type = compare.type(ob1, ob2);
         if (type) {
@@ -62,8 +64,8 @@ const compare = {
                 // if both are objects and not arrays
                 return compare.object(ob1, ob2);
             } else {
-                // neither arrays or objects
-                return compare.other(ob1, ob2);
+                // Same type, but can't be directly compared
+                return false;
             }
         } else {
             return false;

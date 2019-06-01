@@ -1,6 +1,12 @@
 /* globals psl */
 /* eslint no-unused-vars: 0 */
-function allowedParams(search, allowed) {
+// (?:(?<=domain@)|^)param
+
+function escapeRegex(regex) {
+    return regex.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function allowedParams(search, allowed, domain) {
     let params = search
         .substring(1)
         .split("&")
@@ -8,36 +14,40 @@ function allowedParams(search, allowed) {
     return params.length > 0 ? "?" + params.join("&") : "";
 }
 
-function siteParser(rawUrl, res, mode = null) {
+function siteParser(rawUrl, res, mode = null, ) {
     mode = mode === null ? res.options.default_display : mode;
+    let response = { general: "general_notes" };
     let url = new URL(rawUrl);
     if (url.protocol === "about:") {
-        return url.protocol + url.pathname;
+        response.url = url.protocol + url.pathname;
+        response.domain = url.protocol + url.pathname;
     } else if (url.protocol.match(/https?:/g)) {
         let site = psl.parse(url.hostname);
-        if (mode === "url") {
-            let params = allowedParams(url.search, res.options.get_params);
-            return url.hostname + url.pathname + params;
-        } else if (res.options.subdomains_mode === "blacklist") {
+
+        let params = allowedParams(url.search, res.options.get_params, site.domain);
+        response.url = url.hostname + url.pathname + params;
+
+        if (res.options.subdomains_mode === "blacklist") {
             if (
                 res.options.subdomains.indexOf(site.domain) > -1 ||
                 res.options.subdomains.length === 0
             ) {
-                return site.domain;
+                response.domain = site.domain;
             } else {
-                return url.hostname;
+                response.domain = url.hostname;
             }
         } else if (res.options.subdomains_mode === "whitelist") {
             if (
                 res.options.subdomains.indexOf(site.domain) > -1 ||
                 res.options.subdomains.length === 0
             ) {
-                return url.hostname;
+                response.domain = url.hostname;
             } else {
-                return site.domain;
+                response.domain = site.domain;
             }
         }
     } else {
-        return "general_notes";
+        return [response.general, "general_notes"];
     }
+    return [response[mode], mode];
 }

@@ -187,8 +187,7 @@ async function changeNoteMode() {
                 siteParser(tab.url, res, DOM.toggle.value, false),
                 null,
                 true,
-                "NONE",
-                false
+                "NONE"
             );
             break;
         case "general_notes":
@@ -300,17 +299,22 @@ async function saveNotes() {
     await browser.storage.local.set(res);
 }
 
+function noteExists(note, res) {
+    return (note === "general_notes" || res.site_notes.hasOwnProperty(note));
+}
+
 async function loadNotes(
     note = "general_notes",
     tab = null,
     manualClick = false,
     parser = null,
-    priority = null
+    fallback = "none"
 ) {
     // note: the note to load, can be general_notes, site
     // tab: the tab to load (null defaults to current active tab)
     // manual click: whether to respect private_browsing
     // parser: mode to use (NONE will not parse the text)
+    // fallback: whether to fallback to other notes
     let tabs = (await browser.tabs.query({
         active: true,
         currentWindow: true
@@ -323,15 +327,10 @@ async function loadNotes(
     }
     tab = tab === null ? global.currentTab : tab;
     parser = parser === null ? res.options.default_display : parser;
-    priority = priority === null ? res.options.priority_loading : priority;
 
     if (note === "general_notes") {
-        if (priority) {
-            loadNotes(tabs.url, tab, manualClick, parser, priority);
-        } else {
-            displayNotes("general_notes", res.general_notes[tab]);
-            emboldenNotes("general_notes");
-        }
+        displayNotes("general_notes", res.general_notes[tab]);
+        emboldenNotes("general_notes");
     } else if (
         !tabs.incognito ||
         manualClick ||
@@ -339,8 +338,8 @@ async function loadNotes(
     ) {
         let site =
             parser !== "NONE"
-                ? siteParser(tabs.url, res, DOM.toggle.value, priority)
-                : note;
+                ? siteParser(tabs.url, res, DOM.toggle.value)
+                : [note, DOM.toggle.value];
         DOM.toggle.value = site[1];
         let parent = site[0] === "general_notes" ? res : res.site_notes;
         if (!parent.hasOwnProperty(site[0])) {
@@ -479,8 +478,7 @@ async function main() {
         res.options.default_display,
         null,
         false,
-        null,
-        res.options.priority_loading
+        null
     );
     if (res.options.tabnos < 2) {
         DOM.tabstrip.style.display = "none";
