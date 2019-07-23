@@ -137,11 +137,12 @@ async function loadCustomNote(e) {
             break;
     }
     if (target.classList.contains("name")) {
-        if (target.innerText !== DOM.back_text.innerText) {
+        if (target.innerText === browser.i18n.getMessage("general")) {
+            global.tabs.note[tabs[0].id] = target.innerText;
+            loadNotes();
+        } else if (target.innerText !== DOM.back_text.innerText) {
             global.tabs.note[tabs[0].id] = target.innerText;
             loadNotes(target.innerText, null, true, "NONE");
-        } else if (target.innerText === browser.i18n.getMessage("general")) {
-            loadNotes();
         } else if (target.innerText === DOM.back_text.innerText) {
             delete global.tabs.note[tabs[0].id];
             loadNotes(DOM.toggle.value);
