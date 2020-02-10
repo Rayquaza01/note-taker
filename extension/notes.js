@@ -300,16 +300,11 @@ async function saveNotes() {
     await browser.storage.local.set(res);
 }
 
-function noteExists(note, res) {
-    return (note === "general_notes" || res.site_notes.hasOwnProperty(note));
-}
-
 async function loadNotes(
     note = "general_notes",
     tab = null,
     manualClick = false,
     parser = null,
-    fallback = "none"
 ) {
     // note: the note to load, can be general_notes, site
     // tab: the tab to load (null defaults to current active tab)
