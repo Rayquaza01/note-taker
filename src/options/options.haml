@@ -1,0 +1,162 @@
+!!! html
+%html
+  %head
+    %meta{:charset => "utf-8"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "css/options.css"}
+    %title Note Taker Options
+
+  %body
+    .grid-container
+      .grid-item
+        %span.i18n optionTheme
+      .grid-item
+        %select#theme
+          %option.i18n{:value => "light"} optionThemeLight
+          %option.i18n{:value => "dark"} optionThemeDark
+
+      .grid-item
+        %span.i18n optionBGColorLight
+      .grid-item
+        .colorSync
+          \#
+          %input#background_color{:type => "text"}
+          %input{:type => "color"}
+
+      .grid-item
+        %span.i18n optionTextColorLight
+      .grid-item
+        .colorSync
+          \#
+          %input#font_color{:type => "text"}
+          %input{:type => "color"}
+
+      .grid-item
+        %span.i18n optionBGColorDark
+      .grid-item
+        .colorSync
+          \#
+          %input#background_color_dark{:type => "text"}
+          %input{:type => "color"}
+
+      .grid-item
+        %span.i18n optionTextColorDark
+      .grid-item
+        .colorSync
+          \#
+          %input#font_color_dark{:type => "text"}
+          %input{:type => "color"}
+
+      .grid-item
+        %span.i18n optionWidth
+      .grid-item
+        %input#width{:type => "number", :min => "0"}
+        px
+
+      .grid-item
+        %span.i18n optionHeight
+      .grid-item
+        %input#height{:type => "number", :min => "0"}
+        px
+
+      .grid-item
+        %span.i18n optionFont
+      .grid-item
+        %select#font_family
+          %option.i18n{:value => "default"} default
+          %option.i18n{:value => "sans-serif"} optionFontSansSerif
+          %option.i18n{:value => "serif"} optionFontSerif
+          %option.i18n{:value => "monospace"} optionFontMonospace
+          %option.i18n{:value => "custom"} optionFontCustom
+
+      .grid-item
+        %span.i18n optionCustomFontCSS
+      .grid-item
+        %input#font_css{:type => "text"}
+
+      .grid-item
+        %span.i18n optionFontSize
+      .grid-item
+        %input#font_size{:type => "number", :min => "0"}
+        px
+
+      .grid-item
+        %span.i18n optionDefaultDisplay
+      .grid-item
+        %select#default_display
+          %option.i18n{:value => "general_notes"} general
+          %option.i18n{:value => "domain"} domain
+          %option.i18n{:value => "url"} url
+
+      .grid-item
+        %span.i18n optionPrivateBrowsing
+      .grid-item
+        %input#private_browsing{:type => "checkbox"}
+
+      .grid-item
+        %span.i18n optionSubdomainsMode
+      .grid-item
+        %select#subdomains_mode
+          %option.i18n{:value => "blacklist"} blacklist
+          %option.i18n{:value => "whitelist"} whitelist
+
+      .grid-item
+        %span#domain_mode
+      .grid-item
+        %input#subdomains{:type => "text"}
+
+      .grid-item
+        %span.i18n optionNotificationBadge
+      .grid-item
+        %select#notification_badge
+          %option.i18n{:value => "enabled"} enabled
+          %option.i18n{:value => "disabled"} disabled
+          %option.i18n{:value => "bullets"} optionBulletMode
+          %option.i18n{:value => "enabled,bullets"} optionBulletEnabledMode
+
+      .grid-item
+        %span.i18n optionNotificationBadgeColor
+      .grid-item
+        .colorSync
+          \#
+          %input#notification_badge_color{:type => "text"}
+          %input{:type => "color"}
+
+      .grid-item
+        %span.i18n optionBulletTypes
+      .grid-item
+        .list#bullet_types
+
+      .grid-item
+        %span.i18n optionURLParams
+      .grid-item
+        .list#get_params
+
+      .grid-item
+        %span.i18n optionTabs
+      .grid-item
+        %input#tabnos{:type => "number", :min => "0"}
+
+      .grid-item
+        %span.i18n optionPadding
+      .grid-item
+        %input#padding{:type => "number", :min => "0"}
+        px
+
+      .grid-item
+        %span.i18n optionTextDirection
+      .grid-item
+        %select#text_direction
+          %option.i18n{:value => "ltr"} optionLTR
+          %option.i18n{:value => "rtl"} optionRTL
+
+      .grid-item
+        %span.i18n optionPopupShortcut
+      .grid-item
+        %input#browser_action_shortcut{:type => "text"}
+
+      .grid-item
+        %span.i18n optionSidebarShortcut
+      .grid-item
+        %input#browser_sidebar_shortcut{:type => "text"}
+
+    %script{:src => "options.js"}

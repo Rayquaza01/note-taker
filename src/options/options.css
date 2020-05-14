@@ -1,0 +1,13 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+.grid-item {
+  padding: 5px 0;
+  border-bottom: 1px solid black;
+}
+
+input {
+  height: 1en;
+}

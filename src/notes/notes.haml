@@ -1,0 +1,53 @@
+!!! html
+%html
+  %head
+    %meta{:charset => "utf-8"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "css/notes.css"}
+    %link{:rel => "icon", :type => "image/png", :href => "icons/icon-96.png"}
+    %meta{:name => "viewport", :content => "width=device-width, initial-scale=1"}
+    %title Note Taker
+
+  %body
+    .box
+      #overlay.row.content
+        #note_list
+          %input#search.i18n{:type => "text", :placeholder => "search", :data => {:attribute => "placeholder"}}
+          %span.container
+            %span.name.i18n general
+            %span.mdi.mdi-plus{:data => {:icon => "mdi-plus"}}
+      #newNote.row.content
+        %div
+          %span
+            %span.i18n newNote
+            %input#newNoteName
+          #confirm
+            #ok.i18n ok
+            #cancel.i18n cancel
+      #confirmDelete.row.content
+        %div
+          %span
+            %span.i18n deleteNote
+            %span#siteName
+          #ynbox
+            #yes.i18n yes
+            #no.i18n no
+      #tabstrip.row.header{:data => {:activetab => "0"}}
+        %span.tab.active{:data => {:number => "0"}} Tab 1
+      %textarea#textarea{:autofocus => "true", :tabindex => "1"}
+      #buttons.row.footer
+        %span#back
+          %span.mdi.mdi-menu{:data => {:icon => "mdi-menu"}}
+          %span#backText
+        %span#close
+          %span.mdi.mdi-backburger{:data => {:icon => "mdi-backburger"}}
+          %span.i18n close
+        %select#toggle
+          %option.i18n{:value => "general_notes"} general
+          %option.i18n{:value => "domain"} domain
+          %option.i18n{:value => "url"} url
+        %span#sync.mdi.mdi-sync.i18n{:data => {:icon => "mdi-sync", :attribute => "title"}, :title => "sync"}
+        %span#sync_alert.mdi.mdi-sync-alert.i18n{:data => {:icon => "mdi-sync-alert", :attribute => "title"}, :title => "sync-alert"}
+        %span#open_in_new.mdi.mdi-open-in-new.i18n{:data => {:icon => "mdi-open-in-new", :attribute => "title"}, :title => "open-in-new"}
+        %span#theme.mdi.mdi-theme-light-dark.i18n{:data => {:icon => "mdi-theme-light-dark", :attribute => "title"}, :title => "theme-light-dark"}
+        %span#settings.mdi.mdi-settings.i18n{:data => {:icon => "mdi-settings", :attribute => "title"}, :title => "settings"}
+    %script{:src => "notes.js"}
