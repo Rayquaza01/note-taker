@@ -22,9 +22,10 @@
         "no-trailing-spaces": "error",
         "comma-spacing": "error",
         "no-nested-ternary": "error",
-        "max-depth": ["error", 4]
+        "max-depth": ["error", 4],
     },
     "parserOptions": {
-        "ecmaVersion": 2018
+        "ecmaVersion": 2018,
+        "sourceType": "module"
     }
 }

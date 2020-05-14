@@ -1,0 +1,28 @@
+{
+  "name": "note-taker",
+  "version": "1.0.0",
+  "description": "A Firefox add-on that adds a text box to a toolbar button for taking notes.",
+  "private": true,
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build-prod": "./scripts/build-prod.sh",
+    "build-dev": "./scripts/build-dev.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rayquaza01/note-taker.git"
+  },
+  "author": "Rayquaza01",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Rayquaza01/note-taker/issues"
+  },
+  "homepage": "https://github.com/Rayquaza01/note-taker#readme",
+  "devDependencies": {
+    "web-ext": "^4.2.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
