@@ -30,7 +30,7 @@ def convertCSV(file):
 def main():
     opts = args()
     # read path
-    path = os.path.join("extension", "_locales", opts["language"])
+    path = os.path.join("src", "assets", "_locales", opts["language"])
     if not os.path.exists(path):
         os.mkdir(path)
     i18n = convertCSV(os.path.join(path, "messages.csv"))

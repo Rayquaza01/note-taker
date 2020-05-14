@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/Rayquaza01/note-taker#readme",
   "devDependencies": {
+    "svg-inline-loader": "^0.8.2",
     "web-ext": "^4.2.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"

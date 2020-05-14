@@ -7,6 +7,7 @@ module.exports = {
         options: "./src/options/options.js",
         background: "./src/background.js"
     },
+    devtool: "inline-source-map",
     output: {
         filename: "[name].js",
         path: __dirname + "/dist"

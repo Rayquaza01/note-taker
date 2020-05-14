@@ -1,0 +1,59 @@
+extensionName,Note Taker,The extension's name
+extensionDescription,Adds a text box to a toolbar button for taking notes,The extension's description
+general,General Notes,general notes
+domain,Domain Notes,Name for Domain Notes
+url,URL Notes,Name for URL Notes
+default,Default,Default font option
+enabled,Enabled,Enabled text
+disabled,Disabled,Disabled text
+yes,Yes,Yes text
+no,No,No text
+ok,OK,OK text
+cancel,Cancel,Cancel text
+close,Close,Close text
+whitelist,Whitelist,whitelist
+blacklist,Blacklist,blacklist
+optionTheme,Theme,theme option
+optionThemeLight,Light,light theme
+optionThemeDark,Dark,dark theme
+optionBGColorLight,Background Color (Light),background color light option
+optionBGColorDark,Background Color (Dark),background color dark option
+optionTextColorLight,Text Color (Light),font color light option
+optionTextColorDark,Text Color (Dark),font color dark option
+optionWidth,Text Box Width,textbox width
+optionHeight,Text Box Height,textbox height
+optionFont,Font,font
+optionFontSerif,Serif,Serif font option
+optionFontSansSerif,Sans Serif,Sans Serif font option
+optionFontMonospace,Monospace,Monospace font option
+optionFontCustom,Custom,Custom font option
+optionCustomFontCSS,Custom Font CSS,custom for css option
+optionFontSize,Font Size,font size option
+optionDefaultDisplay,Default Display,default display option
+optionPrivateBrowsing,Site Notes in Private Browsing,Private Browsing option
+optionSubdomainsMode,Subdomains Mode,subdomains mode option
+optionSubdomainsWhitelist,Enforce Subdomains On,enforcing subdomains
+optionSubdomainsBlacklist,Ignore Subdomains On,ignoring subdomains
+optionNotificationBadge,Notification Badge,notification badge option
+optionNotificationBadgeColor,Notification Badge Color,notif badge color option
+optionBulletMode,Bullets,bullets option
+optionBulletEnabledMode,Enabled + Bullets,enabled + bullets option
+optionBGEnabledMode,Enabled + Background,enabled + background option
+optionBulletTypes,Bullet Types,bullet types option
+optionURLParams,URL Parameters In Site Notes,URL Params option
+optionTabs,Number of Tabs,tabs option
+optionPadding,Padding,padding option
+optionTextDirection,Text Direction,direction option
+optionLTR,Left to Right,Left to right direction option
+optionRTL,Right to Left,Right to left direction option
+optionPopupShortcut,Popup Shortcut,popup shortcut option
+optionSidebarShortcut,Sidebar Shortcut,sidebar shortcut option
+export,Export Notes and Options,export button
+switchTheme,Switch to light theme,theme switch button title text
+switchThemeDark,Switch to dark theme,theme switch button title text
+openNewTab,Open in New Tab,Open in new title text
+settings,Settings,Settings button title text
+deleteNote,Are you sure you want to delete the note:,Delete confirmation
+tab,Tab,Tab text (number of tab appears after text)
+search,Search,Search bar palceholder text
+newNote,New Note Name:,New note prompt
