@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "lint": "web-ext lint --source-dir ./dist",
-        "build": "web-ext build -s ./dist",
+        "build:watch": "webpack --config webpack.config.js --mode=development --watch",
+        "build:extension": "web-ext build -s ./dist",
         "build:i18n": "python ./scripts/i18n.py --",
         "firefox": "web-ext run --source-dir ./dist --"
     },
