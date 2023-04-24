@@ -1,9 +1,11 @@
 :root {
   --background: white;
+  --background-transparent: rgba(255, 255, 255, 0.5);
   --text-primary: black;
 }
 
 [data-theme='dark'] {
   --background: black;
+  --background-transparent: rgba(0, 0, 0, 0.5);
   --text-primary: white;
 }
