@@ -46,7 +46,8 @@ module.exports = (env, argv) => {
                     { from: "node_modules/react/umd/" + (argv.mode === "production" ? "react.production.min.js" : "react.development.js"), to: "third-party/react.js"},
                     { from: "node_modules/react-dom/umd/" + (argv.mode === "production" ? "react-dom.production.min.js" : "react-dom.development.js"), to: "third-party/react-dom.js"}
                 ]
-            })
+            }),
+            new MiniCssExtrackPlugin()
         ],
         externals: {
             "react": "React",
