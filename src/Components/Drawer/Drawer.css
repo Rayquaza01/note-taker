@@ -1,0 +1,12 @@
+.reactDrawer {
+    height: 100vh;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    background-color: var(--background);
+    transition: 0.5s;
+    overflow: hidden;
+    border-right: 1px solid var(--text-primary);
+}
