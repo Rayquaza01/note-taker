@@ -1,0 +1,11 @@
+@media only screen and (max-width: 500px) {
+    .drawer {
+        width: 60vw !important;
+    }
+}
+
+.drawer {
+    width: 500px;
+    height: 100%;
+    background-color: var(--background);
+}

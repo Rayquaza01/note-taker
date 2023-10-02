@@ -1,0 +1,13 @@
+.modal[data-type="dialog"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog {
+    flex-direction: column;
+}
+
+.dialog-actions {
+    justify-content: right;
+}

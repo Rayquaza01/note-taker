@@ -1,0 +1,49 @@
+.modal {
+    z-index: 1;
+    background-color: var(--modal-background-color);
+}
+
+.modal-left {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 0;
+    height: 100vh;
+    overflow: hidden;
+
+    transition: width .5s ease-in-out;
+}
+
+.modal-right {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    width: 0;
+    height: 100vh;
+    overflow: hidden;
+
+    transition: width .5s ease-in-out;
+}
+
+.modal-left[data-open="true"],
+.modal-right[data-open="true"] {
+    width: 100%;
+}
+
+.modal-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+
+    transition: height .5s ease-in-out;
+}
+
+.modal-top[data-open="true"] {
+    height: 100vh;
+}
