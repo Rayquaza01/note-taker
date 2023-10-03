@@ -1,0 +1,28 @@
+.drawer-list {
+    margin: 10px 5px;
+}
+
+.drawer-list .search {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.drawer-list-item {
+    cursor: pointer;
+    display: flex;
+
+    padding: 2px 0;
+    align-items: center;
+
+    border-bottom: 1px solid;
+}
+
+.drawer-list-item:last-of-type {
+    border-bottom: none;
+}
+
+.drawer-list-item .name {
+    flex-grow: 1;
+    text-overflow: ellipsis;
+}
