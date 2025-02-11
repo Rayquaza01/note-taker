@@ -1,28 +1,29 @@
-.drawer-list {
+.DrawerList {
     margin: 10px 5px;
+
+    .DrawerList__Search {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
 }
 
-.drawer-list .search {
-    width: 100%;
-    text-align: center;
-    box-sizing: border-box;
-}
 
-.drawer-list-item {
+.DrawerList__Item {
     cursor: pointer;
     display: flex;
 
-    padding: 2px 0;
+    padding: 0.3em 0;
     align-items: center;
 
     border-bottom: 1px solid;
+
+    .DrawerList__Item-name {
+        flex-grow: 1;
+        text-overflow: ellipsis;
+    }
 }
 
-.drawer-list-item:last-of-type {
+.DrawerList__Item:last-of-type {
     border-bottom: none;
-}
-
-.drawer-list-item .name {
-    flex-grow: 1;
-    text-overflow: ellipsis;
 }

@@ -10,8 +10,8 @@ export interface DrawerListItemProps {
 
 export function DrawerListItem(props: DrawerListItemProps) {
     return (
-        <div className="drawer-list-item">
-            <span className="name">{ props.name }</span>
+        <div className="DrawerList__Item">
+            <span className="DrawerList__Item-name">{ props.name }</span>
             <button>Rename</button>
             <button>Delete</button>
         </div>
@@ -27,8 +27,8 @@ export function DrawerList(props: DrawerListProps) {
     const notes = useStorageLocal<Note[]>("notes", []);
 
     return (
-        <div className="drawer-list">
-            <input type="text" className="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search"></input>
+        <div className="DrawerList">
+            <input type="text" className="DrawerList__search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search"></input>
             {
                 notes.filter(item => search === "" || search.includes(item.name))
                     .map(item => <DrawerListItem {...item} key={item.name} />)
