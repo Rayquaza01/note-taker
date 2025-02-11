@@ -2,7 +2,7 @@
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const copyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtrackPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerWebpackPlugin = require("css-minimizer-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 
@@ -26,7 +26,7 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.css$/i,
-                    use: [MiniCssExtrackPlugin.loader, "css-loader"]
+                    use: [MiniCssExtractPlugin.loader, "css-loader"]
                 },
                 {
                     test: /\.svg$/i,
@@ -52,7 +52,7 @@ module.exports = (env, argv) => {
                     { from: "src/_locales/", to: "_locales", toType: "dir" },
                 ]
             }),
-            new MiniCssExtrackPlugin()
+            new MiniCssExtractPlugin()
         ],
         optimization: {
             usedExports: true,
