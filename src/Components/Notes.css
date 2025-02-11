@@ -1,0 +1,13 @@
+.NotesTextbox {
+    resize: none;
+    height: 100%;
+    width: 100%;
+
+    font-size: inherit;
+
+    outline: none;
+    border: none;
+    border-bottom: 0.1em solid var(--text-primary);
+
+    flex-grow: 1;
+}
