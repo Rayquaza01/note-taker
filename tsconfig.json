@@ -10,5 +10,6 @@
       "forceConsistentCasingInFileNames": true,
       "jsx": "react"
     },
-    "files": ["src/index.tsx"]
+    "files": ["src/index.tsx"],
+    "include": ["tsglobal.d.ts"]
   }
