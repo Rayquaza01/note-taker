@@ -1,0 +1,13 @@
+.StatusBar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.StatusBar__Menu {
+    cursor: pointer;
+
+    font-weight: bold;
+
+    flex-grow: 1;
+}
