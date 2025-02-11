@@ -3,5 +3,5 @@ import { createRoot } from "react-dom/client";
 
 import { App } from "./App";
 
-const root = createRoot(document.querySelector("#root") as HTMLDivElement);
+const root = createRoot(document.querySelector("body") as HTMLBodyElement);
 root.render(<App />);
