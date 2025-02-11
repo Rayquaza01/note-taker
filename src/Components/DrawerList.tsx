@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import "./DrawerList.css";
 
+import { Note } from "../Notes";
+import { useStorageLocal } from "../Hooks/useStorage";
+
 export interface DrawerListItemProps {
     name: string
 }
@@ -15,25 +18,19 @@ export function DrawerListItem(props: DrawerListItemProps) {
     );
 }
 
-const items = [
-    { name: "1" },
-    { name: "2" },
-    { name: "3" },
-    { name: "4" }
-];
-
 export interface DrawerListProps {
 
 }
 
 export function DrawerList(props: DrawerListProps) {
     const [search, setSearch] = useState("");
+    const notes = useStorageLocal<Note[]>("notes", []);
 
     return (
         <div className="drawer-list">
             <input type="text" className="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search"></input>
             {
-                items.filter(item => search === "" || search.includes(item.name))
+                notes.filter(item => search === "" || search.includes(item.name))
                     .map(item => <DrawerListItem {...item} key={item.name} />)
             }
         </div>
