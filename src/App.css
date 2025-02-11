@@ -11,3 +11,12 @@
   --text-primary: white;
   --modal-backgrund-color: black;
 }
+
+html, body {
+    margin: 0;
+    height: 100%;
+    font-size: 16;
+
+    background-color: var(--background);
+    color: var(--text-primary);
+}
