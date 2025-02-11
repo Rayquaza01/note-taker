@@ -47,16 +47,13 @@ module.exports = (env, argv) => {
             new copyWebpackPlugin({
                 patterns: [
                     { from: "node_modules/webextension-polyfill/dist/browser-polyfill.min.js", to: "third-party/browser-polyfill.min.js" },
-                    { from: "node_modules/react/umd/" + (argv.mode === "production" ? "react.production.min.js" : "react.development.js"), to: "third-party/react.js"},
-                    { from: "node_modules/react-dom/umd/" + (argv.mode === "production" ? "react-dom.production.min.js" : "react-dom.development.js"), to: "third-party/react-dom.js"}
+                    { from: "src/manifest.json" },
+                    { from: "src/icons/", to: "icons", toType: "dir" },
+                    { from: "src/_locales/", to: "_locales", toType: "dir" },
                 ]
             }),
             new MiniCssExtrackPlugin()
         ],
-        externals: {
-            "react": "React",
-            "react-dom": "ReactDOM",
-        },
         optimization: {
             usedExports: true,
             minimizer: [
