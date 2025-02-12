@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import "./DrawerList.css";
 
 import { Note } from "../Notes";
-import { useStorageLocal } from "../Hooks/useStorage";
 
 export interface DrawerListItemProps {
     name: string
@@ -19,19 +18,30 @@ export function DrawerListItem(props: DrawerListItemProps) {
 }
 
 export interface DrawerListProps {
-
+    notes: Note[]
 }
 
 export function DrawerList(props: DrawerListProps) {
     const [search, setSearch] = useState("");
-    const notes = useStorageLocal<Note[]>("notes", []);
+    const visibleNotes = useMemo(() => {
+        return props.notes
+            .filter(item => search === "" || search.includes(item.name))
+            .sort((a, b) => {
+                if (a.name < b.name) {
+                    return 1;
+                } else if (a.name > b.name) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+    }, [props.notes, search])
 
     return (
         <div className="DrawerList">
             <input type="text" className="DrawerList__search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search"></input>
             {
-                notes.filter(item => search === "" || search.includes(item.name))
-                    .map(item => <DrawerListItem {...item} key={item.name} />)
+                visibleNotes.map(item => <DrawerListItem {...item} key={item.name} />)
             }
         </div>
     );
